@@ -1,3 +1,33 @@
+### Project Details
+ConnectEd is a study resource management and collaborative study.
+platform. It is designed to help students.
+- organize and keep track of their study materials
+- share their own study sessions with others or use other’s
+- form groups with friends to study together
+- find study partners with shared interest
+- create blogs to share own learning experiences, methods and
+conclusions or read other's.
+- being motivated to be more collaborative by gamifying the system
+with levels and achievements.
+
+### Motivation
+The motivation stems from an understanding of the challenges
+students face in organizing, collaborating, and maximizing the
+value of their educational experiences. We aim to create a
+comprehensive platform that not only facilitates effective
+personal study management but also fosters a supportive
+community for collaborative learning.
+
+### Modules
+1. User Session Management
+2. SessionBank
+3. Study Group
+4. FindaMate
+5. Educational Markdown Blogs
+6. Gamification of The System
+7. Moderators and Admin
+
+
 # create-svelte
 
 Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/main/packages/create-svelte).
