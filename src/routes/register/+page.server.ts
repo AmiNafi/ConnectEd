@@ -80,12 +80,18 @@ export const actions = {
 			email: body.email as string,
 			password: body.password as string,
 			options: {
-				emailRedirectTo: 'http://localhost:5173/register/verified'
+				emailRedirectTo: 'https://connect-5m13on4i7-saadmrp-gmailcom.vercel.app/register/verified'
 			}
 		});
 
 		// console.log(data);
 		// console.log(err);
+		
+		if (data.user && data.user.identities && data.user.identities.length === 0){
+			return message(form, 'Email already in use', {
+				status: 400
+			});
+		}
 
 		if (err) {
 			if (err instanceof AuthApiError && err.status === 400) {
