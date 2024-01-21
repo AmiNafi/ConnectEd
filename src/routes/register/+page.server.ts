@@ -81,7 +81,7 @@ export const actions = {
 			password: body.password as string,
 			options: {
 				emailRedirectTo: 'https://connect-5m13on4i7-saadmrp-gmailcom.vercel.app/register/verified'
-			}
+			},
 		});
 
 		// console.log(data);
