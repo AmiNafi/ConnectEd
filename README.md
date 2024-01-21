@@ -1,6 +1,5 @@
 ### Project Details
-ConnectEd is a study resource management and collaborative study.
-platform. It is designed to help students.
+ConnectEd is a study resource management and collaborative study platform. It is designed to help students.
 - organize and keep track of their study materials
 - share their own study sessions with others or use other’s
 - form groups with friends to study together
