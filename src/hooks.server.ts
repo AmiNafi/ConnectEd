@@ -31,7 +31,15 @@ export const handle: Handle = async ({ event, resolve }) => {
 	}
 
 	// protect POST requests to all routes that start with /protected-posts
-	if (event.url.pathname.startsWith('/home') && event.request.method === 'POST') {
+	// if (event.url.pathname.startsWith('/home') && event.request.method === 'POST') {
+	// 	const session = await event.locals.getSession();
+	// 	if (!session) {
+	// 		// the user is not signed in
+	// 		throw error(303, '/');
+	// 	}
+	// }
+
+	if (event.url.pathname.startsWith('/api')) {
 		const session = await event.locals.getSession();
 		if (!session) {
 			// the user is not signed in

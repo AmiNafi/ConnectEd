@@ -1,5 +1,14 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
+	import * as Avatar from "$lib/components/ui/avatar";
+	import type { LayoutData } from './$types';
+	import { onMount } from 'svelte';
+
+	export let data: LayoutData 
+
+	onMount(()=>{
+		console.log(data.user)
+	})
 </script>
 
 <body
@@ -47,7 +56,11 @@
 					About
 				</a>
 			</div>
-			<div>
+			<div class="flex flex-row gap-5">
+				<Avatar.Root>
+					<Avatar.Image src="https://github.com/shadcn.png" alt="@shadcn" />
+					<Avatar.Fallback>CN</Avatar.Fallback>
+				</Avatar.Root>
 				<form action="/logout" method="post">
 					<Button type="submit" class="bg-blue-300 text-base text-black hover:bg-blue-500"
 						>Logout</Button

@@ -1,0 +1,20 @@
+{
+  "version": "5",
+  "dialect": "pg",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1705884762726,
+      "tag": "0000_fearless_vermin",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1705885087253,
+      "tag": "0001_nebulous_nick_fury",
+      "breakpoints": true
+    }
+  ]
+}

@@ -10,6 +10,9 @@ export const load = async (event) => {
 	};
 };
 
+const deployPath="https://connect-5m13on4i7-saadmrp-gmailcom.vercel.app/register/verified"
+const localPath="http://localhost:5173/register/verified"
+
 const newUserSchema = z
 	.object({
 		username: z
@@ -80,8 +83,8 @@ export const actions = {
 			email: body.email as string,
 			password: body.password as string,
 			options: {
-				emailRedirectTo: 'https://connect-5m13on4i7-saadmrp-gmailcom.vercel.app/register/verified'
-			},
+				emailRedirectTo: deployPath
+			}
 		});
 
 		// console.log(data);

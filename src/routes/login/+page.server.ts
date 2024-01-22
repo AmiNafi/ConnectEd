@@ -38,7 +38,7 @@ export const actions = {
 		}
 
 		const body = form.data;
-		console.log(body);
+		// console.log(body);
 
 		const { data, error: err } = await event.locals.supabase.auth.signInWithPassword({
 			email: body.email as string,
@@ -57,7 +57,13 @@ export const actions = {
 				status: 500
 			})
 		}
-
+		
+		//Add user if not already added 
+		await event.fetch('/api/user/add', {
+			method: 'POST',
+			body: JSON.stringify({ userName: body.email.split('@')[0],email: body.email})
+		})
+		
 		throw redirect(303, '/home');
 	}
 };

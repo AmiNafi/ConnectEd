@@ -63,7 +63,7 @@
 		variant="ghost"
 		class="invisible lg:visible lg:absolute right-24 top-4 md:right-28 md:top-8">Register</Button
 	>
-	<Button href="/landing-page" class="invisible lg:visible lg:absolute right-44 top-4 md:right-48 md:top-8">Test Landing Page</Button>
+	<!-- <Button href="/landing-page" class="invisible lg:visible lg:absolute right-44 top-4 md:right-48 md:top-8">Test Landing Page</Button> -->
 	<div
 		class="relative hidden h-full flex-col bg-muted p-10 text-white dark:border-r lg:flex justify-center items-center"
 	>
@@ -140,7 +140,7 @@
 					>
 				</p>
 
-				<p class="text-sm text-muted-foreground text-sky-600 hover:underline">Reset Password</p>
+				<p class="text-sm text-sky-600 hover:underline">Reset Password</p>
 			</div>
 		</div>
 	</div>
