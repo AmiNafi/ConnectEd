@@ -15,8 +15,9 @@
 </script>
 
 <!-- <body class="inset-0 flex min-h-screen w-full flex-col bg-gradient-to-br from-blue-300 to-blue-500"> -->
-<body class="inset-0 flex min-h-screen w-full flex-col bg-blue-400">
-	<nav class="flex w-full flex-wrap items-center justify-between bg-blue-800 p-6">
+<!-- <body class="inset-0 flex min-h-screen w-full flex-col bg-blue-400"> -->
+	<body class="inset-0 flex min-h-screen w-full flex-col bg-white">	
+	<nav class="flex w-full flex-wrap items-center justify-between bg-gray-800 p-6">
 		<div class="mr-6 flex flex-shrink-0 items-center text-white">
 			<svg
 				class="mr-2 h-8 w-8 fill-current"
@@ -108,7 +109,7 @@
 					{/await}
 				</a>
 				<form action="/logout" method="post">
-					<Button type="submit" class="bg-blue-300 text-base text-black hover:bg-blue-500"
+					<Button type="submit" class="bg-blue-400 text-base text-black hover:bg-blue-500"
 						>Logout</Button
 					>
 				</form>

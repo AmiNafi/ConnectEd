@@ -99,11 +99,12 @@
 	<div
 		class="relative hidden h-full flex-col bg-muted p-10 text-white dark:border-r lg:flex justify-center items-center"
 	>
-		<div class="absolute inset-0 bg-cover w-full h-full bg-gradient-to-b from-purple-500 to-blue-500 min-h-screen"></div>
-		<div class="relative z-20 flex items-center text-5xl font-black text-black font-mono">Connected</div>
+		<!-- <div class="absolute inset-0 bg-cover w-full h-full bg-gradient-to-b from-purple-500 to-blue-500 min-h-screen"></div> -->
+		<div class="absolute inset-0 bg-cover w-full h-full bg-gradient-to-b from-gray-800 to-gray-900 min-h-screen"></div>
+		<div class="relative z-20 flex items-center text-5xl font-black text-white font-mono">Connected</div>
 		<div class="relative z-20">
 			<blockquote class="space-y-2">
-				<p class="text-2xl text-black font-mono text-center">A study resource management and collaborative study platform.</p>
+				<p class="text-2xl text-white font-mono text-center">A study resource management and collaborative study platform.</p>
 				<!-- <footer class="text-sm">Sofia Davis</footer> -->
 			</blockquote>
 		</div>
