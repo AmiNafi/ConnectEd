@@ -12,7 +12,7 @@ const userSchema = z.object({
 	email: z
 		.string({ required_error: 'Email is required' })
 		.min(1, { message: 'Email is required' })
-		.max(256, { message: 'Email must be ;ess than 256 characters' })
+		.max(256, { message: 'Email must be less than 256 characters' })
 		.email({ message: 'Email must be a valid email address' }),
 	password: z
 		.string({ required_error: 'Password is required' })
@@ -64,6 +64,6 @@ export const actions = {
 			body: JSON.stringify({ userName: body.email.split('@')[0],email: body.email})
 		})
 		
-		throw redirect(303, '/home');
+		throw redirect(303, '/home/session/my-session');
 	}
 };

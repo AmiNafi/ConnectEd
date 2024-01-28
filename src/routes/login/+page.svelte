@@ -16,7 +16,7 @@
 		email: z
 			.string({ required_error: 'Email is required' })
 			.min(1, { message: 'Email is required' })
-			.max(256, { message: 'Email must be ;ess than 256 characters' })
+			.max(256, { message: 'Email must be less than 256 characters' })
 			.email({ message: 'Email must be a valid email address' }),
 		password: z
 			.string({ required_error: 'Password is required' })
@@ -41,7 +41,7 @@
 		isLoading = true;
 		setTimeout(() => {
 			isLoading = false;
-		}, 3000);
+		}, 10000);
 	}
 </script>
 
@@ -86,7 +86,7 @@
 			</div>
 
 			<div class={cn('grid gap-6', className)} {...$$restProps}>
-				<form use:enhance action="?/login" method="post">
+				<form use:enhance action="?/login" method="post" on:submit={()=>{onSubmit()}}>
 					<div class="grid gap-2">
 						{#if $message}
 							<div class="text-red-500 border-red-500 border-2 bg-red-100 py-2 px-2 rounded-sm text-base">{$message}</div>

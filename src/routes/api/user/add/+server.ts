@@ -17,7 +17,7 @@ export const POST: RequestHandler = async (event) => {
         .copy("profile.jpg", user.userName);
 
         const { data: data2} = await supabase.storage
-            .from("userPhoto")
+            .from("profilePicture")
             .getPublicUrl(user.userName);
 
         user.imageLink = data2.publicUrl

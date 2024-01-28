@@ -1,23 +1,25 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
-	import * as Avatar from "$lib/components/ui/avatar";
+	import * as Avatar from '$lib/components/ui/avatar';
 	import type { LayoutData } from './$types';
 	import { onMount } from 'svelte';
+	import type { user } from '$lib/server/schema';
+	import { page } from '$app/stores';
 
-	export let data: LayoutData 
-
-	onMount(()=>{
-		console.log(data.user)
-	})
+	export let data: LayoutData;
+	$: pathName = $page.url.pathname as string;
+	onMount(() => {
+		console.log($page.url.pathname);
+		console.log(data.user[0].sessions[0])
+	});
 </script>
 
-<body
-	class="flex flex-col inset-0 w-full min-h-screen bg-gradient-to-br from-blue-300 to-blue-500"
->
-	<nav class="w-full flex items-center justify-between flex-wrap bg-blue-800 p-6">
-		<div class="flex items-center flex-shrink-0 text-white mr-6">
+<!-- <body class="inset-0 flex min-h-screen w-full flex-col bg-gradient-to-br from-blue-300 to-blue-500"> -->
+<body class="inset-0 flex min-h-screen w-full flex-col bg-blue-400">
+	<nav class="flex w-full flex-wrap items-center justify-between bg-blue-800 p-6">
+		<div class="mr-6 flex flex-shrink-0 items-center text-white">
 			<svg
-				class="fill-current h-8 w-8 mr-2"
+				class="mr-2 h-8 w-8 fill-current"
 				width="54"
 				height="54"
 				viewBox="0 0 54 54"
@@ -26,41 +28,85 @@
 					d="M13.5 22.1c1.8-7.2 6.3-10.8 13.5-10.8 10.8 0 12.15 8.1 17.55 9.45 3.6.9 6.75-.45 9.45-4.05-1.8 7.2-6.3 10.8-13.5 10.8-10.8 0-12.15-8.1-17.55-9.45-3.6-.9-6.75.45-9.45 4.05zM0 38.3c1.8-7.2 6.3-10.8 13.5-10.8 10.8 0 12.15 8.1 17.55 9.45 3.6.9 6.75-.45 9.45-4.05-1.8 7.2-6.3 10.8-13.5 10.8-10.8 0-12.15-8.1-17.55-9.45-3.6-.9-6.75.45-9.45 4.05z"
 				/></svg
 			>
-			<span class="font-semibold text-xl tracking-tight">Connected</span>
+			<span class="text-xl font-semibold tracking-tight">Connected</span>
 		</div>
 
-		<div class="flex-grow flex items-center w-auto">
-			<div class="text-sm flex-grow">
-				<a
-					href="/home"
-					class="text-base text-blue-200 hover:text-white hover:scale-110 mr-4"
-				>
-					My Sessions
-				</a>
-				<a
-					href="#responsive-header"
-					class="text-base text-blue-200 hover:text-white hover:scale-110 mr-4"
-				>
-					SessionBank
-				</a>
-				<a
-					href="#responsive-header"
-					class="text-base text-blue-200 hover:text-white hover:scale-110 mr-4"
-				>
-					My Groups
-				</a>
-				<a
-					href="#responsive-header"
-					class="text-base text-blue-200 hover:text-white hover:scale-110 mr-4"
-				>
-					About
-				</a>
+		<div class="flex w-auto flex-grow items-center">
+			<div class="flex-grow text-sm">
+				{#if pathName.includes('session')}
+					<a
+						href="/home/session/my-session"
+						class="mr-4 text-base text-blue-200 underline hover:scale-125 hover:text-white"
+					>
+						Sessions
+					</a>
+				{:else}
+					<a
+						href="/home/session/my-session"
+						class="mr-4 text-base text-blue-200 hover:scale-150 hover:text-white"
+					>
+						Sessions
+					</a>
+				{/if}
+				{#if pathName.includes('sessionbank')}
+					<a
+						href="#responsive-header"
+						class="mr-4 text-base text-blue-200 underline hover:scale-110 hover:text-white"
+					>
+						SessionBank
+					</a>
+				{:else}
+					<a
+						href="#responsive-header"
+						class="mr-4 text-base text-blue-200 hover:scale-110 hover:text-white"
+					>
+						SessionBank
+					</a>
+				{/if}
+				{#if pathName.includes('group')}
+					<a
+						href="#responsive-header"
+						class="mr-4 text-base text-blue-200 underline hover:scale-110 hover:text-white"
+					>
+						SessionBank
+					</a>
+				{:else}
+					<a
+						href="#responsive-header"
+						class="mr-4 text-base text-blue-200 hover:scale-110 hover:text-white"
+					>
+						SessionBank
+					</a>
+				{/if}
+				{#if pathName.includes('blog')}
+					<a
+						href="#responsive-header"
+						class="mr-4 text-base text-blue-200 underline hover:scale-110 hover:text-white"
+					>
+						Blogs
+					</a>
+				{:else}
+					<a
+						href="#responsive-header"
+						class="mr-4 text-base text-blue-200 hover:scale-110 hover:text-white"
+					>
+						Blogs
+					</a>
+				{/if}
 			</div>
 			<div class="flex flex-row gap-5">
-				<Avatar.Root>
-					<Avatar.Image src="https://github.com/shadcn.png" alt="@shadcn" />
-					<Avatar.Fallback>CN</Avatar.Fallback>
-				</Avatar.Root>
+				<a href="/home/profile">
+					{#await data.user}
+					<Avatar.Root>
+						<Avatar.Fallback></Avatar.Fallback>
+					</Avatar.Root>
+					{:then user}
+					<Avatar.Root>
+						<Avatar.Image src={user[0].imageLink + '?' + Date.now()} alt="@shadcn" />
+						<Avatar.Fallback>{user[0].userName[0].toUpperCase()}</Avatar.Fallback>
+					</Avatar.Root>
+					{/await}
+				</a>
 				<form action="/logout" method="post">
 					<Button type="submit" class="bg-blue-300 text-base text-black hover:bg-blue-500"
 						>Logout</Button
