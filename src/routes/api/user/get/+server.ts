@@ -1,4 +1,4 @@
-import type { RequestHandler } from './$types';
+import type { RequestHandler } from '../$types';
 import {getUser} from "$lib/server/queries"
 
 export const POST: RequestHandler = async (event) => {

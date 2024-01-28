@@ -8,28 +8,29 @@ export const actions = {
 
 		let timestamp = new Date().getTime();
 
+		let name = newLecture.userId+"_"+newLecture.sessionId+"_"+newLecture.courseId+"_"+timestamp
+
 		const { data: res, error: err } = await supabase.storage
 			.from('lectures')
-			.upload(newLecture.userId+"_"+newLecture.sessionId+"_"+newLecture.courseId+"_"+timestamp, newLecture.file, {
+			.upload(name, newLecture.file, {
 				cacheControl: '3600',
 				upsert: false
 			});
+		
 
-		console.log(res)
-		console.log(err)
+		const { data: link} = await supabase
+			.storage
+			.from('lectures')
+			.getPublicUrl(name)
+		
+		newLecture.lectureLink = link.publicUrl
 
-		// if(newCourse.tags!=''){
-		//     newCourse.tags = newCourse.tags.split(',')
-		// }
-		// else newCourse.tags = null
+		event.fetch('/api/lecture/add', {
+			method: 'POST',
+			body: JSON.stringify(newLecture)
+		})
 
-		// event.fetch('/api/course/update', {
-		// 	method: 'POST',
-		// 	body: JSON.stringify(newCourse)
-		// })
-
-		console.log(newLecture);
-		// console.log(newLecture.file.name)
+		// console.log(newLecture);
 
 		return {
 			success: true

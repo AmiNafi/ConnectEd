@@ -248,9 +248,41 @@ export const sessionRelationships = relations(sessionTable, ({one, many}) =>({
 	courses: many(courseTable)
 }))
 
-export const courseRelationships = relations(courseTable, ({one})=>({
+export const courseRelationships = relations(courseTable, ({one, many})=>({
 	session: one(sessionTable,{
 		fields: [courseTable.sessionId],
 		references: [sessionTable.sessionId]
+	}),
+	lectures: many(lectureTable),
+	resources: many(resourceTable),
+	links: many(linkTable),
+	notes: many(noteTable)
+}))
+
+export const lectureRelationships = relations(lectureTable, ({one})=>({
+	lecture: one(courseTable,{
+		fields: [lectureTable.courseId],
+		references: [courseTable.courseId]
+	})
+}))
+
+export const resourceRelationships = relations(resourceTable, ({one})=>({
+	resources: one(courseTable,{
+		fields: [resourceTable.courseId],
+		references: [courseTable.courseId]
+	})
+}))
+
+export const linkRelationships = relations(linkTable, ({one})=>({
+	links: one(courseTable,{
+		fields: [linkTable.courseId],
+		references: [courseTable.courseId]
+	})
+}))
+
+export const noteRelationships = relations(noteTable, ({one})=>({
+	notes: one(courseTable,{
+		fields: [noteTable.courseId],
+		references: [courseTable.courseId]
 	})
 }))

@@ -9,7 +9,7 @@ export const load = async ({ locals: { supabase }, fetch }) => {
 
 		const email = user?.email;
 
-		const res = await fetch('/api/user', {
+		const res = await fetch('/api/user/get', {
 			method: 'POST',
 			body: JSON.stringify({ email: email })
 		});

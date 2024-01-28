@@ -55,7 +55,20 @@ export async function updateCourse(newCourse: course){
     }).where(eq(courseTable.courseId, newCourse.courseId!))
 }
 
+export async function getCourse(newCourse: course){
+    return await db.query.courseTable.findMany({
+        where: eq(courseTable.courseId, newCourse.courseId!),
+        with:{
+            lectures: true,
+            resources: true,
+            links: true,
+            notes: true
+        }
+    })
+}
+
 //Lecture
 export async function insertLecture(newLecture: lecture){
     await db.insert(lectureTable).values(newLecture)
 }
+

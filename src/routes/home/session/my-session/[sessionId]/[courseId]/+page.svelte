@@ -7,11 +7,15 @@
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
+	import { Textarea } from '$lib/components/ui/textarea';
 	import * as Tabs from '$lib/components/ui/tabs';
 	import Setting from '$lib/components/others/setting.svelte';
 	import { enhance } from '$app/forms';
+	import type { ActionData } from './$types';
 
 	export let data: LayoutData;
+	export let form: ActionData;
+
 	const userData = data.user[0];
 	const userSessions = userData.sessions;
 	const currentSession = userSessions.filter((session: session) => {
@@ -38,12 +42,55 @@
 	];
 
 	let name = '';
-	let tag = ''
+	let tag = '';
 
-	let lectureName = ''
+	let lectureName = '';
+	let description = '';
 	let file: File;
 
+	let timerId: any;
+	let showMessage = false;
+	let isLoading = false;
+	async function onSubmit() {
+		isLoading = true;
+		timerId = setTimeout(() => {
+			isLoading = false;
+		}, 10000);
+	}
+
+	$: {
+		if (form?.success) {
+			isLoading = false;
+			clearTimeout(timerId);
+
+			// data.user[0].sessions[sessionIndex].courses[courseIndex].courseName = courseName
+			// data.user[0].sessions[sessionIndex].courses[courseIndex].description = description
+			// data.user[0].sessions[sessionIndex].courses[courseIndex].isLock = isLock
+			// data.user[0].sessions[sessionIndex].courses[courseIndex].tags = chips
+			// data.user[0].sessions[sessionIndex].courses[courseIndex].theme = theme
+
+			// userData = data.user[0];
+			// userSessions = userData.sessions;
+			// currentSession = userSessions.filter((session: session) => {
+			// 	return session.sessionId?.toString() == $page.params.sessionId;
+			// })[0];
+			// sessionCoursess = currentSession.courses as course[];
+			// currentCourse = sessionCoursess.filter((course: course) => {
+			// 	return course.courseId?.toString() == $page.params.courseId;
+			// })[0];
+
+			
+
+			showMessage = true;
+			form.success = false;
+		}
+	}
 </script>
+
+<link
+	rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+/>
 
 <div class="flex grow flex-col items-center">
 	<div class="flex w-full flex-row flex-wrap justify-between">
@@ -92,10 +139,27 @@
 								<Dialog.Header>
 									<Dialog.Title>Add New Lecture</Dialog.Title>
 									<Dialog.Description>
-										Make changes to your profile here. Click save when you're done.
+										Add new lecture. Click save when you're done.
+										{#if showMessage}
+											<div
+												class="mb-10 w-[300px] rounded-sm border-2 border-green-500 bg-green-100 px-2 py-2 text-base text-green-500"
+											>
+												Lecture Successfully Uploaded
+											</div>
+										{/if}
 									</Dialog.Description>
 								</Dialog.Header>
-								<form use:enhance action="?/upload" method="post" enctype="multipart/form-data">
+								<form
+									use:enhance
+									action="?/upload"
+									method="post"
+									enctype="multipart/form-data"
+									on:submit={() => {
+										onSubmit();
+									}}
+								>
+									<button type="submit" disabled style="display: none" aria-hidden="true"></button>
+
 									<input hidden id="userId" name="userId" value={userData.userId} />
 									<input hidden id="sessionId" name="sessionId" value={currentSession.sessionId} />
 									<input hidden id="courseId" name="courseId" value={currentCourse.courseId} />
@@ -103,18 +167,47 @@
 									<div class="grid gap-4 py-4">
 										<div class="grid grid-cols-4 items-center gap-4">
 											<Label class="text-right">Lecture Name</Label>
-											<Input id="lectureName" name="lectureName" class="col-span-3" bind:value={lectureName}/>
+											<Input
+												id="lectureName"
+												name="lectureName"
+												class="col-span-3"
+												bind:value={lectureName}
+												disabled={isLoading}
+											/>
 										</div>
-			
+
+										<div class="grid grid-cols-4 items-center gap-4">
+											<Label class="text-right">Description</Label>
+											<Textarea
+												id="description"
+												name="description"
+												class="col-span-3"
+												bind:value={description}
+												disabled={isLoading}
+											/>
+										</div>
+
 										<div class="grid grid-cols-4 items-center gap-4">
 											<Label class="text-right">File</Label>
-											<Input id="file" name="file" class="col-span-3" type="file" bind:value={file} 
-											accept=".png, .jpg, .jpeg, .pdf"/>
+											<Input
+												id="file"
+												name="file"
+												class="col-span-3"
+												type="file"
+												bind:value={file}
+												disabled={isLoading}
+												accept=".png, .jpg, .jpeg, .pdf"
+											/>
 										</div>
 									</div>
 
 									<Dialog.Footer>
-										<Button type="submit">Save changes</Button>
+										<Button type="submit" disabled={isLoading}>
+											{#if isLoading}
+												<i class="fa fa-spinner fa-spin px-3" style="font-size:24px" />
+											{/if}
+											Save changes</Button
+										>
 									</Dialog.Footer>
 								</form>
 							</Dialog.Content>
