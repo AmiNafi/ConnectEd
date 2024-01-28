@@ -23,20 +23,22 @@
 			href={item.href}
 			variant="ghost"
 			class={cn(
-				!isActive && "hover:underline",
-				isActive && "underline",
-				"relative w-full hover:bg-transparent text-base p-7"
+				!isActive && "hover",
+				isActive,
+				"relative w-64 hover:bg-gray-600 text-base p-7"
 			)}
+
 			data-sveltekit-noscroll
 		>
 			{#if isActive}
 				<div
-					class="absolute inset-0 bg-[#8c9ad4]"
+					class="absolute inset-0 bg-gray-400"
+					style="width: 64px: auto;"
 					in:send={{ key: "active-sidebar-tab" }}
 					out:receive={{ key: "active-sidebar-tab" }}
 				/>
 			{/if}
-			<div class="relative">
+			<div class="relative text-black">
 				{item.title}
 			</div>
 		</Button>
