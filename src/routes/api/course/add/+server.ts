@@ -7,6 +7,6 @@ export const POST: RequestHandler = async (event) => {
     insertCourse(newSession)
 
     return new Response(
-
+        
     )
 }

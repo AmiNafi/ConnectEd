@@ -1,0 +1,1 @@
+ALTER TABLE "lecture_table" ADD COLUMN "saved_name" text NOT NULL;

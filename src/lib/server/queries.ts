@@ -72,3 +72,13 @@ export async function insertLecture(newLecture: lecture){
     await db.insert(lectureTable).values(newLecture)
 }
 
+export async function deleteLecture(newLecture: lecture){
+    await db.delete(lectureTable).where(eq(lectureTable.lectureId, newLecture.lectureId!))
+}
+
+export async function updateLecture(newLecture: lecture){
+    await db.update(lectureTable).set({
+        lectureName: newLecture.lectureName,
+        description: newLecture.description,
+    }).where(eq(lectureTable.lectureId, newLecture.lectureId!))
+}

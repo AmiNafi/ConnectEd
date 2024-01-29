@@ -91,6 +91,7 @@ export const lectureTable = pgTable('lecture_table', {
 	lectureName: text('lecture_name').notNull(),
 	description: text('description'),
 	lectureLink: text('lecture_link').notNull(),
+	savedName: text('saved_name').notNull(),
 	createdAt: timestamp('created_at').defaultNow()
 });
 
