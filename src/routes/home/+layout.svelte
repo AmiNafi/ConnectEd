@@ -10,13 +10,13 @@
 	$: pathName = $page.url.pathname as string;
 	onMount(() => {
 		console.log($page.url.pathname);
-		console.log(data.user[0].sessions[0]);
+		console.log(data.user[0].sessions[0])
 	});
 </script>
 
 <!-- <body class="inset-0 flex min-h-screen w-full flex-col bg-gradient-to-br from-blue-300 to-blue-500"> -->
 <!-- <body class="inset-0 flex min-h-screen w-full flex-col bg-blue-400"> -->
-<body class="inset-0 flex min-h-screen w-full flex-col bg-white">
+	<body class="inset-0 flex min-h-screen w-full flex-col bg-white">	
 	<nav class="flex w-full flex-wrap items-center justify-between bg-gray-800 p-6">
 		<div class="mr-6 flex flex-shrink-0 items-center text-white">
 			<svg
@@ -69,26 +69,26 @@
 						href="#responsive-header"
 						class="mr-4 text-base text-blue-200 underline hover:scale-110 hover:text-white"
 					>
-						Groups
+						SessionBank
 					</a>
 				{:else}
 					<a
 						href="#responsive-header"
 						class="mr-4 text-base text-blue-200 hover:scale-110 hover:text-white"
 					>
-						Groups
+						SessionBank
 					</a>
 				{/if}
 				{#if pathName.includes('blog')}
 					<a
-						href="#responsive-header"
+						href="/home/blogs"
 						class="mr-4 text-base text-blue-200 underline hover:scale-110 hover:text-white"
 					>
 						Blogs
 					</a>
 				{:else}
 					<a
-						href="#responsive-header"
+						href="/home/blogs"
 						class="mr-4 text-base text-blue-200 hover:scale-110 hover:text-white"
 					>
 						Blogs
@@ -98,14 +98,14 @@
 			<div class="flex flex-row gap-5">
 				<a href="/home/profile">
 					{#await data.user}
-						<Avatar.Root>
-							<Avatar.Fallback></Avatar.Fallback>
-						</Avatar.Root>
+					<Avatar.Root>
+						<Avatar.Fallback></Avatar.Fallback>
+					</Avatar.Root>
 					{:then user}
-						<Avatar.Root>
-							<Avatar.Image src={user[0].imageLink + '?' + Date.now()} alt="@shadcn" />
-							<Avatar.Fallback>{user[0].userName[0].toUpperCase()}</Avatar.Fallback>
-						</Avatar.Root>
+					<Avatar.Root>
+						<Avatar.Image src={user[0].imageLink + '?' + Date.now()} alt="@shadcn" />
+						<Avatar.Fallback>{user[0].userName[0].toUpperCase()}</Avatar.Fallback>
+					</Avatar.Root>
 					{/await}
 				</a>
 				<form action="/logout" method="post">
