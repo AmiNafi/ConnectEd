@@ -745,7 +745,6 @@ c0,1.657-1.343,3-3,3s-3-1.343-3-3V25c0-1.657,1.343-3,3-3s3,1.343,3,3V51z"
 		</Tabs.Content>
 		<!-- Resouce Tab -->
 		<Tabs.Content value="resource">
-			<Tabs.Content value="lecture">
 				<div class="flex flex-col">
 					<div class="mt-5 flex flex-row justify-between">
 						<div class="flex flex-row justify-between gap-20">
