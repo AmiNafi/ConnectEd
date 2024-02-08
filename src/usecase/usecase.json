@@ -1,0 +1,299 @@
+[
+    {
+        "usecase": {
+            "name": "Session Creation",
+            "scenario": "A student creates a session for a specific academic term.",
+            "actors": "Student",
+            "preconditions": "User is registered and logged in.",
+            "steps": [
+                "User navigates to the 'Sessions' section.",
+                "User selects the academic term for which they want to create a session.",
+                "User enters the session title (e.g., '4-1' for level 4, term 1).",
+                "User creates the session."
+            ]
+        },
+        "testcases": [
+            {
+                "name": "Valid Session Creation",
+                "description": "Verify that a student can successfully create a session for a specific academic term.",
+                "input": {
+                    "session_title": "4-1"
+                },
+                "expected": {
+                    "outcome": "Session creation successful",
+                    "status": "Success"
+                }
+            },
+            {
+                "name": "Duplicate Session Title",
+                "description": "Verify that the system handles the case where a student tries to create a session with a title that already exists for the same academic term.",
+                "input": {
+                    "session_title": "4-1" 
+                },
+                "expected": {
+                    "outcome": "Session creation unsuccessful",
+                    "status": "Failed"
+                }
+            },
+            {
+                "name": "Empty Session Title",
+                "description": "Verify that the system handles the case where a student tries to create a session without a title.",
+                "input": {
+                    "session_title": ""
+                },
+                "expected": {
+                    "outcome": "Session creation unsuccessful",
+                    "status": "Failed"
+                }
+            }
+        ]
+    },
+    {
+        "usecase": {
+            "name": "Session Creation with Visibility Settings",
+            "scenario": "A student creates a session and sets its visibility.",
+            "actors": "Student",
+            "preconditions": "User is registered and logged in.",
+            "steps": [
+                "User navigates to the 'Sessions' section.",
+                "User selects to create a new session.",
+                "User enters the session title.",
+                "User selects the visibility setting: public, private, or publish.",
+                "User creates the session."
+            ]
+        },
+        "testcases": [
+            {
+                "name": "Create Public Session",
+                "description": "Verify that a student can create a session with public visibility.",
+                "input": {
+                    "session_title": "4-1",
+                    "visibility": "public"
+                },
+                "expected": {
+                    "outcome": "Session creation successful with public visibility",
+                    "status": "Success"
+                }
+            },
+            {
+                "name": "Create Private Session",
+                "description": "Verify that a student can create a session with private visibility.",
+                "input": {
+                    "session_title": "4-2",
+                    "visibility": "private"
+                },
+                "expected": {
+                    "outcome": "Session creation successful with private visibility",
+                    "status": "Success"
+                }
+            },
+            {
+                "name": "Publish Session",
+                "description": "Verify that a student can publish a session to make it visible to others.",
+                "input": {
+                    "session_title": "4-1",
+                    "visibility": "publish"
+                },
+                "expected": {
+                    "outcome": "Session successfully published",
+                    "status": "Success"
+                }
+            }
+        ]
+    }
+    ,
+    {
+        "usecase": {
+            "name": "Course Creation Under Session",
+            "scenario": "A student creates a course under a session.",
+            "actors": "Student",
+            "preconditions": "User is registered and logged in. A session exists.",
+            "steps": [
+                "User navigates to the desired session.",
+                "User selects to create a new course.",
+                "User enters the course title.",
+                "User creates the course."
+            ]
+        },
+        "testcases": [
+            {
+                "name": "Create Course Under Session",
+                "description": "Verify that a student can create a course under a session.",
+                "input": {
+                    "session_title": "4-1",
+                    "course_title": "CSE408 Software Development",
+                    "class_notes": "Introduction to Software Development"
+                },
+                "expected": {
+                    "outcome": "Course creation successful under session",
+                    "status": "Success"
+                }
+            },
+            {
+                "name": "Duplicate Course Added Under Same Session",
+                "description": "Verify that the system handles the case where a student tries to create a course with a duplicate title under the same session.",
+                "input": {
+                    "session_title": "4-1",
+                    "course_title": "CSE408 Software Development",
+                    "class_notes": "Advanced Software Development"
+                },
+                "expected": {
+                    "outcome": "Course creation unsuccessful due to duplicate title",
+                    "status": "Failed"
+                }
+            },
+            {
+                "name": "Empty Course Title",
+                "description": "Verify that the system handles the case where a student tries to create a course without a title.",
+                "input": {
+                    "session_title": "4-1",
+                    "course_title": ""
+                },
+                "expected": {
+                    "outcome": "Course creation unsuccessful",
+                    "status": "Failed"
+                }
+            }
+        ]
+    }
+    ,
+    {
+        "usecase": {
+            "name": "Adding Resources to a Course",
+            "scenario": "A student adds various resources to a course.",
+            "actors": "Student",
+            "preconditions": "User is registered and logged in. A course exists under a session.",
+            "steps": [
+                "User navigates to the desired course.",
+                "User selects to add a new resource.",
+                "User specifies the type of resource to add: lecture video, PDF, link, or notes.",
+                "User uploads or provides the necessary information for the selected resource type.",
+                "User adds the resource to the course."
+            ]
+        },
+        "testcases": [
+            {
+                "name": "Add Lecture Video",
+                "description": "Verify that a student can add a lecture video to a course.",
+                "input": {
+                    "resource_type": "lecture_video",
+                    "video_title": "Introduction to Software Development",
+                    "video_url": "https://example.com/lecture1"
+                },
+                "expected": {
+                    "outcome": "Lecture video added successfully to the course",
+                    "status": "Success"
+                }
+            },
+            {
+                "name": "Add PDF Resource",
+                "description": "Verify that a student can add a PDF resource to a course.",
+                "input": {
+                    "resource_type": "pdf",
+                    "pdf_title": "Software Development Basics",
+                    "pdf_file": "example.pdf"
+                },
+                "expected": {
+                    "outcome": "PDF resource added successfully to the course",
+                    "status": "Success"
+                }
+            },
+            {
+                "name": "Add Link",
+                "description": "Verify that a student can add a link to a course.",
+                "input": {
+                    "resource_type": "link",
+                    "link_title": "Software Development Tutorial",
+                    "link_url": "https://example.com/tutorial"
+                },
+                "expected": {
+                    "outcome": "Link added successfully to the course",
+                    "status": "Success"
+                }
+            },
+            {
+                "name": "Add Notes",
+                "description": "Verify that a student can add personal class notes or pictures to a course.",
+                "input": {
+                    "resource_type": "notes",
+                    "notes_title": "Class Notes - Week 1",
+                    "notes_file": "notes_week1.pdf"
+                },
+                "expected": {
+                    "outcome": "Notes added successfully to the course",
+                    "status": "Success"
+                }
+            }
+        ]
+    }
+    ,
+    {
+        "usecase": {
+            "name": "Writing Educational Blogs with Tags",
+            "scenario": "A user writes an educational blog and adds tags to it.",
+            "actors": "User",
+            "preconditions": "User is registered and logged in.",
+            "steps": [
+                "User navigates to the 'Blogs' section.",
+                "User selects to create a new blog post.",
+                "User writes the content of the blog post.",
+                "User adds relevant tags to the blog post.",
+                "User publishes the blog post."
+            ]
+        },
+        "testcases": [
+            {
+                "name": "Write Blog with Tags",
+                "description": "Verify that a user can write an educational blog with tags.",
+                "input": {
+                    "blog_title": "Introduction to Machine Learning",
+                    "blog_content": "In this blog post, we discuss the basics of machine learning...",
+                    "tags": ["machine learning", "artificial intelligence", "data science"]
+                },
+                "expected": {
+                    "outcome": "Blog post created successfully with tags",
+                    "status": "Success"
+                }
+            },
+            {
+                "name": "Empty Blog Title",
+                "description": "Verify that the system handles the case where a user tries to create a blog post without a title.",
+                "input": {
+                    "blog_title": "",
+                    "blog_content": "Lorem ipsum dolor sit amet...",
+                    "tags": ["test", "blog"]
+                },
+                "expected": {
+                    "outcome": "Blog post creation unsuccessful",
+                    "status": "Failed"
+                }
+            },
+            {
+                "name": "Empty Blog Content",
+                "description": "Verify that the system handles the case where a user tries to create a blog post without content.",
+                "input": {
+                    "blog_title": "Sample Blog",
+                    "blog_content": "",
+                    "tags": ["test", "blog"]
+                },
+                "expected": {
+                    "outcome": "Blog post creation unsuccessful",
+                    "status": "Failed"
+                }
+            },
+            {
+                "name": "Empty Tags",
+                "description": "Verify that the system handles the case where a user tries to create a blog post without adding any tags.",
+                "input": {
+                    "blog_title": "Sample Blog",
+                    "blog_content": "Lorem ipsum dolor sit amet...",
+                    "tags": []
+                },
+                "expected": {
+                    "outcome": "Blog post creation unsuccessful",
+                    "status": "Failed"
+                }
+            }
+        ]
+    }    
+]
