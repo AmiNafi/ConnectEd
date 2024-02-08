@@ -3,6 +3,6 @@
 	import { onMount } from "svelte";
 
 	onMount(()=>{
-		goto("/login")
+		goto("/landing-page")
 	})
 </script>

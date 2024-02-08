@@ -1,4 +1,4 @@
-import type { user } from '$lib/server/schema';
+import { setUserId } from '$lib/stores/user.js';
 
 export const load = async ({ locals: { supabase }, fetch }) => {
 	async function getUserData() {
@@ -17,7 +17,9 @@ export const load = async ({ locals: { supabase }, fetch }) => {
 		return data
 	}
 
+	const ret = await getUserData()
+	setUserId(ret[0].userId)
 	return {
-		user: await getUserData()
+		user: ret
 	};
 };

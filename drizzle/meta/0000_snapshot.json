@@ -1,5 +1,5 @@
 {
-  "id": "80966716-1557-4c48-9766-e5e406e80d95",
+  "id": "78508516-3370-4e22-b135-336dd021b810",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "5",
   "dialect": "pg",
@@ -44,6 +44,74 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
+    "blog_table": {
+      "name": "blog_table",
+      "schema": "",
+      "columns": {
+        "blog_id": {
+          "name": "blog_id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "writer_id": {
+          "name": "writer_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "blog_title": {
+          "name": "blog_title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "blog_content": {
+          "name": "blog_content",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "tags": {
+          "name": "tags",
+          "type": "text[]",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "upvote": {
+          "name": "upvote",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "default": 0
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "blog_table_writer_id_user_table_user_id_fk": {
+          "name": "blog_table_writer_id_user_table_user_id_fk",
+          "tableFrom": "blog_table",
+          "tableTo": "user_table",
+          "columnsFrom": [
+            "writer_id"
+          ],
+          "columnsTo": [
+            "user_id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
     "course_table": {
       "name": "course_table",
       "schema": "",
@@ -58,7 +126,7 @@
           "name": "session_id",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "course_name": {
           "name": "course_name",
@@ -81,6 +149,18 @@
         },
         "image_link": {
           "name": "image_link",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "tags": {
+          "name": "tags",
+          "type": "text[]",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "theme": {
+          "name": "theme",
           "type": "text",
           "primaryKey": false,
           "notNull": true
@@ -120,13 +200,13 @@
           "name": "user_id",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "followee_id": {
           "name": "followee_id",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "created_at": {
           "name": "created_at",
@@ -184,13 +264,13 @@
           "name": "sender_id",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "receiver_id": {
           "name": "receiver_id",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "sent_at": {
           "name": "sent_at",
@@ -248,13 +328,13 @@
           "name": "user1_id",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "user2_id": {
           "name": "user2_id",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "created_at": {
           "name": "created_at",
@@ -318,7 +398,7 @@
           "name": "creator_id",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "group_name": {
           "name": "group_name",
@@ -385,7 +465,7 @@
           "name": "course_id",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "lecture_name": {
           "name": "lecture_name",
@@ -401,6 +481,12 @@
         },
         "lecture_link": {
           "name": "lecture_link",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "saved_name": {
+          "name": "saved_name",
           "type": "text",
           "primaryKey": false,
           "notNull": true
@@ -446,7 +532,7 @@
           "name": "course_id",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "link_name": {
           "name": "link_name",
@@ -501,13 +587,13 @@
           "name": "group_id",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "user_id": {
           "name": "user_id",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "joined_at": {
           "name": "joined_at",
@@ -571,7 +657,7 @@
           "name": "course_id",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "note_name": {
           "name": "note_name",
@@ -581,6 +667,12 @@
         },
         "note_content": {
           "name": "note_content",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "saved_name": {
+          "name": "saved_name",
           "type": "text",
           "primaryKey": false,
           "notNull": true
@@ -626,7 +718,7 @@
           "name": "course_id",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "resource_name": {
           "name": "resource_name",
@@ -642,6 +734,12 @@
         },
         "resource_link": {
           "name": "resource_link",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "saved_name": {
+          "name": "saved_name",
           "type": "text",
           "primaryKey": false,
           "notNull": true
@@ -673,6 +771,70 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
+    "session_fav_table": {
+      "name": "session_fav_table",
+      "schema": "",
+      "columns": {
+        "session_id": {
+          "name": "session_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "session_fav_table_session_id_session_table_session_id_fk": {
+          "name": "session_fav_table_session_id_session_table_session_id_fk",
+          "tableFrom": "session_fav_table",
+          "tableTo": "session_table",
+          "columnsFrom": [
+            "session_id"
+          ],
+          "columnsTo": [
+            "session_id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "session_fav_table_user_id_user_table_user_id_fk": {
+          "name": "session_fav_table_user_id_user_table_user_id_fk",
+          "tableFrom": "session_fav_table",
+          "tableTo": "user_table",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "user_id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "session_fav_id": {
+          "name": "session_fav_id",
+          "columns": [
+            "user_id",
+            "session_id"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
     "session_table": {
       "name": "session_table",
       "schema": "",
@@ -687,7 +849,7 @@
           "name": "user_id",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "session_name": {
           "name": "session_name",
@@ -705,11 +867,22 @@
           "name": "visibility",
           "type": "text",
           "primaryKey": false,
-          "notNull": false,
-          "default": "'private'"
+          "notNull": true
         },
         "image_link": {
           "name": "image_link",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "tags": {
+          "name": "tags",
+          "type": "text[]",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "theme": {
+          "name": "theme",
           "type": "text",
           "primaryKey": false,
           "notNull": true
@@ -741,12 +914,76 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
+    "session_vote_table": {
+      "name": "session_vote_table",
+      "schema": "",
+      "columns": {
+        "session_id": {
+          "name": "session_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "session_vote_table_session_id_session_table_session_id_fk": {
+          "name": "session_vote_table_session_id_session_table_session_id_fk",
+          "tableFrom": "session_vote_table",
+          "tableTo": "session_table",
+          "columnsFrom": [
+            "session_id"
+          ],
+          "columnsTo": [
+            "session_id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "session_vote_table_user_id_user_table_user_id_fk": {
+          "name": "session_vote_table_user_id_user_table_user_id_fk",
+          "tableFrom": "session_vote_table",
+          "tableTo": "user_table",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "user_id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "session_vote_id": {
+          "name": "session_vote_id",
+          "columns": [
+            "user_id",
+            "session_id"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
     "task_table": {
       "name": "task_table",
       "schema": "",
       "columns": {
-        "text_id": {
-          "name": "text_id",
+        "task_id": {
+          "name": "task_id",
           "type": "serial",
           "primaryKey": true,
           "notNull": true
@@ -755,7 +992,7 @@
           "name": "course_id",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "task_name": {
           "name": "task_name",
@@ -817,13 +1054,13 @@
           "name": "acheivement_id",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "user_id": {
           "name": "user_id",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "completed_at": {
           "name": "completed_at",
@@ -919,7 +1156,8 @@
           "name": "inbox_setting",
           "type": "text",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false,
+          "default": "'public'"
         },
         "user_type": {
           "name": "user_type",

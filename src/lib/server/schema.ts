@@ -27,6 +27,9 @@ Tables
 13. friendRequestTable
 14. friendTable
 15. followTable
+16. blogTable
+17. sessionVoteTable
+18. sessionFavTable
 */
 
 export type user = typeof userTable.$inferInsert;
@@ -44,6 +47,9 @@ export type member = typeof memberTable.$inferInsert;
 export type friendRequest = typeof friendRequestTable.$inferInsert;
 export type friend = typeof friendTable.$inferInsert;
 export type follow = typeof followTable.$inferInsert;
+export type blog = typeof blogTable.$inferInsert;
+export type sessionVote = typeof sessionVoteTable.$inferInsert;
+export type sessionFav = typeof sessionFavTable.$inferInsert;
 
 export const userTable = pgTable('user_table', {
 	userId: serial('user_id').primaryKey(),
@@ -61,7 +67,9 @@ export const userTable = pgTable('user_table', {
 
 export const sessionTable = pgTable('session_table', {
 	sessionId: serial('session_id').primaryKey(),
-	userId: integer('user_id').references(() => userTable.userId, { onDelete: 'cascade' }).notNull(),
+	userId: integer('user_id')
+		.references(() => userTable.userId, { onDelete: 'cascade' })
+		.notNull(),
 	sessionName: text('session_name').notNull(),
 	description: text('description'),
 	visibility: text('visibility').notNull(),
@@ -73,9 +81,11 @@ export const sessionTable = pgTable('session_table', {
 
 export const courseTable = pgTable('course_table', {
 	courseId: serial('course_id').primaryKey(),
-	sessionId: integer('session_id').references(() => sessionTable.sessionId, {
-		onDelete: 'cascade'
-	}).notNull(),
+	sessionId: integer('session_id')
+		.references(() => sessionTable.sessionId, {
+			onDelete: 'cascade'
+		})
+		.notNull(),
 	courseName: text('course_name').notNull(),
 	description: text('description'),
 	isLock: boolean('is_lock').default(false),
@@ -87,7 +97,9 @@ export const courseTable = pgTable('course_table', {
 
 export const lectureTable = pgTable('lecture_table', {
 	lectureId: serial('lecture_id').primaryKey(),
-	courseId: integer('course_id').references(() => courseTable.courseId, { onDelete: 'cascade' }).notNull(),
+	courseId: integer('course_id')
+		.references(() => courseTable.courseId, { onDelete: 'cascade' })
+		.notNull(),
 	lectureName: text('lecture_name').notNull(),
 	description: text('description'),
 	lectureLink: text('lecture_link').notNull(),
@@ -97,7 +109,9 @@ export const lectureTable = pgTable('lecture_table', {
 
 export const linkTable = pgTable('link_table', {
 	linkId: serial('link_id').primaryKey(),
-	courseId: integer('course_id').references(() => courseTable.courseId, { onDelete: 'cascade' }).notNull(),
+	courseId: integer('course_id')
+		.references(() => courseTable.courseId, { onDelete: 'cascade' })
+		.notNull(),
 	linkName: text('link_name').notNull(),
 	description: text('description'),
 	link: text('link').notNull(),
@@ -106,24 +120,32 @@ export const linkTable = pgTable('link_table', {
 
 export const resourceTable = pgTable('resource_table', {
 	resourceId: serial('resource_id').primaryKey(),
-	courseId: integer('course_id').references(() => courseTable.courseId, { onDelete: 'cascade' }).notNull(),
+	courseId: integer('course_id')
+		.references(() => courseTable.courseId, { onDelete: 'cascade' })
+		.notNull(),
 	resourceName: text('resource_name').notNull(),
 	description: text('description'),
 	resourceLink: text('resource_link').notNull(),
+	savedName: text('saved_name').notNull(),
 	createdAt: timestamp('created_at').defaultNow()
 });
 
 export const noteTable = pgTable('note_table', {
 	noteId: serial('note_id').primaryKey(),
-	courseId: integer('course_id').references(() => courseTable.courseId, { onDelete: 'cascade' }).notNull(),
+	courseId: integer('course_id')
+		.references(() => courseTable.courseId, { onDelete: 'cascade' })
+		.notNull(),
 	noteName: text('note_name').notNull(),
 	noteContent: text('note_content').notNull(),
+	savedName: text('saved_name').notNull(),
 	createdAt: timestamp('created_at').defaultNow()
 });
 
 export const taskTable = pgTable('task_table', {
-	taskId: serial('text_id').primaryKey(),
-	courseId: integer('course_id').references(() => courseTable.courseId, { onDelete: 'cascade' }).notNull(),
+	taskId: serial('task_id').primaryKey(),
+	courseId: integer('course_id')
+		.references(() => courseTable.courseId, { onDelete: 'cascade' })
+		.notNull(),
 	taskName: text('task_name').notNull(),
 	description: text('description'),
 	deadline: timestamp('deadline').notNull(),
@@ -143,10 +165,14 @@ export const achievementTable = pgTable('achievement_table', {
 export const userAchievementTable = pgTable(
 	'user_achievement_table',
 	{
-		achievementId: integer('acheivement_id').references(() => achievementTable.achievementId, {
-			onDelete: 'cascade'
-		}).notNull(),
-		userId: integer('user_id').references(() => userTable.userId, { onDelete: 'cascade' }).notNull(),
+		achievementId: integer('acheivement_id')
+			.references(() => achievementTable.achievementId, {
+				onDelete: 'cascade'
+			})
+			.notNull(),
+		userId: integer('user_id')
+			.references(() => userTable.userId, { onDelete: 'cascade' })
+			.notNull(),
 		completedAt: timestamp('completed_at').defaultNow()
 	},
 	(table) => {
@@ -162,7 +188,9 @@ export const userAchievementTable = pgTable(
 
 export const groupTable = pgTable('group_table', {
 	groupId: serial('group_id').primaryKey(),
-	creatorId: integer('creator_id').references(() => userTable.userId, { onDelete: 'cascade' }).notNull(),
+	creatorId: integer('creator_id')
+		.references(() => userTable.userId, { onDelete: 'cascade' })
+		.notNull(),
 	groupName: text('group_name').notNull(),
 	description: text('description'),
 	password: text('password').notNull(),
@@ -173,8 +201,12 @@ export const groupTable = pgTable('group_table', {
 export const memberTable = pgTable(
 	'member_table',
 	{
-		groupId: integer('group_id').references(() => groupTable.groupId, { onDelete: 'cascade' }).notNull(),
-		userId: integer('user_id').references(() => userTable.userId, { onDelete: 'cascade' }).notNull(),
+		groupId: integer('group_id')
+			.references(() => groupTable.groupId, { onDelete: 'cascade' })
+			.notNull(),
+		userId: integer('user_id')
+			.references(() => userTable.userId, { onDelete: 'cascade' })
+			.notNull(),
 		joinedAt: timestamp('joined_at').defaultNow()
 	},
 	(table) => {
@@ -191,8 +223,12 @@ export const memberTable = pgTable(
 export const friendRequestTable = pgTable(
 	'friend_request_table',
 	{
-		senderId: integer('sender_id').references(() => userTable.userId, { onDelete: 'cascade' }).notNull(),
-		receiverId: integer('receiver_id').references(() => userTable.userId, { onDelete: 'cascade' }).notNull(),
+		senderId: integer('sender_id')
+			.references(() => userTable.userId, { onDelete: 'cascade' })
+			.notNull(),
+		receiverId: integer('receiver_id')
+			.references(() => userTable.userId, { onDelete: 'cascade' })
+			.notNull(),
 		sentAt: timestamp('sent_at').defaultNow()
 	},
 	(table) => {
@@ -206,51 +242,127 @@ export const friendRequestTable = pgTable(
 	}
 );
 
-export const friendTable = pgTable('friend_table', {
-    user1Id: integer('user1_id').references(() => userTable.userId, { onDelete: 'cascade' }).notNull(),
-	user2Id: integer('user2_id').references(() => userTable.userId, { onDelete: 'cascade' }).notNull(),
+export const friendTable = pgTable(
+	'friend_table',
+	{
+		user1Id: integer('user1_id')
+			.references(() => userTable.userId, { onDelete: 'cascade' })
+			.notNull(),
+		user2Id: integer('user2_id')
+			.references(() => userTable.userId, { onDelete: 'cascade' })
+			.notNull(),
+		createdAt: timestamp('created_at').defaultNow()
+	},
+	(table) => {
+		return {
+			friendId: primaryKey({
+				name: 'friend_id',
+				columns: [table.user1Id, table.user2Id]
+			})
+		};
+	}
+);
+
+export const followTable = pgTable(
+	'follow_table',
+	{
+		userId: integer('user_id')
+			.references(() => userTable.userId, { onDelete: 'cascade' })
+			.notNull(),
+		followeeId: integer('followee_id')
+			.references(() => userTable.userId, { onDelete: 'cascade' })
+			.notNull(),
+		createdAt: timestamp('created_at').defaultNow()
+	},
+	(table) => {
+		return {
+			followId: primaryKey({
+				name: 'follow_id',
+				columns: [table.userId, table.followeeId]
+			})
+		};
+	}
+);
+
+export const blogTable = pgTable('blog_table', {
+	blogId: serial('blog_id').primaryKey(),
+	writerId: integer('writer_id')
+		.references(() => userTable.userId, { onDelete: 'cascade' })
+		.notNull(),
+	blogTitle: text('blog_title').notNull(),
+	blogContent: text('blog_content').notNull(),
+	tags: text('tags').array(),
+	upvote: integer('upvote').default(0),
 	createdAt: timestamp('created_at').defaultNow()
-},(table) => {
-    return {
-        friendId: primaryKey({
-            name: 'friend_id',
-            columns: [table.user1Id, table.user2Id]
-        })
-    };
 });
 
-export const followTable = pgTable('follow_table', {
-    userId: integer('user_id').references(() => userTable.userId, { onDelete: 'cascade' }).notNull(),
-	followeeId: integer('followee_id').references(() => userTable.userId, { onDelete: 'cascade' }).notNull(),
-	createdAt: timestamp('created_at').defaultNow()
-},(table) => {
-    return {
-        followId: primaryKey({
-            name: 'follow_id',
-            columns: [table.userId, table.followeeId]
-        })
-    };
-});
+export const sessionVoteTable = pgTable(
+	'session_vote_table',
+	{
+		sessionId: integer('session_id')
+			.references(() => sessionTable.sessionId, { onDelete: 'cascade' })
+			.notNull(),
+		userId: integer('user_id')
+			.references(() => userTable.userId, { onDelete: 'cascade' })
+			.notNull(),
+		createdAt: timestamp('created_at').defaultNow()
+	},
+	(table) => {
+		return {
+			// pk: primaryKey({columns: [table.groupId, table.userId] }),
+			sessionVoteId: primaryKey({
+				name: 'session_vote_id',
+				columns: [table.userId, table.sessionId]
+			})
+		};
+	}
+);
 
+export const sessionFavTable = pgTable(
+	'session_fav_table',
+	{
+		sessionId: integer('session_id')
+			.references(() => sessionTable.sessionId, { onDelete: 'cascade' })
+			.notNull(),
+		userId: integer('user_id')
+			.references(() => userTable.userId, { onDelete: 'cascade' })
+			.notNull(),
+		createdAt: timestamp('created_at').defaultNow()
+	},
+	(table) => {
+		return {
+			// pk: primaryKey({columns: [table.groupId, table.userId] }),
+			sessionFavId: primaryKey({
+				name: 'session_fav_id',
+				columns: [table.userId, table.sessionId]
+			})
+		};
+	}
+);
 
 /*
 	Relationships  
 */
 
-export const userRelationships = relations(userTable, ({many})=>({
-    sessions: many(sessionTable),
-}))
+export const userRelationships = relations(userTable, ({ many }) => ({
+	sessions: many(sessionTable),
+	blogs: many(blogTable),
+	sessionVotes: many(sessionVoteTable),
+	sessionFavs: many(sessionFavTable)
+}));
 
-export const sessionRelationships = relations(sessionTable, ({one, many}) =>({
-    user: one(userTable,{
-        fields: [sessionTable.userId],
-        references: [userTable.userId]
-    }),
-	courses: many(courseTable)
-}))
+export const sessionRelationships = relations(sessionTable, ({ one, many }) => ({
+	user: one(userTable, {
+		fields: [sessionTable.userId],
+		references: [userTable.userId]
+	}),
+	courses: many(courseTable),
+	sessionVotes: many(sessionVoteTable),
+	sessionFavs: many(sessionFavTable)
+}));
 
-export const courseRelationships = relations(courseTable, ({one, many})=>({
-	session: one(sessionTable,{
+export const courseRelationships = relations(courseTable, ({ one, many }) => ({
+	session: one(sessionTable, {
 		fields: [courseTable.sessionId],
 		references: [sessionTable.sessionId]
 	}),
@@ -258,32 +370,61 @@ export const courseRelationships = relations(courseTable, ({one, many})=>({
 	resources: many(resourceTable),
 	links: many(linkTable),
 	notes: many(noteTable)
-}))
+}));
 
-export const lectureRelationships = relations(lectureTable, ({one})=>({
-	lecture: one(courseTable,{
+export const lectureRelationships = relations(lectureTable, ({ one }) => ({
+	course: one(courseTable, {
 		fields: [lectureTable.courseId],
 		references: [courseTable.courseId]
 	})
-}))
+}));
 
-export const resourceRelationships = relations(resourceTable, ({one})=>({
-	resources: one(courseTable,{
+export const resourceRelationships = relations(resourceTable, ({ one }) => ({
+	course: one(courseTable, {
 		fields: [resourceTable.courseId],
 		references: [courseTable.courseId]
 	})
-}))
+}));
 
-export const linkRelationships = relations(linkTable, ({one})=>({
-	links: one(courseTable,{
+export const linkRelationships = relations(linkTable, ({ one }) => ({
+	course: one(courseTable, {
 		fields: [linkTable.courseId],
 		references: [courseTable.courseId]
 	})
-}))
+}));
 
-export const noteRelationships = relations(noteTable, ({one})=>({
-	notes: one(courseTable,{
+export const noteRelationships = relations(noteTable, ({ one }) => ({
+	course: one(courseTable, {
 		fields: [noteTable.courseId],
 		references: [courseTable.courseId]
 	})
-}))
+}));
+
+export const blogRelationships = relations(blogTable, ({ one }) => ({
+	writer: one(userTable, {
+		fields: [blogTable.writerId],
+		references: [userTable.userId]
+	})
+}));
+
+export const sessionVoteRelationship = relations(sessionVoteTable, ({ one }) => ({
+	voter: one(userTable, {
+		fields: [sessionVoteTable.userId],
+		references: [userTable.userId]
+	}),
+	session: one(sessionTable, {
+		fields: [sessionVoteTable.sessionId],
+		references: [sessionTable.sessionId]
+	})
+}));
+
+export const sessionFavRelationship = relations(sessionFavTable, ({ one }) => ({
+	faver: one(userTable, {
+		fields: [sessionFavTable.userId],
+		references: [userTable.userId]
+	}),
+	session: one(sessionTable, {
+		fields: [sessionFavTable.sessionId],
+		references: [sessionTable.sessionId]
+	})
+}));

@@ -7,10 +7,10 @@ export const POST: RequestHandler = async (event) => {
     const user = await event.request.json() as user
     const res = await doesUserExist(user) as boolean
 
-    console.log(res)
+    // console.log(res)
     
     if (res==false){
-        console.log(user)
+        // console.log(user)
 
         const { data: data1, error:err1 } = await supabase.storage
         .from("profilePicture")

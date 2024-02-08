@@ -1,21 +1,16 @@
 <script lang="ts">
-	import type { LayoutData } from '../$types';
-	import type { user } from '$lib/server/schema';
-	import * as Avatar from '$lib/components/ui/avatar';
+	import type { LayoutData } from "../$types";
 
-	export let data: LayoutData;
+    export let data: LayoutData;
+	const userData = data.user[0];
 </script>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <title>My Profile</title>
-</head>
-<body class="bg-gray-100 font-sans">
+
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+<title>My Profile</title>
+
+<body class="bg-gray-100 font-sans min-h-screen">
 
 <div class="max-w-4xl mx-auto mt-8 p-6 bg-white rounded-lg shadow-md">
     <div class="flex items-center mb-6">
@@ -24,7 +19,7 @@
         <div class="flex items-center mb-6">
             <i class="fa-solid fa-user text-4xl"></i>
             <div class="ml-4">
-                <h2 class="text-2xl font-bold text-gray-800">Nafiul Islam</h2>
+                <h2 class="text-2xl font-bold text-gray-800">{userData.userName}</h2>
             </div>
 
             <span class="ml-1 text-gray-600"> Level 3 </span>
@@ -95,4 +90,4 @@
 </div>
 
 </body>
-</html>
+

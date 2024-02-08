@@ -1,1 +1,0 @@
-ALTER TABLE "course_table" ALTER COLUMN "image_link" DROP NOT NULL;

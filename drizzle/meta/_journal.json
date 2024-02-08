@@ -5,50 +5,8 @@
     {
       "idx": 0,
       "version": "5",
-      "when": 1705884762726,
-      "tag": "0000_fearless_vermin",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "5",
-      "when": 1705885087253,
-      "tag": "0001_nebulous_nick_fury",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "5",
-      "when": 1706306235827,
-      "tag": "0002_whole_iron_man",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "5",
-      "when": 1706308470898,
-      "tag": "0003_lucky_mister_fear",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "5",
-      "when": 1706377851889,
-      "tag": "0004_cuddly_thing",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "5",
-      "when": 1706377995859,
-      "tag": "0005_spotty_robbie_robertson",
-      "breakpoints": true
-    },
-    {
-      "idx": 6,
-      "version": "5",
-      "when": 1706479365093,
-      "tag": "0006_skinny_spyke",
+      "when": 1707120279953,
+      "tag": "0000_shiny_zemo",
       "breakpoints": true
     }
   ]

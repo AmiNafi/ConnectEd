@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import Button from '$lib/components/ui/button/button.svelte';
 	import { Label } from '$lib/components/ui/label';
 	import type { LayoutData } from '../$types';
 	import Breadcrumb from '$lib/components/others/breadcrumb.svelte';
