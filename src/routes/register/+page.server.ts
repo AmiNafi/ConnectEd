@@ -10,7 +10,7 @@ export const load = async (event) => {
 	};
 };
 
-const deployPath="https://connect-5m13on4i7-saadmrp-gmailcom.vercel.app/register/verified"
+const deployPath="https://connect-ed-two.vercel.app/register/verified"
 const localPath="http://localhost:5173/register/verified"
 
 const newUserSchema = z

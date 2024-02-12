@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import type { LayoutData } from '../../$types';
 	import type { blog } from '$lib/server/schema';
 	import Breadcrumb from '$lib/components/others/breadcrumb.svelte';
 	import { Separator } from '$lib/components/ui/separator';
@@ -9,17 +8,20 @@
 	import Upvoted from '$lib/components/svg/upvoted.svelte';
 	import Downvote from '$lib/components/svg/downvote.svelte';
 	import Downvoted from '$lib/components/svg/downvoted.svelte';
+	import type { PageData } from '../$types';
 
-	export let data: LayoutData;
+	export let data: PageData;
 	const userData = data.user[0];
-	const userBlogs = userData.blogs as blog[];
-	const currentBlog = userBlogs.filter((blog: blog) => {
-		return blog.blogId?.toString() == $page.params.blogId;
-	})[0];
-
+	const blogs = data.favoriteBlog;
+	const currentBlog = (blogs.filter((it: any) => {
+		return it.blogId?.toString() == $page.params.blogId;
+	})[0]).blog;
+    $:{
+        console.log(currentBlog)
+    }
 	let items = [
-		{ href: './', text: 'My Blogs' },
-		{ href: './my-blog/' + $page.params.blogId, text: currentBlog.blogTitle }
+		{ href: './', text: 'Favorite Blogs' },
+		{ href: './'+ $page.params.blogId, text: currentBlog.blogTitle }
 	];
 
 	function generateColour(str: string) {
@@ -36,12 +38,13 @@
 		}
 		return hash;
 	}
+
 </script>
 
 <div class="flex grow flex-col items-center">
 	<div class="flex w-full flex-row flex-wrap justify-between">
 		<Breadcrumb {items} />
-		<a href="./{currentBlog.blogId}/settings"><Setting/></a>
+		<!-- <a href="./{currentBlog.blogId}/settings"><Setting/></a> -->
 	</div>
 	<!-- <Label class="mt-10 text-center text-3xl font-medium">{currentBlog.blogTitle}</Label> -->
 	<div
@@ -53,7 +56,7 @@
 		<!-- Information in a line below the title -->
 		<div class="flex flex-row justify-center gap-5">
 			<p class="mb-2 text-sm text-gray-600">
-				Written by <span class="font-medium">{userData.userName}</span>
+				Written by <span class="font-medium">{currentBlog.writer.userName}</span>
 			</p>
 			<p class="mb-2 text-sm text-gray-600">
 				Created on <span class="font-medium">{currentBlog.createdAt?.toString().split('T')[0]}</span

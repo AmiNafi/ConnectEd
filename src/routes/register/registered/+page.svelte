@@ -4,7 +4,6 @@
 
 	let className: string | undefined | null = undefined;
 	export { className as class };
-
 </script>
 
 <link
@@ -18,30 +17,39 @@
 	<Button
 		href="/login"
 		variant="ghost"
-		class="invisible lg:visible lg:absolute right-4 top-4 md:right-8 md:top-8">Login</Button
+		class="invisible right-4 top-4 md:right-8 md:top-8 lg:visible lg:absolute">Login</Button
 	>
-    <Button
+	<Button
 		href="/register"
 		variant="ghost"
-		class="invisible lg:visible lg:absolute right-24 top-4 md:right-28 md:top-8">Register</Button
+		class="invisible right-24 top-4 md:right-28 md:top-8 lg:visible lg:absolute">Register</Button
 	>
 
 	<div
-		class="relative hidden h-full flex-col bg-muted p-10 text-white dark:border-r lg:flex justify-center items-center"
+		class="relative hidden h-full flex-col items-center justify-center bg-muted p-10 text-white dark:border-r lg:flex"
 	>
-		<div class="absolute inset-0 bg-cover w-full h-full bg-gradient-to-b from-purple-500 to-blue-500 min-h-screen"></div>
-		<div class="relative z-20 flex items-center text-5xl font-black text-black font-mono">ApiHub</div>
+		<div
+			class="absolute inset-0 h-full min-h-screen w-full bg-gradient-to-b from-gray-800 to-gray-900 bg-cover"
+		></div>
+		<div class="relative z-20 flex items-center font-mono text-5xl font-black text-white">
+			Connected
+		</div>
 		<div class="relative z-20">
 			<blockquote class="space-y-2">
-				<p class="text-2xl text-black font-mono text-center">A large collection of free and open source apis</p>
+				<p class="text-center font-mono text-2xl text-white">
+					A study resource management and collaborative study platform.
+				</p>
 				<!-- <footer class="text-sm">Sofia Davis</footer> -->
 			</blockquote>
 		</div>
 	</div>
 
-	<div class="lg:p-8 flex flex-row justify-center">
+	<div class="flex flex-row justify-center lg:p-8">
 		<div>
-		<img alt="The project logo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Eo_circle_green_checkmark.svg/64px-Eo_circle_green_checkmark.svg.png" />
+			<img
+				alt="The project logo"
+				src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Eo_circle_green_checkmark.svg/64px-Eo_circle_green_checkmark.svg.png"
+			/>
 		</div>
 		<div class="flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
 			<div class="flex flex-col space-y-2 text-center">
@@ -49,11 +57,7 @@
 				<p class="text-sm text-muted-foreground">Please wait for verification email</p>
 			</div>
 
-			<div class={cn('grid gap-6', className)} {...$$restProps}>
-				
-			</div>
-
-			
+			<div class={cn('grid gap-6', className)} {...$$restProps}></div>
 		</div>
 	</div>
 </div>

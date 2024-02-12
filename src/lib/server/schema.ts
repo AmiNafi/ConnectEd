@@ -30,6 +30,8 @@ Tables
 16. blogTable
 17. sessionVoteTable
 18. sessionFavTable
+19. sessionVoteTable
+20. sessionFavTable
 */
 
 export type user = typeof userTable.$inferInsert;
@@ -50,6 +52,8 @@ export type follow = typeof followTable.$inferInsert;
 export type blog = typeof blogTable.$inferInsert;
 export type sessionVote = typeof sessionVoteTable.$inferInsert;
 export type sessionFav = typeof sessionFavTable.$inferInsert;
+export type blogVote = typeof blogVoteTable.$inferInsert;
+export type blogFav = typeof blogFavTable.$inferInsert;
 
 export const userTable = pgTable('user_table', {
 	userId: serial('user_id').primaryKey(),
@@ -340,6 +344,50 @@ export const sessionFavTable = pgTable(
 	}
 );
 
+export const blogVoteTable = pgTable(
+	'blog_vote_table',
+	{
+		blogId: integer('blog_id')
+			.references(() => blogTable.blogId, { onDelete: 'cascade' })
+			.notNull(),
+		userId: integer('user_id')
+			.references(() => userTable.userId, { onDelete: 'cascade' })
+			.notNull(),
+		createdAt: timestamp('created_at').defaultNow()
+	},
+	(table) => {
+		return {
+			// pk: primaryKey({columns: [table.groupId, table.userId] }),
+			blogVoteId: primaryKey({
+				name: 'blog_vote_id',
+				columns: [table.userId, table.blogId]
+			})
+		};
+	}
+);
+
+export const blogFavTable = pgTable(
+	'blog_fav_table',
+	{
+		blogId: integer('blog_id')
+			.references(() => blogTable.blogId, { onDelete: 'cascade' })
+			.notNull(),
+		userId: integer('user_id')
+			.references(() => userTable.userId, { onDelete: 'cascade' })
+			.notNull(),
+		createdAt: timestamp('created_at').defaultNow()
+	},
+	(table) => {
+		return {
+			// pk: primaryKey({columns: [table.groupId, table.userId] }),
+			blogFavId: primaryKey({
+				name: 'blog_fav_id',
+				columns: [table.userId, table.blogId]
+			})
+		};
+	}
+);
+
 /*
 	Relationships  
 */
@@ -348,7 +396,9 @@ export const userRelationships = relations(userTable, ({ many }) => ({
 	sessions: many(sessionTable),
 	blogs: many(blogTable),
 	sessionVotes: many(sessionVoteTable),
-	sessionFavs: many(sessionFavTable)
+	sessionFavs: many(sessionFavTable),
+	blogVotes: many(blogVoteTable),
+	blogFavs: many(blogFavTable),
 }));
 
 export const sessionRelationships = relations(sessionTable, ({ one, many }) => ({
@@ -400,11 +450,13 @@ export const noteRelationships = relations(noteTable, ({ one }) => ({
 	})
 }));
 
-export const blogRelationships = relations(blogTable, ({ one }) => ({
+export const blogRelationships = relations(blogTable, ({ many, one }) => ({
 	writer: one(userTable, {
 		fields: [blogTable.writerId],
 		references: [userTable.userId]
-	})
+	}),
+	blogVotes: many(blogVoteTable),
+	blogFavs: many(blogFavTable),
 }));
 
 export const sessionVoteRelationship = relations(sessionVoteTable, ({ one }) => ({
@@ -426,5 +478,27 @@ export const sessionFavRelationship = relations(sessionFavTable, ({ one }) => ({
 	session: one(sessionTable, {
 		fields: [sessionFavTable.sessionId],
 		references: [sessionTable.sessionId]
+	})
+}));
+
+export const blogVoteRelationship = relations(blogVoteTable, ({ one }) => ({
+	voter: one(userTable, {
+		fields: [blogVoteTable.userId],
+		references: [userTable.userId]
+	}),
+	blog: one(blogTable, {
+		fields: [blogVoteTable.blogId],
+		references: [blogTable.blogId]
+	})
+}));
+
+export const blogFavRelationship = relations(blogFavTable, ({ one }) => ({
+	faver: one(userTable, {
+		fields: [blogFavTable.userId],
+		references: [userTable.userId]
+	}),
+	blog: one(blogTable, {
+		fields: [blogFavTable.blogId],
+		references: [blogTable.blogId]
 	})
 }));

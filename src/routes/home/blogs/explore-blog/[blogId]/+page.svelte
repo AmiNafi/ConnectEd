@@ -1,25 +1,25 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import type { LayoutData } from '../../$types';
 	import type { blog } from '$lib/server/schema';
 	import Breadcrumb from '$lib/components/others/breadcrumb.svelte';
 	import { Separator } from '$lib/components/ui/separator';
-	import Setting from '$lib/components/others/setting.svelte'
+	import Setting from '$lib/components/others/setting.svelte';
 	import Upvote from '$lib/components/svg/upvote.svelte';
 	import Upvoted from '$lib/components/svg/upvoted.svelte';
 	import Downvote from '$lib/components/svg/downvote.svelte';
 	import Downvoted from '$lib/components/svg/downvoted.svelte';
+	import type { PageData } from '../$types';
 
-	export let data: LayoutData;
+	export let data: PageData;
 	const userData = data.user[0];
-	const userBlogs = userData.blogs as blog[];
-	const currentBlog = userBlogs.filter((blog: blog) => {
+	const blogs = data.searchResult;
+	const currentBlog = blogs.filter((blog: blog) => {
 		return blog.blogId?.toString() == $page.params.blogId;
 	})[0];
 
 	let items = [
-		{ href: './', text: 'My Blogs' },
-		{ href: './my-blog/' + $page.params.blogId, text: currentBlog.blogTitle }
+		{ href: './', text: 'Explore Blogs' },
+		{ href: './' + $page.params.blogId, text: currentBlog.blogTitle }
 	];
 
 	function generateColour(str: string) {
@@ -36,12 +36,30 @@
 		}
 		return hash;
 	}
+
+	let commentList = [
+		{
+			author: '1',
+			date: '1',
+			content: '1'
+		},
+		{
+			author: '1',
+			date: '1',
+			content: '1'
+		},
+		{
+			author: '1',
+			date: '1',
+			content: '1'
+		}
+	];
 </script>
 
 <div class="flex grow flex-col items-center">
 	<div class="flex w-full flex-row flex-wrap justify-between">
 		<Breadcrumb {items} />
-		<a href="./{currentBlog.blogId}/settings"><Setting/></a>
+		<!-- <a href="./{currentBlog.blogId}/settings"><Setting/></a> -->
 	</div>
 	<!-- <Label class="mt-10 text-center text-3xl font-medium">{currentBlog.blogTitle}</Label> -->
 	<div
@@ -84,5 +102,89 @@
 		</div> -->
 		<!-- Upvote and Downvote section at the bottom with SVG icons -->
 		<div class="mt-4 flex items-center justify-start"></div>
+
+		<div class="comment-section">
+			<h2>Leave a Comment</h2>
+			<form>
+				<textarea name="comment" required></textarea>
+				<button type="submit">Submit</button>
+			</form>
+
+			<h2>Comments</h2>
+			{#each commentList as comment}
+				<div class="comment">
+					<div class="comment-header">
+						<span>{comment.author}</span>
+						<span>{comment.date}</span>
+					</div>
+					<div class="comment-content">
+						{comment.content}
+					</div>
+				</div>
+			{/each}
+		</div>
 	</div>
 </div>
+
+<style>
+	/* Base styles */
+	.comment-section {
+		padding: 20px;
+		border-top: 1px solid #ccc;
+	}
+
+	/* Form styles */
+	form {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+	}
+
+	textarea {
+		resize: none;
+		background-color: #f5f5f5;
+		border: 1px solid #ddd;
+		padding: 10px;
+		font-family: sans-serif;
+		font-size: 16px;
+		line-height: 1.5;
+	}
+
+	textarea::placeholder {
+		color: #ccc;
+	}
+
+	button {
+		background-color: #4caf50;
+		color: white;
+		padding: 8px 15px;
+		border: none;
+		border-radius: 5px;
+		cursor: pointer;
+	}
+
+	button:hover {
+		background-color: #42814c;
+	}
+
+	/* Comment display styles */
+	.comment {
+		padding: 15px;
+		border-bottom: 1px solid #ddd;
+		display: flex;
+		flex-direction: column;
+		gap: 5px;
+	}
+
+	.comment-header {
+		display: flex;
+		justify-content: space-between;
+		font-size: 14px;
+		color: #888;
+	}
+
+	.comment-content {
+		font-size: 16px;
+		line-height: 1.5;
+	}
+</style>

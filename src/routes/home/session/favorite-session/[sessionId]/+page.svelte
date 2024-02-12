@@ -16,10 +16,13 @@
 	const sessionCoursess = currentSession.courses as course[]
 
 	let items = [
-		{ href: './', text: 'Explore Sessions' },
+		{ href: './', text: 'Saved Sessions' },
 		{ href: './' + $page.params.sessionId, text: currentSession.sessionName }
 	];
 
+    // $:{
+    //     console.log(sessionCoursess)
+    // }
 </script>
 
 <div class="flex grow flex-col items-center">

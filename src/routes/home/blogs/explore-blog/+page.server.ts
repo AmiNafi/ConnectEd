@@ -1,5 +1,4 @@
-import type { Actions, PageServerLoad } from './$types';
-import { userId } from '$lib/stores/user.js';
+import type {Actions, PageServerLoad} from './$types';
 
 export const actions = {
 	search: async (event) => {
@@ -8,7 +7,7 @@ export const actions = {
 
 		// console.log(data);
 
-		const ret = await event.fetch('/api/session/search', {
+		const ret = await event.fetch('/api/blog/search', {
 			method: 'POST',
 			body: JSON.stringify(data)
 		});
@@ -26,7 +25,7 @@ export const actions = {
 		
 		// console.log(data)
 
-		const ret = await event.fetch('/api/session/favorite', {
+		const ret = await event.fetch('/api/blog/favorite', {
 			method: 'POST',
 			body: JSON.stringify(data)
 		});
@@ -41,7 +40,7 @@ export const actions = {
 		
 		// console.log(data)
 
-		const ret = await event.fetch('/api/session/unfavorite', {
+		const ret = await event.fetch('/api/blog/unfavorite', {
 			method: 'POST',
 			body: JSON.stringify(data)
 		});
@@ -50,25 +49,4 @@ export const actions = {
 		// 	success: 'success'
 		// };
 	},
-};
-
-export const load: PageServerLoad = async ({ fetch }) => {
-	let id;
-	userId.subscribe((value) => {
-		id = value;
-	});
-
-	let payload = { userId: id };
-	// console.log(payload)
-
-
-	const res = await fetch('/api/session/search', {
-		method: 'POST',
-		body: JSON.stringify(payload)
-	});
-	const data = await res.json();
-
-	return {
-		searchResult: data
-	};
-};
+} satisfies Actions;

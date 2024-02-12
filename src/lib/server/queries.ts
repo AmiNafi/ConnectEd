@@ -7,7 +7,9 @@ import {
 	resourceTable,
 	linkTable,
 	blogTable,
-	sessionFavTable
+	sessionFavTable,
+	blogFavTable,
+	blogVoteTable
 } from './schema';
 import type {
 	user,
@@ -18,7 +20,9 @@ import type {
 	link,
 	note,
 	blog,
-	sessionFav
+	sessionFav,
+	blogFav,
+	blogVote
 } from './schema';
 import { eq, lt, gte, ne, inArray, and, or, sql } from 'drizzle-orm';
 
@@ -75,38 +79,59 @@ export async function updateSession(newSession: session) {
 
 export async function searchSession(name: string, tag: string, userId: number) {
 	if (name && tag) {
-		const ret = await db
-			.select()
-			.from(sessionTable)
-			.where(
-				sql`
-        ${sessionTable.sessionName}==${name} and
-        ${tag}=ANY(${sessionTable.tags}) and
-		${sessionTable.visibility} LIKE 'publish'
-        `
-			);
+		const ret = await db.query.sessionTable.findMany({
+			where: sql`
+			LOWER(${sessionTable.sessionName}) LIKE LOWER('%'||${name}||'%') and
+			${tag}=ANY(${sessionTable.tags}) and
+			${sessionTable.visibility} LIKE 'publish'
+					`,
+			with: {
+				user: true,
+				courses: true,
+				sessionFavs: {
+					where: (sessionFavs, { eq }) => eq(sessionFavs.userId, userId),
+					columns: {
+						userId: true
+					}
+				}
+			}
+		});
 		return ret;
 	} else if (name) {
-		const ret = await db
-			.select()
-			.from(sessionTable)
-			.where(
-				sql`
-        ${sessionTable.sessionName}==${name} and
-		${sessionTable.visibility} LIKE 'publish'
-        `
-			);
+		const ret = await db.query.sessionTable.findMany({
+			where: sql`
+			LOWER(${sessionTable.sessionName}) LIKE LOWER('%'||${name}||'%') and
+			${sessionTable.visibility} LIKE 'publish'
+					`,
+			with: {
+				user: true,
+				courses: true,
+				sessionFavs: {
+					where: (sessionFavs, { eq }) => eq(sessionFavs.userId, userId),
+					columns: {
+						userId: true
+					}
+				}
+			}
+		});
 		return ret;
 	} else if (tag) {
-		const ret = await db
-			.select()
-			.from(sessionTable)
-			.where(
-				sql`
-        ${tag}=ANY(${sessionTable.tags}) and
-		${sessionTable.visibility} LIKE 'publish'
-        `
-			);
+		const ret = await db.query.sessionTable.findMany({
+			where: sql`
+			${tag}=ANY(${sessionTable.tags}) and
+			${sessionTable.visibility} LIKE 'publish'
+					`,
+			with: {
+				user: true,
+				courses: true,
+				sessionFavs: {
+					where: (sessionFavs, { eq }) => eq(sessionFavs.userId, userId),
+					columns: {
+						userId: true
+					}
+				}
+			}
+		});
 		return ret;
 	} else {
 		const ret = await db.query.sessionTable.findMany({
@@ -225,6 +250,83 @@ export async function deleteBlog(newBlog: blog) {
 	await db.delete(blogTable).where(eq(blogTable.blogId, newBlog.blogId!));
 }
 
+export async function updateBlog(newBlog: blog){
+	await db.update(blogTable)
+	.set({
+		blogContent: newBlog.blogContent,
+		blogTitle: newBlog.blogTitle,
+		tags: newBlog.tags
+	})
+	.where(eq(blogTable.blogId, newBlog.blogId!))
+}
+
+export async function searchBlog(name: string, tag: string, userId: number) {
+	if (name && tag) {
+		const ret = await db.query.blogTable.findMany({
+			where: sql`
+			LOWER(${blogTable.blogTitle}) LIKE LOWER('%'||${name}||'%') and
+			${tag}=ANY(${blogTable.tags})
+			`,
+			with: {
+				writer: true,
+				blogFavs: {
+					where: (blogFavs, { eq }) => eq(blogFavs.userId, userId),
+					columns: {
+						userId: true
+					}
+				}
+			}
+		});
+		return ret;
+	} else if (name) {
+		const ret = await db.query.blogTable.findMany({
+			where: sql`
+			LOWER(${blogTable.blogTitle}) LIKE LOWER('%'||${name}||'%') and
+
+			`,
+			with: {
+				writer: true,
+				blogFavs: {
+					where: (blogFavs, { eq }) => eq(blogFavs.userId, userId),
+					columns: {
+						userId: true
+					}
+				}
+			}
+		});
+		return ret;
+	} else if (tag) {
+		const ret = await db.query.blogTable.findMany({
+			where: sql`
+			${tag}=ANY(${blogTable.tags})
+			`,
+			with: {
+				writer: true,
+				blogFavs: {
+					where: (blogFavs, { eq }) => eq(blogFavs.userId, userId),
+					columns: {
+						userId: true
+					}
+				}
+			}
+		});
+		return ret;
+	} else {
+		const ret = await db.query.blogTable.findMany({
+			with: {
+				writer: true,
+				blogFavs: {
+					where: (blogFavs, { eq }) => eq(blogFavs.userId, userId),
+					columns: {
+						userId: true
+					}
+				}
+			}
+		});
+		return ret;
+	}
+}
+
 //SessionFav
 export async function favoriteSession(newSessionFav: sessionFav) {
 	await db.insert(sessionFavTable).values(newSessionFav);
@@ -233,8 +335,51 @@ export async function favoriteSession(newSessionFav: sessionFav) {
 export async function unfavoriteSession(newSessionFav: sessionFav) {
 	await db.delete(sessionFavTable).where(
 		sql`
-	${sessionFavTable.userId} == ${newSessionFav.userId} and
-	${sessionFavTable.sessionId} == ${newSessionFav.sessionId}
-	`
+		${sessionFavTable.userId} = ${newSessionFav.userId} and
+		${sessionFavTable.sessionId} = ${newSessionFav.sessionId}
+		`
 	);
+}
+
+export async function getFavoriteSession(userId: number) {
+	// console.log(userId)
+	return await db.query.sessionFavTable.findMany({
+		where: eq(sessionFavTable.userId, userId),
+		with: {
+			session:{
+				with:{
+					courses: true,
+					user: true
+				}
+			}
+		}
+	});
+}
+
+//BlogFav
+export async function favoriteBlog(newBlogFav: blogFav) {
+	await db.insert(blogFavTable).values(newBlogFav);
+}
+
+export async function unfavoriteBlog(newBlogFav: blogFav) {
+	await db.delete(blogFavTable).where(
+		sql`
+		${blogFavTable.userId} = ${newBlogFav.userId} and
+		${blogFavTable.blogId} = ${newBlogFav.blogId}
+		`
+	);
+}
+
+export async function getFavoriteBlog(userId: number) {
+	// console.log(userId)
+	return await db.query.blogFavTable.findMany({
+		where: eq(blogFavTable.userId, userId),
+		with: {
+			blog:{
+				with:{
+					writer: true
+				}
+			}
+		}
+	});
 }

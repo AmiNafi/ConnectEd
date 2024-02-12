@@ -72,7 +72,7 @@
 	});
 
 	function makeStrong() {
-		blogContent = '<strong>' + quill.root.innerHTML + '</strong>';
+		blogContent = quill.root.innerHTML;
 		console.log(blogContent)
 	}
 </script>
