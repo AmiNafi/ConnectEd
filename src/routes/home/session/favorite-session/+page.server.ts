@@ -5,7 +5,7 @@ export const load = async ({ params, fetch }) => {
 	userId.subscribe((value) => {
 		id = value;
 	});
-
+	
     const res = await fetch('/api/session/get-favorite', {
         method: 'POST',
         body: JSON.stringify({ userId: id})

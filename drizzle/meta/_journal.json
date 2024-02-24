@@ -15,6 +15,48 @@
       "when": 1707709601375,
       "tag": "0001_stiff_king_cobra",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1707718442270,
+      "tag": "0002_lively_guardian",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1707719276325,
+      "tag": "0003_silly_hobgoblin",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1707722578853,
+      "tag": "0004_acoustic_spyke",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1707723268519,
+      "tag": "0005_freezing_morph",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1707723702996,
+      "tag": "0006_misty_guardian",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "5",
+      "when": 1708569532756,
+      "tag": "0007_square_millenium_guard",
+      "breakpoints": true
     }
   ]
 }

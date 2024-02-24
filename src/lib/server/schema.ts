@@ -9,6 +9,7 @@ import {
 	primaryKey
 } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
+
 /*
 Tables
 ----------------
@@ -54,6 +55,8 @@ export type sessionVote = typeof sessionVoteTable.$inferInsert;
 export type sessionFav = typeof sessionFavTable.$inferInsert;
 export type blogVote = typeof blogVoteTable.$inferInsert;
 export type blogFav = typeof blogFavTable.$inferInsert;
+export type blogComment = typeof blogCommentTable.$inferInsert
+export type request = typeof requestTable.$inferInsert
 
 export const userTable = pgTable('user_table', {
 	userId: serial('user_id').primaryKey(),
@@ -353,6 +356,7 @@ export const blogVoteTable = pgTable(
 		userId: integer('user_id')
 			.references(() => userTable.userId, { onDelete: 'cascade' })
 			.notNull(),
+		vote: integer('vote').notNull(),
 		createdAt: timestamp('created_at').defaultNow()
 	},
 	(table) => {
@@ -388,6 +392,58 @@ export const blogFavTable = pgTable(
 	}
 );
 
+export const blogCommentTable = pgTable(
+	'blog_comment_table',
+	{
+		commentId: serial('comment_id').primaryKey(),
+		blogId: integer('blog_id')
+		.references(() => blogTable.blogId, { onDelete: 'cascade' })
+		.notNull(),
+		userId: integer('user_id')
+			.references(() => userTable.userId, { onDelete: 'cascade' })
+			.notNull(),
+		comment: text('comment').notNull(),
+		createdAt: timestamp('created_at').defaultNow(),
+		userName: text('user_name').notNull(),
+		imageLink: text('image_link').notNull()
+	}
+)
+
+export const requestTable = pgTable(
+	"request_table",
+	{
+		requestId: serial('request_id').primaryKey(),
+		userId: integer('user_id')
+		.references(() => userTable.userId, { onDelete: 'cascade' })
+		.notNull(),
+		createdAt: timestamp('created_at').defaultNow(),
+		title: text('title').notNull(),
+		description: text('description').notNull(),
+		userName: text('user_name').notNull(),
+		tags: text('tags').array(),
+		date: text('data')
+	}
+)
+
+export const acceptedTable = pgTable(
+	'accepted_table',
+	{
+		acceptedId: serial('accepted_id').primaryKey(),
+		from: integer('user1_id')
+		.references(() => userTable.userId, { onDelete: 'cascade' })
+		.notNull(),
+		to: integer('user2_id')
+		.references(() => userTable.userId, { onDelete: 'cascade' })
+		.notNull(),
+		userName: text('user_name').notNull(),
+		createdAt: timestamp('created_at').defaultNow(),
+		title: text('title').notNull(),
+		description: text('description').notNull(),
+		tags: text('tags').array(),
+		date: text('data').notNull()
+	}
+)
+
 /*
 	Relationships  
 */
@@ -399,6 +455,7 @@ export const userRelationships = relations(userTable, ({ many }) => ({
 	sessionFavs: many(sessionFavTable),
 	blogVotes: many(blogVoteTable),
 	blogFavs: many(blogFavTable),
+	// groups: many(groupTable)
 }));
 
 export const sessionRelationships = relations(sessionTable, ({ one, many }) => ({
@@ -502,3 +559,18 @@ export const blogFavRelationship = relations(blogFavTable, ({ one }) => ({
 		references: [blogTable.blogId]
 	})
 }));
+
+export const groupRelationship = relations(groupTable, ({many}) => ({
+	// members: many(userTable)
+}))
+
+export const memberRelationship = relations(memberTable, ({one})=>({
+	group: one(groupTable, {
+		fields: [memberTable.groupId],
+		references: [groupTable.groupId]
+	}),
+	member: one(userTable, {
+		fields: [memberTable.userId],
+		references: [userTable.userId]
+	})
+}))

@@ -8,18 +8,22 @@
 	import Upvoted from '$lib/components/svg/upvoted.svelte';
 	import Downvote from '$lib/components/svg/downvote.svelte';
 	import Downvoted from '$lib/components/svg/downvoted.svelte';
-	import type { PageData } from '../$types';
+	import type { ActionData, PageData } from './$types';
+	import { enhance } from '$app/forms';
+	import { onMount } from 'svelte';
+	import { Circle } from 'svelte-loading-spinners';
 
 	export let data: PageData;
+	export let form: ActionData;
+
 	const userData = data.user[0];
-	const blogs = data.searchResult;
-	const currentBlog = blogs.filter((blog: blog) => {
-		return blog.blogId?.toString() == $page.params.blogId;
-	})[0];
+	// const blogs = data.searchResult;
+	let currentBlog: any;
+	let blogComments: any;
 
 	let items = [
-		{ href: './', text: 'Explore Blogs' },
-		{ href: './' + $page.params.blogId, text: currentBlog.blogTitle }
+		{ href: './', text: 'Explore Blogs' }
+		// { href: './' + $page.params.blogId, text: currentBlog.blogTitle }
 	];
 
 	function generateColour(str: string) {
@@ -37,23 +41,88 @@
 		return hash;
 	}
 
-	let commentList = [
-		{
-			author: '1',
-			date: '1',
-			content: '1'
-		},
-		{
-			author: '1',
-			date: '1',
-			content: '1'
-		},
-		{
-			author: '1',
-			date: '1',
-			content: '1'
+	let comment = '';
+
+	$: {
+		if (form?.success == 'comment') {
+			console.log(form?.success);
+			console.log(form?.newComment);
+			blogComments.push(form.newComment[0]);
+			blogComments = blogComments;
+			form.success = '';
 		}
-	];
+	}
+
+	function upvote() {
+		let tmp: number
+		if(currentBlog.blogVotes[0]){
+			tmp = currentBlog.blogVotes[0].vote
+			currentBlog.upvote += 2
+		}
+		else{
+			currentBlog.upvote += 1
+			tmp = 0
+		}
+		currentBlog.blogVotes = [];
+		currentBlog.blogVotes = [...currentBlog.blogVotes, { vote: 1 }];
+
+		fetch('/api/blog/unvote', {
+			method: 'POST',
+			body: JSON.stringify({ blogId: currentBlog.blogId, userId: userData.userId, vote: -tmp })
+		}).then(() => {
+			fetch('/api/blog/vote', {
+				method: 'POST',
+				body: JSON.stringify({ blogId: currentBlog.blogId, userId: userData.userId, vote: 1 })
+			});
+		});
+	}
+
+	function downvote() {
+		let tmp: number
+		if(currentBlog.blogVotes[0]){
+			tmp = currentBlog.blogVotes[0].vote
+			currentBlog.upvote -= 2
+		}
+		else{
+			currentBlog.upvote -= 1
+			tmp = 0
+		}
+		currentBlog.blogVotes = [];
+		currentBlog.blogVotes = [...currentBlog.blogVotes, { vote: -1 }];
+
+		fetch('/api/blog/unvote', {
+			method: 'POST',
+			body: JSON.stringify({ blogId: currentBlog.blogId, userId: userData.userId, vote: -tmp })
+		}).then(() => {
+			fetch('/api/blog/vote', {
+				method: 'POST',
+				body: JSON.stringify({ blogId: currentBlog.blogId, userId: userData.userId, vote: -1 })
+			});
+		});
+	}
+
+	function unvote() {
+		let tmp = currentBlog.blogVotes[0].vote
+		currentBlog.upvote -= tmp
+		currentBlog.blogVotes = [];
+
+		fetch('/api/blog/unvote', {
+			method: 'POST',
+			body: JSON.stringify({ blogId: currentBlog.blogId, userId: userData.userId, vote: -tmp })
+		});
+	}
+
+	onMount(() => {
+		data.currentBlog.then((res) => {
+			currentBlog = res[0];
+			console.log(res[0]);
+			items = [...items, { href: './' + $page.params.blogId, text: currentBlog.blogTitle }];
+		});
+
+		data.blogComments.then((res) => {
+			blogComments = res;
+		});
+	});
 </script>
 
 <div class="flex grow flex-col items-center">
@@ -61,69 +130,195 @@
 		<Breadcrumb {items} />
 		<!-- <a href="./{currentBlog.blogId}/settings"><Setting/></a> -->
 	</div>
-	<!-- <Label class="mt-10 text-center text-3xl font-medium">{currentBlog.blogTitle}</Label> -->
-	<div
-		class="mx-auto w-full max-w-screen-lg rounded-md border border-gray-300 bg-white p-10 shadow-md"
-	>
-		<!-- Title at the top center -->
-		<h1 class="mb-4 text-center text-3xl font-bold">{currentBlog.blogTitle}</h1>
+	{#if currentBlog && blogComments}
+		<!-- <Label class="mt-10 text-center text-3xl font-medium">{currentBlog.blogTitle}</Label> -->
+		<div
+			class="mx-auto w-full max-w-screen-lg rounded-md border border-gray-300 bg-white p-10 shadow-md"
+		>
+			<!-- Title at the top center -->
+			<h1 class="mb-4 text-center text-3xl font-bold">{currentBlog.blogTitle}</h1>
 
-		<!-- Information in a line below the title -->
-		<div class="flex flex-row justify-center gap-5">
-			<p class="mb-2 text-sm text-gray-600">
-				Written by <span class="font-medium">{userData.userName}</span>
-			</p>
-			<p class="mb-2 text-sm text-gray-600">
-				Created on <span class="font-medium">{currentBlog.createdAt?.toString().split('T')[0]}</span
-				>
-			</p>
-			<p class="mb-2 text-sm text-gray-600">
-				Upvotes: <span class="font-medium">{currentBlog.upvote}</span>
-			</p>
+			<!-- Information in a line below the title -->
+			<div class="flex flex-row justify-center gap-5">
+				<p class="mb-2 text-sm text-gray-600">
+					Written by <span class="font-medium">{userData.userName}</span>
+				</p>
+				<p class="mb-2 text-sm text-gray-600">
+					Created on <span class="font-medium"
+						>{currentBlog.createdAt?.toString().split('T')[0]}</span
+					>
+				</p>
+				<p class="mb-2 text-sm text-gray-600">
+					Upvotes: <span class="font-medium">{currentBlog.upvote}</span>
+				</p>
+			</div>
+
+			<!-- Tags in a line below the information -->
+			<div class="flex flex-wrap gap-2">
+				{#each currentBlog.tags as tag}
+					<span
+						class="rounded-full bg-gray-200 px-2 py-1 text-xs"
+						style="background-color: {generateColour(tag)}">{tag}</span
+					>
+				{/each}
+			</div>
+			<Separator class="m-5" />
+			<!-- Content of the blog -->
+			{@html currentBlog.blogContent}
+			<Separator class="m-5" />
+			<div class="flex flex-row">
+				{#if currentBlog.blogVotes[0]}
+					{#if currentBlog.blogVotes[0].vote == 1}
+						<button
+							on:click={() => {
+								unvote();
+							}}><Upvoted design="hover:scale-105" /></button
+						>
+						<button
+							on:click={() => {
+								downvote();
+							}}><Downvote design="hover:scale-105" /></button
+						>
+					{:else}
+						<button
+							on:click={() => {
+								upvote();
+							}}><Upvote design="hover:scale-105" /></button
+						>
+						<button
+							on:click={() => {
+								unvote();
+							}}><Downvoted design="hover:scale-105" /></button
+						>
+					{/if}
+				{:else}
+					<button
+						on:click={() => {
+							upvote();
+						}}><Upvote design="hover:scale-105" /></button
+					>
+					<button
+						on:click={() => {
+							downvote();
+						}}><Downvote design="hover:scale-105" /></button
+					>
+				{/if}
+				<div class="ml-5">{currentBlog.upvote}</div>
+			</div>
+			<!-- Upvote and Downvote section at the bottom with SVG icons -->
+			<!-- <div class="mt-4 flex items-center justify-start"></div> -->
 		</div>
-
-		<!-- Tags in a line below the information -->
-		<div class="flex flex-wrap gap-2">
-			{#each currentBlog.tags as tag}
-				<span
-					class="rounded-full bg-gray-200 px-2 py-1 text-xs"
-					style="background-color: {generateColour(tag)}">{tag}</span
-				>
-			{/each}
-		</div>
-		<Separator class="m-5" />
-		<!-- Content of the blog -->
-		{@html currentBlog.blogContent}
-		<Separator class="m-5" />
-		<!-- <div class="flex flex-row">
-			<Upvote design="hover:scale-105"/>
-			<Downvote design="hover:scale-105"/>
-            <div class="ml-5">{currentBlog.upvote}</div>
-		</div> -->
-		<!-- Upvote and Downvote section at the bottom with SVG icons -->
-		<div class="mt-4 flex items-center justify-start"></div>
-
-		<div class="comment-section">
+		<div class="comment-section max-w-screen-l w-full">
 			<h2>Leave a Comment</h2>
-			<form>
-				<textarea name="comment" required></textarea>
-				<button type="submit">Submit</button>
+			<form
+				use:enhance={() => {
+					return async ({ update }) => {
+						update({ reset: false });
+					};
+				}}
+				action="?/comment"
+				method="post"
+				on:submit={() => {
+					comment = '';
+				}}
+			>
+				<input hidden name="blogId" value={$page.params.blogId} />
+				<input hidden name="userId" value={userData.userId} />
+				<input hidden name="userName" value={userData.userName} />
+				<input hidden name="imageLink" value={userData.imageLink} />
+				<textarea name="comment" bind:value={comment} required></textarea>
+				<button type="submit" class="button-1">Submit</button>
 			</form>
 
-			<h2>Comments</h2>
-			{#each commentList as comment}
-				<div class="comment">
-					<div class="comment-header">
-						<span>{comment.author}</span>
-						<span>{comment.date}</span>
+			<div class="antialiased">
+				<h3 class="mb-4 text-lg font-semibold text-gray-900">Comments</h3>
+
+				<div class="mb-10 space-y-4">
+					{#each blogComments as comment}
+						<div class="flex">
+							<div class="mr-3 flex-shrink-0">
+								<img
+									class="mt-2 h-8 w-8 rounded-full sm:h-10 sm:w-10"
+									src={comment.imageLink}
+									alt=""
+								/>
+							</div>
+							<div class="flex-1 rounded-lg border px-4 py-2 leading-relaxed sm:px-6 sm:py-4">
+								<strong>{comment.userName}</strong>
+								<span class="text-xs text-gray-400"
+									>{comment.createdAt.toString().split('T')[0]}</span
+								>
+								<p class="text-sm">
+									{comment.comment}
+								</p>
+								<!-- <div class="mt-4 flex items-center">
+					<div class="flex -space-x-2 mr-2">
+					  <img class="rounded-full w-6 h-6 border border-white" src="https://images.unsplash.com/photo-1554151228-14d9def656e4?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=100&h=100&q=80" alt="">
+					  <img class="rounded-full w-6 h-6 border border-white" src="https://images.unsplash.com/photo-1513956589380-bad6acb9b9d4?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=100&h=100&q=80" alt="">
 					</div>
-					<div class="comment-content">
-						{comment.content}
+					<div class="text-sm text-gray-500 font-semibold">
+					  5 Replies
 					</div>
+				  </div> -->
+							</div>
+						</div>
+					{/each}
+
+					<!-- <div class="flex">
+					<div class="mr-3 flex-shrink-0">
+						<img
+							class="mt-2 h-8 w-8 rounded-full sm:h-10 sm:w-10"
+							src="https://images.unsplash.com/photo-1604426633861-11b2faead63c?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=200&h=200&q=80"
+							alt=""
+						/>
+					</div>
+					<div class="flex-1 rounded-lg border px-4 py-2 leading-relaxed sm:px-6 sm:py-4">
+						<strong>Sarah</strong> <span class="text-xs text-gray-400">3:34 PM</span>
+						<p class="text-sm">
+							Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
+							invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.
+						</p> -->
+
+					<!-- <h4 class="my-5 uppercase tracking-wide text-gray-400 font-bold text-xs">Replies</h4>
+		  
+				  <div class="space-y-4">
+					<div class="flex">
+					  <div class="flex-shrink-0 mr-3">
+						<img class="mt-3 rounded-full w-6 h-6 sm:w-8 sm:h-8" src="https://images.unsplash.com/photo-1604426633861-11b2faead63c?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=200&h=200&q=80" alt="">
+					  </div>
+					  <div class="flex-1 bg-gray-100 rounded-lg px-4 py-2 sm:px-6 sm:py-4 leading-relaxed">
+						<strong>Sarah</strong> <span class="text-xs text-gray-400">3:34 PM</span>
+						<p class="text-xs sm:text-sm">
+						  Lorem ipsum dolor sit amet, consetetur sadipscing elitr,
+						  sed diam nonumy eirmod tempor invidunt ut labore et dolore
+						  magna aliquyam erat, sed diam voluptua.
+						</p>
+					  </div>
+					</div>
+					<div class="flex">
+					  <div class="flex-shrink-0 mr-3">
+						<img class="mt-3 rounded-full w-6 h-6 sm:w-8 sm:h-8" src="https://images.unsplash.com/photo-1604426633861-11b2faead63c?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=200&h=200&q=80" alt="">
+					  </div>
+					  <div class="flex-1 bg-gray-100 rounded-lg px-4 py-2 sm:px-6 sm:py-4 leading-relaxed">
+						<strong>Sarah</strong> <span class="text-xs text-gray-400">3:34 PM</span>
+						<p class="text-xs sm:text-sm">
+						  Lorem ipsum dolor sit amet, consetetur sadipscing elitr,
+						  sed diam nonumy eirmod tempor invidunt ut labore et dolore
+						  magna aliquyam erat, sed diam voluptua.
+						</p>
+					  </div>
+					</div> 
+				  </div> -->
+					<!-- </div> -->
+					<!-- </div> -->
 				</div>
-			{/each}
+			</div>
 		</div>
-	</div>
+	{:else}
+		<div class="flex h-full w-full items-center justify-center">
+			<Circle size="60" color="#FF3E00" unit="px" duration="1s" />
+		</div>
+	{/if}
 </div>
 
 <style>
@@ -154,7 +349,7 @@
 		color: #ccc;
 	}
 
-	button {
+	.button-1 {
 		background-color: #4caf50;
 		color: white;
 		padding: 8px 15px;
@@ -163,7 +358,7 @@
 		cursor: pointer;
 	}
 
-	button:hover {
+	.button-1:hover {
 		background-color: #42814c;
 	}
 

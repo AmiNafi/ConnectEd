@@ -1,0 +1,1 @@
+ALTER TABLE "blog_comment_table" ADD COLUMN "comment" text NOT NULL;

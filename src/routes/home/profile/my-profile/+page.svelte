@@ -3,15 +3,15 @@
 
     export let data: LayoutData;
 	const userData = data.user[0];
-    console.log(data , userData);
-    console.log(userData.blogs.length);
+    // console.log(data , userData);
+    // console.log(userData.blogs.length);
 </script>
 
 
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 <title>My Profile</title>
 
-<body class="bg-gray-100 font-sans min-h-screen">
+<body class="flex flex-row justify-center mx-auto">
 
 <div class="max-w-4xl mx-auto mt-8 p-6 bg-white rounded-lg shadow-md">
     <div class="flex items-center mb-6">

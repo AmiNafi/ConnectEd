@@ -66,14 +66,14 @@
 				{/if}
 				{#if pathName.includes('find-a-mate')}
 					<a
-						href="#responsive-header"
+						href="/home/find-a-mate/request-board"
 						class="mr-4 text-base text-blue-200 underline hover:scale-110 hover:text-white"
 					>
 						Find-a-Mate
 					</a>
 				{:else}
 					<a
-						href="#responsive-header"
+						href="/home/find-a-mate/request-board"
 						class="mr-4 text-base text-blue-200 hover:scale-110 hover:text-white"
 					>
 						Find-a-Mate
@@ -81,14 +81,14 @@
 				{/if}
 				{#if pathName.includes('group')}
 					<a
-						href="#responsive-header"
+						href="/home/group/my-group"
 						class="mr-4 text-base text-blue-200 underline hover:scale-110 hover:text-white"
 					>
 						Groups
 					</a>
 				{:else}
 					<a
-						href="#responsive-header"
+						href="/home/group/my-group"
 						class="mr-4 text-base text-blue-200 hover:scale-110 hover:text-white"
 					>
 						Groups
@@ -111,7 +111,7 @@
 				{/if}
 			</div>
 			<div class="flex flex-row gap-5">
-				<a href="/home/profile">
+				<a href="/home/profile/my-profile">
 					{#await data.user}
 						<Avatar.Root>
 							<Avatar.Fallback></Avatar.Fallback>

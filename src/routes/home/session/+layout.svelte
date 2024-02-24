@@ -8,7 +8,7 @@
 			href: '/home/session/my-session'
 		},
 		{
-			title: 'Favorite Sessions',
+			title: 'Saved Sessions',
 			href: '/home/session/favorite-session'
 		},
 		{

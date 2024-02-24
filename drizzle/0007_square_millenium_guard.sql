@@ -1,0 +1,1 @@
+ALTER TABLE "blog_vote_table" ADD COLUMN "vote" integer;

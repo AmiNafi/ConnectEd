@@ -10,9 +10,9 @@
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
 	import Button from '$lib/components/ui/button/button.svelte';
-	import RightArrow from '$lib/components/others/right-arrow.svelte';
+	import RightArrow from '$lib/components/others/right-arrow.svelte'
 
-	let items = [{ href: 'home/blogs/explore-blog', text: 'Explore Blogs' }];
+	let items = [{ href: 'home/find-a-mate', text: 'Request Board' }];
 
 	export let data: PageData;
 	export let form: ActionData;
@@ -21,43 +21,11 @@
 	let searchResult = data.searchResult;
 	let perPage = 5;
 	let cnt = Math.max(Object.keys(searchResult).length, 1);
-	function onFav(index: number, blogId: number) {
-		searchResult[index].blogFavs.push({ userId: userData.userId });
-		searchResult = searchResult;
-
-		let payload = {blogId: blogId, userId: userData.userId}
-
-		fetch('/api/blog/favorite', {
-			method: 'POST',
-			body: JSON.stringify(payload)
-		});
-	}
-
-	function onUnFav(index: number, blogId: number) {
-		searchResult[index].blogFavs = [];
-		searchResult = searchResult;
-
-		let payload = {blogId: blogId, userId: userData.userId}
-
-		fetch('/api/blog/unfavorite', {
-			method: 'POST',
-			body: JSON.stringify(payload)
-		});
-	}
 
 	let name = '';
 	let tag = '';
 	let sortBy = '';
 
-	$: {
-		console.log(form?.success);
-		if (form?.success == 'search') {
-			searchResult = form.searchResult;
-			cnt = Math.max(Object.keys(searchResult).length, 1);
-			// console.log(searchResult)
-			form.success = '';
-		}
-	}
 
 	function generateColour(str: string) {
 		// Simple hash function to generate a color based on the tag name
@@ -97,13 +65,23 @@
 			}
 		});
 	}
+
+	$: {
+		console.log(form?.success);
+		if (form?.success=="search") {
+			searchResult = form.searchResult;
+			cnt = Math.max(Object.keys(searchResult).length, 1);
+			// console.log(searchResult)
+			form.success = '';
+		}
+	}
 </script>
 
 <div class="flex grow flex-col items-center">
 	<div class="flex w-full flex-row flex-wrap items-start justify-start">
 		<Breadcrumb {items} />
 	</div>
-	<Label class="mt-10 text-center text-3xl font-medium">Explore Blogs</Label>
+	<Label class="mt-10 text-center text-3xl font-medium">Request Board</Label>
 	<form
 		class="mt-5 flex w-[90%] flex-row justify-between gap-20"
 		use:enhance={() => {
@@ -136,58 +114,32 @@
 				<!-- svelte-ignore a11y-no-static-element-interactions -->
 				<div class="blog-card">
 					<!-- <div class="blog-card"> -->
-					<div class="flex justify-end">
-						<button class="flex items-center rounded-full px-4 py-2 text-white">
-							{#if searchResult[perPage * ((currentPage || 1) - 1) + i].blogFavs[0] == undefined}
-								<button
-									on:click={() => {
-										onFav(
-											perPage * ((currentPage || 1) - 1) + i,
-											searchResult[perPage * ((currentPage || 1) - 1) + i].blogId
-										);
-									}}
-									><Favorite design="hover:scale-110" />
-								</button>
-							{:else}
-								<button
-									on:click={() => {
-										onUnFav(
-											perPage * ((currentPage || 1) - 1) + i,
-											searchResult[perPage * ((currentPage || 1) - 1) + i].blogId
-										);
-									}}
-									><Favorited design="hover:scale-110" />
-								</button>
-							{/if}
-						</button>
-					</div>
 					<!-- on:click={() => {
 						goto('explore-blog/' + searchResult[perPage * ((currentPage || 1) - 1) + i].blogId);
 					}} -->
 					<div class="flex flex-row justify-between">
 						<div>
-							<h2>{searchResult[perPage * ((currentPage || 1) - 1) + i].blogTitle}</h2>
-							<p class="blog-info">
-								Created by {searchResult[perPage * ((currentPage || 1) - 1) + i].writer.userName} on
-								{searchResult[perPage * ((currentPage || 1) - 1) + i].createdAt.split('T')[0]}
-							</p>
+						<h2>{searchResult[perPage * ((currentPage || 1) - 1) + i].title}</h2>
+						<p>{searchResult[perPage * ((currentPage || 1) - 1) + i].description}</p>
+						<p class="blog-info">
+							Created by {searchResult[perPage * ((currentPage || 1) - 1) + i].userName} on {searchResult[
+								perPage * ((currentPage || 1) - 1) + i
+							].createdAt.split('T')[0]}
+						</p>
 
-							<div class="tags">
-								{#if searchResult[perPage * ((currentPage || 1) - 1) + i].tags != null}
-									{#each searchResult[perPage * ((currentPage || 1) - 1) + i].tags as tag (tag)}
-										<span class="tag" style="background-color: {generateColour(tag)}">{tag}</span>
-									{/each}
-								{:else}
-									<p class="message">No tags available</p>
-								{/if}
-							</div>
+						<div class="tags">
+							{#if searchResult[perPage * ((currentPage || 1) - 1) + i].tags != null}
+								{#each searchResult[perPage * ((currentPage || 1) - 1) + i].tags as tag (tag)}
+									<span class="tag" style="background-color: {generateColour(tag)}">{tag}</span>
+								{/each}
+							{:else}
+								<p class="message">No tags available</p>
+							{/if}
 						</div>
-						<div class="my-auto">
-							<Button
-								href="./explore-blog/{searchResult[perPage * ((currentPage || 1) - 1) + i].blogId}"
-								class="bg-white hover:bg-muted"><RightArrow /></Button
-							>
-						</div>
+					</div>
+					<div class="my-auto">
+						<Button href="#responsive-header" class="bg-white border text-black hover:bg-muted">Knock</Button>
+					</div>
 					</div>
 					<!-- {#if Object.keys(searchResult[perPage * ((currentPage || 1) - 1) + i].courses).length > 0}
 						<p class="blog-info">

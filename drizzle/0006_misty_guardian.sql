@@ -1,0 +1,1 @@
+ALTER TABLE "request_table" ADD COLUMN "user_name" text NOT NULL;

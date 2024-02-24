@@ -4,20 +4,16 @@
 
 	const sidebarNavItems = [
 		{
-			title: 'Explore Blogs',
-			href: '/home/blogs/explore-blog'
+			title: 'Request Board',
+			href: '/home/find-a-mate/request-board'
 		},
 		{
-			title: 'My Blogs',
-			href: '/home/blogs/my-blog'
+			title: 'My Requests',
+			href: '/home/find-a-mate/my-request'
 		},
 		{
-			title: 'Saved Blogs',
-			href: '/home/blogs/favorite-blog'
-		},
-		{
-			title: 'Create Blog',
-			href: '/home/blogs/new-blog'
+			title: 'Create Request',
+			href: '/home/find-a-mate/new-request'
 		}
 	];
 </script>

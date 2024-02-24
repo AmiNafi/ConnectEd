@@ -1,10 +1,9 @@
 import type { RequestHandler } from "@sveltejs/kit";
-import {getBlog} from "$lib/server/queries"
-import type {blog} from "$lib/server/schema";
+import {getBlogComment} from "$lib/server/queries"
 
 export const POST: RequestHandler = async (event) => {
     const data = await event.request.json()
-    const res = await getBlog(data.blogId, data.userId)
+    const res = await getBlogComment(data.blogId)
 
     // console.log(res);
     return new Response(
