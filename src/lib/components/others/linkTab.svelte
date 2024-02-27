@@ -151,11 +151,11 @@
 							</Dialog.Description>
 						</Dialog.Header>
 						<form
-							use:enhance={() => {
-								return async ({ update }) => {
-									update({ reset: false });
-								};
-							}}
+						use:enhance={() => {
+							return async ({ update }) => {
+								update({ reset: false, invalidateAll:false });
+							};
+						}}
 							action="?/uploadLink"
 							method="post"
 							enctype="multipart/form-data"
@@ -390,11 +390,11 @@ c0,1.657-1.343,3-3,3s-3-1.343-3-3V25c0-1.657,1.343-3,3-3s3,1.343,3,3V51z"
 					</Dialog.Description>
 				</Dialog.Header>
 				<form
-					use:enhance={() => {
-						return async ({ update }) => {
-							update({ reset: false });
-						};
-					}}
+				use:enhance={() => {
+					return async ({ update }) => {
+						update({ reset: false, invalidateAll:false });
+					};
+				}}
 					action="?/updateLink"
 					method="post"
 					enctype="multipart/form-data"
@@ -475,11 +475,11 @@ c0,1.657-1.343,3-3,3s-3-1.343-3-3V25c0-1.657,1.343-3,3-3s3,1.343,3,3V51z"
 					</Dialog.Description>
 				</Dialog.Header>
 				<form
-					use:enhance={() => {
-						return async ({ update }) => {
-							update({ reset: false });
-						};
-					}}
+				use:enhance={() => {
+					return async ({ update }) => {
+						update({ reset: false, invalidateAll:false });
+					};
+				}}
 					action="?/deleteLink"
 					method="post"
 					on:submit={() => {

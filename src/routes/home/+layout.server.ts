@@ -18,6 +18,7 @@ export const load = async ({ locals: { supabase }, fetch }) => {
 	}
 
 	const ret = await getUserData()
+	// localStorage.setItem("1",'1')
 	setUserId(ret[0].userId)
 	return {
 		user: ret

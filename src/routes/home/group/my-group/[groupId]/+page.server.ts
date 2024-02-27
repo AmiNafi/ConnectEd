@@ -1,4 +1,5 @@
 import { userId } from '$lib/stores/user.js';
+import { redirect, type Actions } from '@sveltejs/kit';
 
 export const load = async ({ params, fetch }) => {
 	let groupId = params.groupId;

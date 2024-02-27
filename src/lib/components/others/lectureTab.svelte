@@ -152,8 +152,8 @@
 						</Dialog.Header>
 						<form
 							use:enhance={() => {
-								return async ({ update }) => {
-									update({ reset: false });
+								return async ({ update, result }) => {
+									update({ reset: false, invalidateAll: false });
 								};
 							}}
 							action="?/uploadLecture"
@@ -393,7 +393,7 @@ c0,1.657-1.343,3-3,3s-3-1.343-3-3V25c0-1.657,1.343-3,3-3s3,1.343,3,3V51z"
 				<form
 					use:enhance={() => {
 						return async ({ update }) => {
-							update({ reset: false });
+							update({ reset: false, invalidateAll: false });
 						};
 					}}
 					action="?/updateLecture"
@@ -479,7 +479,7 @@ c0,1.657-1.343,3-3,3s-3-1.343-3-3V25c0-1.657,1.343-3,3-3s3,1.343,3,3V51z"
 				<form
 					use:enhance={() => {
 						return async ({ update }) => {
-							update({ reset: false });
+							update({ reset: false, invalidateAll:false });
 						};
 					}}
 					action="?/deleteLecture"

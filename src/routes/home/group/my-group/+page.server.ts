@@ -1,4 +1,5 @@
 import { userId } from '$lib/stores/user.js';
+import type { Actions } from '@sveltejs/kit';
 
 export const load = async ({ params, fetch }) => {
 	let id: number;
@@ -20,3 +21,23 @@ export const load = async ({ params, fetch }) => {
 		myGroups: getMyGroups()
 	};
 };
+
+export const actions = {
+	join: async (event) => {
+		const formData = await event.request.formData();
+		let data = Object.fromEntries(formData.entries()) as any;
+		
+		// console.log(data)
+
+		const ret = await event.fetch('/api/group/join', {
+			method: 'POST',
+			body: JSON.stringify(data)
+		});
+
+		const res = await ret.json()
+
+		// console.log(res)
+
+		return res
+	}
+} satisfies Actions;

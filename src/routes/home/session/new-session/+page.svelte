@@ -93,7 +93,11 @@
 	{/if}
 	<Separator />
 	<form
-		use:enhance
+	use:enhance={() => {
+		return async ({ update }) => {
+			update({invalidateAll:false });
+		};
+	}}
 		action="?/create"
 		method="post"
 		on:submit={() => {

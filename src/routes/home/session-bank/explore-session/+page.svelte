@@ -10,6 +10,9 @@
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
 	import Button from '$lib/components/ui/button/button.svelte';
+	import RightArrow from '$lib/components/others/right-arrow.svelte';
+	import { onMount } from 'svelte';
+	import { Circle } from 'svelte-loading-spinners';
 
 	let items = [{ href: 'home/session-bank/explore-session', text: 'Explore Sessions' }];
 
@@ -17,9 +20,11 @@
 	export let form: ActionData;
 
 	const userData = data.user[0];
-	let searchResult = data.searchResult;
+	let searchResult: any = null;
+
 	let perPage = 5;
-	let cnt = Math.max(Object.keys(searchResult).length,1)
+	let cnt: number;
+
 	function onFav(index: number, sessionId: number) {
 		searchResult[index].sessionFavs.push({ userId: userData.userId });
 		searchResult = searchResult;
@@ -34,38 +39,48 @@
 	let tag = '';
 	let sortBy = '';
 
-	$:{
-		console.log(form?.success)
-		if(form?.success=="search"){
-			searchResult = form.searchResult
-			cnt = Math.max(Object.keys(searchResult).length,1)
+	onMount(() => {
+		data.searchResult.then((res) => {
+			searchResult = res;
+			console.log(res)
+			cnt = Math.max(Object.keys(searchResult).length, 1);
+		});
+	});
+
+	$: {
+		console.log(form?.success);
+		if (form?.success == 'search') {
+			searchResult = form.searchResult;
+			cnt = Math.max(Object.keys(searchResult).length, 1);
 			// console.log(searchResult)
-			form.success = ''
+			form.success = '';
 		}
 	}
 
-	$:{
-		searchResult = searchResult.sort(function (x: any, y: any) {
-			if (sortBy == 'oldest') {
-				if (x.createdAt < y.createdAt) {
-					return -1;
+	$: {
+		if (searchResult) {
+			searchResult = searchResult.sort(function (x: any, y: any) {
+				if (sortBy == 'oldest') {
+					if (x.createdAt < y.createdAt) {
+						return -1;
+					}
+					if (x.createdAt > y.createdAt) {
+						return 1;
+					}
+					return 0;
+				} else if (sortBy == 'newest') {
+					if (x.createdAt < y.createdAt) {
+						return 1;
+					}
+					if (x.createdAt > y.createdAt) {
+						return -1;
+					}
+					return 0;
+				} else {
+					return 0;
 				}
-				if (x.createdAt > y.createdAt) {
-					return 1;
-				}
-				return 0;
-			} else if (sortBy == 'newest') {
-				if (x.createdAt < y.createdAt) {
-					return 1;
-				}
-				if (x.createdAt > y.createdAt) {
-					return -1;
-				}
-				return 0;
-			} else {
-				return 0;
-			}
-		});
+			});
+		}
 	}
 </script>
 
@@ -78,9 +93,10 @@
 		class="mt-5 flex w-[90%] flex-row justify-between gap-20"
 		use:enhance={() => {
 			return async ({ update }) => {
-				update({ reset: false });
+				update({ reset: false, invalidateAll:false });
 			};
 		}}
+		on:submit={()=>{searchResult=null}}
 		action="?/search"
 		method="post"
 	>
@@ -99,118 +115,135 @@
 		</select>
 		<Button class="bg-green-500 hover:bg-green-700" type="submit">Search</Button>
 	</form>
-	<Pagination.Root count={cnt} {perPage} let:pages let:currentPage>
-		{#each Array(perPage) as _, i}
-			{#if i < Object.keys(searchResult).length}
-				<!-- svelte-ignore a11y-click-events-have-key-events -->
-				<!-- svelte-ignore a11y-no-static-element-interactions -->
-				<div
-					class="session-card"
-					on:click={() => {
-						goto(
-							'explore-session/' + searchResult[perPage * ((currentPage || 1) - 1) + i].sessionId
-						);
-					}}
-				>
-					<!-- <div class="session-card"> -->
-					<div class="flex justify-end">
-						<button class="flex items-center rounded-full px-4 py-2 text-white">
-							{#if searchResult[perPage * ((currentPage || 1) - 1) + i].sessionFavs[0] == undefined}
-								<form
-									use:enhance
-									action="?/favorite"
-									method="post"
-									on:submit={() => {
-										onFav(
-											perPage * ((currentPage || 1) - 1) + i,
-											searchResult[perPage * ((currentPage || 1) - 1) + i].sessionId
-										);
+	{#if !searchResult}
+		<div class="flex h-full w-full items-center justify-center">
+			<Circle size="60" color="#FF3E00" unit="px" duration="1s" />
+		</div>
+	{:else}
+		<Pagination.Root count={cnt} {perPage} let:pages let:currentPage>
+			{#each Array(perPage) as _, i}
+				{#if i < Object.keys(searchResult).length}
+					<!-- svelte-ignore a11y-click-events-have-key-events -->
+					<!-- svelte-ignore a11y-no-static-element-interactions -->
+					<div class="session-card">
+						<!-- <div class="session-card"> -->
+						<div class="flex justify-end">
+							<button class="flex items-center rounded-full px-4 py-2 text-white">
+								{#if searchResult[perPage * ((currentPage || 1) - 1) + i].sessionFavs[0] == undefined}
+									<form
+									use:enhance={() => {
+										return async ({ update }) => {
+											update({ invalidateAll:false });
+										};
 									}}
-								>
-									<input hidden id="userId" name="userId" value={userData.userId} />
-									<input
-										hidden
-										id="sessionId"
-										name="sessionId"
-										value={searchResult[perPage * ((currentPage || 1) - 1) + i].sessionId}
-									/>
-									<button type="submit"><Favorite design="hover:scale-110" /></button>
-								</form>
-							{:else}
-								<form
-									use:enhance
-									action="?/unfavorite"
-									method="post"
-									on:submit={() => {
-										onUnFav(
-											perPage * ((currentPage || 1) - 1) + i,
-											searchResult[perPage * ((currentPage || 1) - 1) + i].sessionId
-										);
+										action="?/favorite"
+										method="post"
+										on:submit={() => {
+											onFav(
+												perPage * ((currentPage || 1) - 1) + i,
+												searchResult[perPage * ((currentPage || 1) - 1) + i].sessionId
+											);
+										}}
+									>
+										<input hidden id="userId" name="userId" value={userData.userId} />
+										<input
+											hidden
+											id="sessionId"
+											name="sessionId"
+											value={searchResult[perPage * ((currentPage || 1) - 1) + i].sessionId}
+										/>
+										<button type="submit"><Favorite design="hover:scale-110" /></button>
+									</form>
+								{:else}
+									<form
+									use:enhance={() => {
+										return async ({ update }) => {
+											update({invalidateAll:false });
+										};
 									}}
+										action="?/unfavorite"
+										method="post"
+										on:submit={() => {
+											onUnFav(
+												perPage * ((currentPage || 1) - 1) + i,
+												searchResult[perPage * ((currentPage || 1) - 1) + i].sessionId
+											);
+										}}
+									>
+										<input hidden id="userId" name="userId" value={userData.userId} />
+										<input
+											hidden
+											id="sessionId"
+											name="sessionId"
+											value={searchResult[perPage * ((currentPage || 1) - 1) + i].sessionId}
+										/>
+										<button type="submit"><Favorited design="hover:scale-110" /></button>
+									</form>
+								{/if}
+							</button>
+						</div>
+						<div class="flex flex-row justify-between">
+							<div>
+								<h2>{searchResult[perPage * ((currentPage || 1) - 1) + i].sessionName}</h2>
+								<p class="session-info">
+									Created by {searchResult[perPage * ((currentPage || 1) - 1) + i].user.userName} on
+									{searchResult[perPage * ((currentPage || 1) - 1) + i].createdAt.split('T')[0]}
+								</p>
+
+								<div class="tags">
+									{#if searchResult[perPage * ((currentPage || 1) - 1) + i].tags != null}
+										{#each searchResult[perPage * ((currentPage || 1) - 1) + i].tags as tag (tag)}
+											<span class="tag">{tag}</span>
+										{/each}
+									{:else}
+										<p class="message">No tags available</p>
+									{/if}
+								</div>
+
+								{#if Object.keys(searchResult[perPage * ((currentPage || 1) - 1) + i].courses).length > 0}
+									<p class="session-info">
+										Courses: {searchResult[perPage * ((currentPage || 1) - 1) + i].courses
+											.map((course) => course.courseName)
+											.join(', ')}
+									</p>
+								{:else}
+									<p class="message">No courses available</p>
+								{/if}
+							</div>
+							<div class="my-auto">
+								<Button
+									href="explore-session/{searchResult[perPage * ((currentPage || 1) - 1) + i]
+										.sessionId}"
+									class="bg-white hover:bg-muted"><RightArrow /></Button
 								>
-									<input hidden id="userId" name="userId" value={userData.userId} />
-									<input
-										hidden
-										id="sessionId"
-										name="sessionId"
-										value={searchResult[perPage * ((currentPage || 1) - 1) + i].sessionId}
-									/>
-									<button type="submit"><Favorited design="hover:scale-110" /></button>
-								</form>
-							{/if}
-						</button>
+							</div>
+						</div>
 					</div>
-					<h2>{searchResult[perPage * ((currentPage || 1) - 1) + i].sessionName}</h2>
-					<p class="session-info">
-						Created by {searchResult[perPage * ((currentPage || 1) - 1) + i].user.userName} on {searchResult[
-							perPage * ((currentPage || 1) - 1) + i
-						].createdAt.split('T')[0]}
-					</p>
-
-					<div class="tags">
-						{#if searchResult[perPage * ((currentPage || 1) - 1) + i].tags != null}
-							{#each searchResult[perPage * ((currentPage || 1) - 1) + i].tags as tag (tag)}
-								<span class="tag">{tag}</span>
-							{/each}
-						{:else}
-							<p class="message">No tags available</p>
-						{/if}
-					</div>
-
-					{#if Object.keys(searchResult[perPage * ((currentPage || 1) - 1) + i].courses).length > 0}
-						<p class="session-info">
-							Courses: {searchResult[perPage * ((currentPage || 1) - 1) + i].courses
-								.map((course) => course.courseName)
-								.join(', ')}
-						</p>
-					{:else}
-						<p class="message">No courses available</p>
-					{/if}
-				</div>
-			{/if}
-		{/each}
-		<Pagination.Content>
-			<Pagination.Item>
-				<Pagination.PrevButton />
-			</Pagination.Item>
-			{#each pages as page (page.key)}
-				{#if page.type === 'ellipsis'}
-					<Pagination.Item>
-						<Pagination.Ellipsis />
-					</Pagination.Item>
-				{:else}
-					<Pagination.Item>
-						<Pagination.Link {page} isActive={currentPage == page.value}>
-							{page.value}
-						</Pagination.Link>
-					</Pagination.Item>
 				{/if}
 			{/each}
-			<Pagination.Item>
-				<Pagination.NextButton />
-			</Pagination.Item>
-		</Pagination.Content>
-	</Pagination.Root>
+			<Pagination.Content>
+				<Pagination.Item>
+					<Pagination.PrevButton />
+				</Pagination.Item>
+				{#each pages as page (page.key)}
+					{#if page.type === 'ellipsis'}
+						<Pagination.Item>
+							<Pagination.Ellipsis />
+						</Pagination.Item>
+					{:else}
+						<Pagination.Item>
+							<Pagination.Link {page} isActive={currentPage == page.value}>
+								{page.value}
+							</Pagination.Link>
+						</Pagination.Item>
+					{/if}
+				{/each}
+				<Pagination.Item>
+					<Pagination.NextButton />
+				</Pagination.Item>
+			</Pagination.Content>
+		</Pagination.Root>
+	{/if}
 </div>
 
 <style>

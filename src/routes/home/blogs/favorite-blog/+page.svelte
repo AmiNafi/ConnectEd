@@ -10,33 +10,32 @@
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
 	import Button from '$lib/components/ui/button/button.svelte';
-	import RightArrow from '$lib/components/others/right-arrow.svelte'
+	import RightArrow from '$lib/components/others/right-arrow.svelte';
+	import { Circle } from 'svelte-loading-spinners';
+	import { onMount } from 'svelte';
 
 	let items = [{ href: 'home/blogs/favorite-blog', text: 'Favorite Blogs' }];
 
 	export let data: PageData;
 
 	const userData = data.user[0];
-	let searchResult = data.favoriteBlog;
+	let searchResult: any = null;
 	let perPage = 5;
-	let cnt = Math.max(Object.keys(searchResult).length, 1);
+	let cnt: number;
 
 	function onUnFav(index: number, blogId: number) {
-		searchResult.splice(index,1)
+		searchResult.splice(index, 1);
 		searchResult = searchResult;
 	}
 
 	let sortBy = '';
 
-	// $: {
-	// 	console.log(form?.success);
-	// 	if (form?.success=="search") {
-	// 		searchResult = form.searchResult;
-	// 		cnt = Math.max(Object.keys(searchResult).length, 1);
-	// 		// console.log(searchResult)
-	// 		form.success = '';
-	// 	}
-	// }
+	onMount(() => {
+		data.favoriteBlogs.then((res) => {
+			searchResult = res;
+			cnt = Math.max(Object.keys(searchResult).length, 1);
+		});
+	});
 
 	function generateColour(str: string) {
 		// Simple hash function to generate a color based on the tag name
@@ -52,30 +51,6 @@
 		}
 		return hash;
 	}
-
-	// $: {
-	// 	searchResult = searchResult.sort(function (x: any, y: any) {
-	// 		if (sortBy == 'oldest') {
-	// 			if (x.createdAt < y.createdAt) {
-	// 				return -1;
-	// 			}
-	// 			if (x.createdAt > y.createdAt) {
-	// 				return 1;
-	// 			}
-	// 			return 0;
-	// 		} else if (sortBy == 'newest') {
-	// 			if (x.createdAt < y.createdAt) {
-	// 				return 1;
-	// 			}
-	// 			if (x.createdAt > y.createdAt) {
-	// 				return -1;
-	// 			}
-	// 			return 0;
-	// 		} else {
-	// 			return 0;
-	// 		}
-	// 	});
-	// }
 </script>
 
 <div class="flex grow flex-col items-center">
@@ -83,44 +58,25 @@
 		<Breadcrumb {items} />
 	</div>
 	<Label class="mt-10 text-center text-3xl font-medium">Favorite Blogs</Label>
-	<!-- <form
-		class="mt-5 flex w-[90%] flex-row justify-between gap-20"
-		use:enhance={() => {
-			return async ({ update }) => {
-				update({ reset: false });
-			};
-		}}
-		action="?/search"
-		method="post"
-	>
-		<input hidden id="userId" name="userId" value={userData.userId} />
-		<Input type="text" placeholder="name" name="name" bind:value={name} class="max-w-xs bg-muted" />
-		<Input type="text" placeholder="tag" name="tag" bind:value={tag} class="max-w-xs bg-muted" />
-		<select
-			bind:value={sortBy}
-			class="inline-flex h-10 items-center justify-center whitespace-nowrap rounded-md bg-muted px-4 py-2 text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2
-    focus-visible:ring-ring
-    focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
-		>
-			<option value="" disabled selected hidden>-- sort by --</option>
-			<option value="newest">Newest</option>
-			<option value="oldest">Oldest</option>
-		</select>
-		<Button class="bg-green-500 hover:bg-green-700" type="submit">Search</Button>
-	</form> -->
-	<Pagination.Root count={cnt} {perPage} let:pages let:currentPage>
-		{#each Array(perPage) as _, i}
-			{#if i < Object.keys(searchResult).length}
-				<!-- svelte-ignore a11y-click-events-have-key-events -->
-				<!-- svelte-ignore a11y-no-static-element-interactions -->
-				<div class="blog-card">
-					<!-- <div class="blog-card"> -->
-					<div class="flex justify-end">
-						<button class="flex items-center rounded-full px-4 py-2 text-white">
+
+	{#if !searchResult}
+		<div class="flex h-full w-full items-center justify-center">
+			<Circle size="60" color="#FF3E00" unit="px" duration="1s" />
+		</div>
+	{:else}
+		<Pagination.Root count={cnt} {perPage} let:pages let:currentPage>
+			{#each Array(perPage) as _, i}
+				{#if i < Object.keys(searchResult).length}
+					<!-- svelte-ignore a11y-click-events-have-key-events -->
+					<!-- svelte-ignore a11y-no-static-element-interactions -->
+					<div class="blog-card">
+						<!-- <div class="blog-card"> -->
+						<div class="flex justify-end">
+							<button class="flex items-center rounded-full px-4 py-2 text-white">
 								<form
 									use:enhance={() => {
 										return async ({ update }) => {
-											update({ reset: false });
+											update({ reset: false, invalidateAll: false });
 										};
 									}}
 									action="?/unfavorite"
@@ -141,35 +97,40 @@
 									/>
 									<button type="submit"><Favorited design="hover:scale-110" /></button>
 								</form>
-						</button>
-					</div>
-					<!-- on:click={() => {
+							</button>
+						</div>
+						<!-- on:click={() => {
 						goto('explore-blog/' + searchResult[perPage * ((currentPage || 1) - 1) + i].blog.blogId);
 					}} -->
-					<div class="flex flex-row justify-between">
-						<div>
-						<h2>{searchResult[perPage * ((currentPage || 1) - 1) + i].blog.blogTitle}</h2>
-						<p class="blog-info">
-							Created by {searchResult[perPage * ((currentPage || 1) - 1) + i].blog.writer.userName} on {searchResult[
-								perPage * ((currentPage || 1) - 1) + i
-							].createdAt.split('T')[0]}
-						</p>
+						<div class="flex flex-row justify-between">
+							<div>
+								<h2>{searchResult[perPage * ((currentPage || 1) - 1) + i].blog.blogTitle}</h2>
+								<p class="blog-info">
+									Created by {searchResult[perPage * ((currentPage || 1) - 1) + i].blog.writer
+										.userName} on {searchResult[
+										perPage * ((currentPage || 1) - 1) + i
+									].createdAt.split('T')[0]}
+								</p>
 
-						<div class="tags">
-							{#if searchResult[perPage * ((currentPage || 1) - 1) + i].blog.tags != null}
-								{#each searchResult[perPage * ((currentPage || 1) - 1) + i].blog.tags as tag (tag)}
-									<span class="tag" style="background-color: {generateColour(tag)}">{tag}</span>
-								{/each}
-							{:else}
-								<p class="message">No tags available</p>
-							{/if}
+								<div class="tags">
+									{#if searchResult[perPage * ((currentPage || 1) - 1) + i].blog.tags != null}
+										{#each searchResult[perPage * ((currentPage || 1) - 1) + i].blog.tags as tag (tag)}
+											<span class="tag" style="background-color: {generateColour(tag)}">{tag}</span>
+										{/each}
+									{:else}
+										<p class="message">No tags available</p>
+									{/if}
+								</div>
+							</div>
+							<div class="my-auto">
+								<Button
+									href="./favorite-blog/{searchResult[perPage * ((currentPage || 1) - 1) + i].blog
+										.blogId}"
+									class="bg-white hover:bg-muted"><RightArrow /></Button
+								>
+							</div>
 						</div>
-					</div>
-					<div class="my-auto">
-						<Button href="./favorite-blog/{searchResult[perPage * ((currentPage || 1) - 1) + i].blog.blogId}" class="bg-white hover:bg-muted"><RightArrow/></Button>
-					</div>
-					</div>
-					<!-- {#if Object.keys(searchResult[perPage * ((currentPage || 1) - 1) + i].blog.courses).length > 0}
+						<!-- {#if Object.keys(searchResult[perPage * ((currentPage || 1) - 1) + i].blog.courses).length > 0}
 						<p class="blog-info">
 							Courses: {searchResult[perPage * ((currentPage || 1) - 1) + i].blog.courses
 								.map((course) => course.courseName)
@@ -178,31 +139,32 @@
 					{:else}
 						<p class="message">No courses available</p>
 					{/if} -->
-				</div>
-			{/if}
-		{/each}
-		<Pagination.Content>
-			<Pagination.Item>
-				<Pagination.PrevButton />
-			</Pagination.Item>
-			{#each pages as page (page.key)}
-				{#if page.type === 'ellipsis'}
-					<Pagination.Item>
-						<Pagination.Ellipsis />
-					</Pagination.Item>
-				{:else}
-					<Pagination.Item>
-						<Pagination.Link {page} isActive={currentPage == page.value}>
-							{page.value}
-						</Pagination.Link>
-					</Pagination.Item>
+					</div>
 				{/if}
 			{/each}
-			<Pagination.Item>
-				<Pagination.NextButton />
-			</Pagination.Item>
-		</Pagination.Content>
-	</Pagination.Root>
+			<Pagination.Content>
+				<Pagination.Item>
+					<Pagination.PrevButton />
+				</Pagination.Item>
+				{#each pages as page (page.key)}
+					{#if page.type === 'ellipsis'}
+						<Pagination.Item>
+							<Pagination.Ellipsis />
+						</Pagination.Item>
+					{:else}
+						<Pagination.Item>
+							<Pagination.Link {page} isActive={currentPage == page.value}>
+								{page.value}
+							</Pagination.Link>
+						</Pagination.Item>
+					{/if}
+				{/each}
+				<Pagination.Item>
+					<Pagination.NextButton />
+				</Pagination.Item>
+			</Pagination.Content>
+		</Pagination.Root>
+	{/if}
 </div>
 
 <style>

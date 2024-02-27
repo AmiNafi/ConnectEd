@@ -119,11 +119,11 @@
 	{/if}
 	<Separator />
 	<form
-		use:enhance={() => {
-			return async ({ update }) => {
-				update({ reset: false });
-			};
-		}}
+	use:enhance={() => {
+		return async ({ update }) => {
+			update({ reset: false, invalidateAll:false });
+		};
+	}}
 		action="?/update"
 		method="post"
 		on:submit={() => {

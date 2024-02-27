@@ -40,6 +40,26 @@ export async function insertUser(newUser: user) {
 	await db.insert(userTable).values(newUser);
 }
 
+export async function updateUser(newUser:user){
+	const tmp = await db.select().from(userTable).where(eq(userTable.userName, newUser.userName))
+
+	if(tmp.length>0 && tmp[0].userId!=newUser.userId){
+		return {
+			success: false,
+			message: "User with this name already exists"
+		}
+	}
+
+	await db.update(userTable).set({
+		userName: newUser.userName
+	}).where(eq(userTable.userId,newUser.userId!))
+
+	return {
+		success: true,
+		message: "User profile updated"
+	}
+}
+
 export async function doesUserExist(newUser: user) {
 	return (await db.select().from(userTable).where(eq(userTable.email, newUser.email))).length != 0;
 }
@@ -274,22 +294,24 @@ export async function getBlog(blogId: number, userId: number) {
 	return ret;
 }
 
-export async function updateBlog(newBlog: blog){
-	await db.update(blogTable)
-	.set({
-		blogContent: newBlog.blogContent,
-		blogTitle: newBlog.blogTitle,
-		tags: newBlog.tags
-	})
-	.where(eq(blogTable.blogId, newBlog.blogId!))
+export async function updateBlog(newBlog: blog) {
+	await db
+		.update(blogTable)
+		.set({
+			blogContent: newBlog.blogContent,
+			blogTitle: newBlog.blogTitle,
+			tags: newBlog.tags
+		})
+		.where(eq(blogTable.blogId, newBlog.blogId!));
 }
 
-export async function updateBlogVote(blogId: number, vote: number){
-	await db.update(blogTable)
-	.set({
-		upvote: sql`${blogTable.upvote}+${vote}`
-	})
-	.where(eq(blogTable.blogId, blogId))
+export async function updateBlogVote(blogId: number, vote: number) {
+	await db
+		.update(blogTable)
+		.set({
+			upvote: sql`${blogTable.upvote}+${vote}`
+		})
+		.where(eq(blogTable.blogId, blogId));
 }
 
 export async function searchBlog(name: string, tag: string, userId: number) {
@@ -299,7 +321,14 @@ export async function searchBlog(name: string, tag: string, userId: number) {
 			LOWER(${blogTable.blogTitle}) LIKE LOWER('%'||${name}||'%') and
 			${tag}=ANY(${blogTable.tags})
 			`,
-			columns: {blogId:true, writerId:true, blogTitle:true, createdAt:true, tags:true, upvote:true},
+			columns: {
+				blogId: true,
+				writerId: true,
+				blogTitle: true,
+				createdAt: true,
+				tags: true,
+				upvote: true
+			},
 			with: {
 				writer: true,
 				blogFavs: {
@@ -317,7 +346,14 @@ export async function searchBlog(name: string, tag: string, userId: number) {
 			LOWER(${blogTable.blogTitle}) LIKE LOWER('%'||${name}||'%')
 
 			`,
-			columns: {blogId:true, writerId:true, blogTitle:true, createdAt:true, tags:true, upvote:true},
+			columns: {
+				blogId: true,
+				writerId: true,
+				blogTitle: true,
+				createdAt: true,
+				tags: true,
+				upvote: true
+			},
 			with: {
 				writer: true,
 				blogFavs: {
@@ -334,7 +370,14 @@ export async function searchBlog(name: string, tag: string, userId: number) {
 			where: sql`
 			${tag}=ANY(${blogTable.tags})
 			`,
-			columns: {blogId:true, writerId:true, blogTitle:true, createdAt:true, tags:true, upvote:true},
+			columns: {
+				blogId: true,
+				writerId: true,
+				blogTitle: true,
+				createdAt: true,
+				tags: true,
+				upvote: true
+			},
 			with: {
 				writer: true,
 				blogFavs: {
@@ -348,7 +391,14 @@ export async function searchBlog(name: string, tag: string, userId: number) {
 		return ret;
 	} else {
 		const ret = await db.query.blogTable.findMany({
-			columns: {blogId:true, writerId:true, blogTitle:true, createdAt:true, tags:true, upvote:true},
+			columns: {
+				blogId: true,
+				writerId: true,
+				blogTitle: true,
+				createdAt: true,
+				tags: true,
+				upvote: true
+			},
 			with: {
 				writer: true,
 				blogFavs: {
@@ -382,8 +432,8 @@ export async function getFavoriteSession(userId: number) {
 	return await db.query.sessionFavTable.findMany({
 		where: eq(sessionFavTable.userId, userId),
 		with: {
-			session:{
-				with:{
+			session: {
+				with: {
 					courses: true,
 					user: true
 				}
@@ -411,9 +461,17 @@ export async function getFavoriteBlog(userId: number) {
 	return await db.query.blogFavTable.findMany({
 		where: eq(blogFavTable.userId, userId),
 		with: {
-			blog:{
-				with:{
+			blog: {
+				with: {
 					writer: true
+				},
+				columns: {
+					blogId: true,
+					blogTitle: true,
+					createdAt: true,
+					tags: true,
+					upvote: true,
+					writerId: true
 				}
 			}
 		}
@@ -426,13 +484,13 @@ export async function voteBlog(newBlogVote: blogVote) {
 }
 
 export async function unvoteBlog(newBlogVote: blogVote) {
-	console.log(newBlogVote)
+	console.log(newBlogVote);
 	await db.delete(blogVoteTable).where(
 		sql`
 		${newBlogVote.blogId} = ${blogVoteTable.blogId} AND
 		${newBlogVote.userId} = ${blogVoteTable.userId}
 		`
-	)
+	);
 }
 
 //Blog Comment
@@ -441,8 +499,7 @@ export async function commentBlog(newBlogComment: blogComment) {
 }
 
 export async function getBlogComment(blogId: number) {
-	return await db.select().from(blogCommentTable).
-	where(eq(blogCommentTable.blogId, blogId))
+	return await db.select().from(blogCommentTable).where(eq(blogCommentTable.blogId, blogId));
 }
 
 //Request
@@ -450,10 +507,8 @@ export async function addRequest(newReq: request) {
 	return await db.insert(requestTable).values(newReq).returning();
 }
 
-export async function getRequest(userId: number){
-	return await db.select().from(requestTable).where(
-		eq(requestTable.userId, userId)
-	)
+export async function getRequest(userId: number) {
+	return await db.select().from(requestTable).where(eq(requestTable.userId, userId));
 }
 
 export async function searchRequest(name: string, tag: string, userId: number) {
@@ -466,11 +521,14 @@ export async function searchRequest(name: string, tag: string, userId: number) {
 		});
 		return ret;
 	} else if (name) {
-		const ret = await db.select().from(requestTable).where(
-			sql`
+		const ret = await db
+			.select()
+			.from(requestTable)
+			.where(
+				sql`
 			LOWER(${requestTable.title}) LIKE LOWER('%'||${name}||'%')
 			`
-		);
+			);
 		return ret;
 	} else if (tag) {
 		const ret = await db.query.requestTable.findMany({
@@ -488,38 +546,147 @@ export async function searchRequest(name: string, tag: string, userId: number) {
 //Group
 
 export async function insertGroup(newGroup: group) {
+	const tmp = await db
+		.select()
+		.from(groupTable)
+		.where(eq(groupTable.groupName, newGroup.groupName));
+
+	if (tmp.length > 0) {
+		return {
+			success: false,
+			message: 'Group with this name already exists'
+		};
+	}
+
 	const ret = await db.insert(groupTable).values(newGroup).returning();
-	insertMember({groupId: ret[0].groupId, userId: ret[0].creatorId})
+	insertMember({ groupId: ret[0].groupId, userId: ret[0].creatorId });
+
+	return {
+		success: true,
+		message: 'Group successfully created'
+	};
 }
 
 export async function deleteGroup(groupId: number) {
-	await db.delete(groupTable).where(eq(groupTable.groupId,groupId))
+	await db.delete(groupTable).where(eq(groupTable.groupId, groupId));
 }
 
-export async function getMyGroups(userId: number){
+export async function updateGroup(newGroup: group) {
+	const tmp = newGroup.groupName;
+
+	if (tmp) {
+		const tmp2 = await db
+			.select()
+			.from(groupTable)
+			.where(eq(groupTable.groupName, newGroup.groupName));
+
+		if (tmp2.length > 0) {
+			return {
+				success: false,
+				message: 'Group with this name already exists'
+			};
+		}
+
+		await db
+			.update(groupTable)
+			.set({
+				groupName: newGroup.groupName,
+				description: newGroup.description,
+				password: newGroup.password
+			})
+			.where(eq(groupTable.groupId, newGroup.groupId!));
+	} else {
+		await db
+			.update(groupTable)
+			.set({
+				description: newGroup.description,
+				password: newGroup.password
+			})
+			.where(eq(groupTable.groupId, newGroup.groupId!));
+	}
+
+	return {
+		success: true,
+		message: 'Group successfully updated'
+	};
+}
+
+export async function getMyGroups(userId: number) {
 	return await db.query.memberTable.findMany({
 		where: eq(memberTable.userId, userId),
 		with: {
 			group: true
 		}
-	}) 
+	});
 }
 
-export async function getGroupInfo(groupId: number){
+export async function getGroupInfo(groupId: number) {
 	return await db.query.groupTable.findMany({
-		where: eq(groupTable.groupId, groupId),
-	})
+		where: eq(groupTable.groupId, groupId)
+	});
+}
+
+export async function joinGroup(groupName: string, password: string, userId: number) {
+	const group = await db
+		.select()
+		.from(groupTable)
+		.where(
+			sql`
+		${groupTable.groupName} =  ${groupName} AND
+		${groupTable.password} = ${password}
+		`
+		);
+
+	if (group.length != 0) {
+		const member = await db
+			.select()
+			.from(memberTable)
+			.where(
+				sql`
+			${memberTable.groupId} = ${group[0].groupId} AND
+			${memberTable.userId} = ${userId}
+
+			`
+			);
+
+		if (member.length != 0) {
+			return {
+				success: false,
+				message: 'Already a member of this group'
+			};
+		} else {
+			await db.insert(memberTable).values({ groupId: group[0].groupId, userId: userId });
+			return {
+				success: true,
+				message: 'Group Joined Successfully'
+			};
+		}
+	} else {
+		return {
+			success: false,
+			message: 'Invalid Credentials'
+		};
+	}
+}
+
+export async function leaveGroup(userId: number, groupId: number) {
+	await db.delete(memberTable).where(
+		sql`
+		${memberTable.userId} = ${userId} AND
+		${memberTable.groupId} = ${groupId}
+		`
+	);
 }
 
 //Member
 
-export async function getMemberInfo(groupId: number){
+export async function getMemberInfo(groupId: number) {
 	return await db.query.memberTable.findMany({
 		where: eq(memberTable.groupId, groupId),
 		with: {
 			member: true
 		}
-	})
+	});
 }
 
 export async function insertMember(newMember: member) {
@@ -532,5 +699,5 @@ export async function deleteMember(newMember: member) {
 		${memberTable.groupId} = ${newMember.groupId} AND
 		${memberTable.userId} = ${newMember.userId}
 		`
-	)
+	);
 }

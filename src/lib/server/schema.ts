@@ -55,8 +55,9 @@ export type sessionVote = typeof sessionVoteTable.$inferInsert;
 export type sessionFav = typeof sessionFavTable.$inferInsert;
 export type blogVote = typeof blogVoteTable.$inferInsert;
 export type blogFav = typeof blogFavTable.$inferInsert;
-export type blogComment = typeof blogCommentTable.$inferInsert
-export type request = typeof requestTable.$inferInsert
+export type blogComment = typeof blogCommentTable.$inferInsert;
+export type request = typeof requestTable.$inferInsert;
+export type groupMessage = typeof groupChatTable.$inferInsert;
 
 export const userTable = pgTable('user_table', {
 	userId: serial('user_id').primaryKey(),
@@ -392,57 +393,66 @@ export const blogFavTable = pgTable(
 	}
 );
 
-export const blogCommentTable = pgTable(
-	'blog_comment_table',
-	{
-		commentId: serial('comment_id').primaryKey(),
-		blogId: integer('blog_id')
+export const blogCommentTable = pgTable('blog_comment_table', {
+	commentId: serial('comment_id').primaryKey(),
+	blogId: integer('blog_id')
 		.references(() => blogTable.blogId, { onDelete: 'cascade' })
 		.notNull(),
-		userId: integer('user_id')
-			.references(() => userTable.userId, { onDelete: 'cascade' })
-			.notNull(),
-		comment: text('comment').notNull(),
-		createdAt: timestamp('created_at').defaultNow(),
-		userName: text('user_name').notNull(),
-		imageLink: text('image_link').notNull()
-	}
-)
+	userId: integer('user_id')
+		.references(() => userTable.userId, { onDelete: 'cascade' })
+		.notNull(),
+	comment: text('comment').notNull(),
+	createdAt: timestamp('created_at').defaultNow(),
+	userName: text('user_name').notNull(),
+	imageLink: text('image_link').notNull()
+});
 
-export const requestTable = pgTable(
-	"request_table",
-	{
-		requestId: serial('request_id').primaryKey(),
-		userId: integer('user_id')
+export const requestTable = pgTable('request_table', {
+	requestId: serial('request_id').primaryKey(),
+	userId: integer('user_id')
 		.references(() => userTable.userId, { onDelete: 'cascade' })
 		.notNull(),
-		createdAt: timestamp('created_at').defaultNow(),
-		title: text('title').notNull(),
-		description: text('description').notNull(),
-		userName: text('user_name').notNull(),
-		tags: text('tags').array(),
-		date: text('data')
-	}
-)
+	createdAt: timestamp('created_at').defaultNow(),
+	title: text('title').notNull(),
+	description: text('description').notNull(),
+	userName: text('user_name').notNull(),
+	tags: text('tags').array(),
+	date: text('data')
+});
 
-export const acceptedTable = pgTable(
-	'accepted_table',
-	{
-		acceptedId: serial('accepted_id').primaryKey(),
-		from: integer('user1_id')
+export const acceptedTable = pgTable('accepted_table', {
+	acceptedId: serial('accepted_id').primaryKey(),
+	from: integer('user1_id')
 		.references(() => userTable.userId, { onDelete: 'cascade' })
 		.notNull(),
-		to: integer('user2_id')
+	to: integer('user2_id')
 		.references(() => userTable.userId, { onDelete: 'cascade' })
 		.notNull(),
-		userName: text('user_name').notNull(),
-		createdAt: timestamp('created_at').defaultNow(),
-		title: text('title').notNull(),
-		description: text('description').notNull(),
-		tags: text('tags').array(),
-		date: text('data').notNull()
-	}
-)
+	userName: text('user_name').notNull(),
+	createdAt: timestamp('created_at').defaultNow(),
+	title: text('title').notNull(),
+	description: text('description').notNull(),
+	tags: text('tags').array(),
+	date: text('data').notNull()
+});
+
+/*
+	Realtime Tables
+*/
+
+export const groupChatTable = pgTable('group_chat_table', {
+	messageId: serial('message_id').primaryKey(),
+	createdAt: timestamp('created_at').defaultNow(),
+	groupId: integer('group_id')
+		.references(() => groupTable.groupId, { onDelete: 'cascade' })
+		.notNull(),
+	userId: integer('user_id')
+		.references(() => userTable.userId, { onDelete: 'cascade' })
+		.notNull(),
+	userName: text('user_name').notNull(),
+	imageLink: text('image_link').notNull(),
+	message: text('message').notNull()
+});
 
 /*
 	Relationships  
@@ -454,7 +464,7 @@ export const userRelationships = relations(userTable, ({ many }) => ({
 	sessionVotes: many(sessionVoteTable),
 	sessionFavs: many(sessionFavTable),
 	blogVotes: many(blogVoteTable),
-	blogFavs: many(blogFavTable),
+	blogFavs: many(blogFavTable)
 	// groups: many(groupTable)
 }));
 
@@ -513,7 +523,7 @@ export const blogRelationships = relations(blogTable, ({ many, one }) => ({
 		references: [userTable.userId]
 	}),
 	blogVotes: many(blogVoteTable),
-	blogFavs: many(blogFavTable),
+	blogFavs: many(blogFavTable)
 }));
 
 export const sessionVoteRelationship = relations(sessionVoteTable, ({ one }) => ({
@@ -560,11 +570,11 @@ export const blogFavRelationship = relations(blogFavTable, ({ one }) => ({
 	})
 }));
 
-export const groupRelationship = relations(groupTable, ({many}) => ({
+export const groupRelationship = relations(groupTable, ({ many }) => ({
 	// members: many(userTable)
-}))
+}));
 
-export const memberRelationship = relations(memberTable, ({one})=>({
+export const memberRelationship = relations(memberTable, ({ one }) => ({
 	group: one(groupTable, {
 		fields: [memberTable.groupId],
 		references: [groupTable.groupId]
@@ -573,4 +583,4 @@ export const memberRelationship = relations(memberTable, ({one})=>({
 		fields: [memberTable.userId],
 		references: [userTable.userId]
 	})
-}))
+}));

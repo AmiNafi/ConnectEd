@@ -211,11 +211,11 @@
 		<div class="comment-section max-w-screen-l w-full">
 			<h2>Leave a Comment</h2>
 			<form
-				use:enhance={() => {
-					return async ({ update }) => {
-						update({ reset: false });
-					};
-				}}
+			use:enhance={() => {
+				return async ({ update }) => {
+					update({ reset: false, invalidateAll:false });
+				};
+			}}
 				action="?/comment"
 				method="post"
 				on:submit={() => {

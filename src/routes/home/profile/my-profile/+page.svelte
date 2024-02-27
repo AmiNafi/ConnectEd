@@ -1,35 +1,34 @@
 <script lang="ts">
-	import type { LayoutData } from "../$types";
+	import type { LayoutData } from '../$types';
 
-    export let data: LayoutData;
+	export let data: LayoutData;
 	const userData = data.user[0];
-    // console.log(data , userData);
-    // console.log(userData.blogs.length);
+	// console.log(data , userData);
+	// console.log(userData.blogs.length);
 </script>
 
-
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+<link
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+	rel="stylesheet"
+/>
 <title>My Profile</title>
 
-<body class="flex flex-row justify-center mx-auto">
+<div class="flex grow flex-col items-center space-y-6">
+	<div class="mx-auto mt-8 max-w-4xl rounded-lg bg-white p-6 shadow-md">
+		<div class="mb-6 flex flex-row justify-center">
 
-<div class="max-w-4xl mx-auto mt-8 p-6 bg-white rounded-lg shadow-md">
-    <div class="flex items-center mb-6">
-        
-        <!-- Add a dummy user name -->
-        <div class="flex items-center mb-6">
-            <!-- <i class="fa-solid fa-user text-4xl"></i> -->
-            <img src={userData.imageLink}  class="object-cover w-full h-40" />
-            <div class="ml-4">
-                <h2 class="text-2xl font-bold text-gray-800">{userData.userName}</h2>
-            </div>
+				<!-- svelte-ignore a11y-missing-attribute -->
+				<img
+					src={userData.imageLink + '?' + Date.now().toString()}
+					class="w-[300px] object-cover"
+				/>
 
-            <!-- <span class="ml-1 text-gray-600"> Level 3 </span> -->
+		</div>
+        <div class="ml-4">
+            <h2 class="text-2xl font-bold text-gray-800 text-center">{userData.userName}</h2>
         </div>
 
-    </div>
-
-    <!-- <div class="flex items-center space-x-4 mb-6">
+		<!-- <div class="flex items-center space-x-4 mb-6">
         <div class="flex-1">
             <p class="text-gray-600">Experience Points</p>
             <div class="flex items-center mt-2">
@@ -42,116 +41,141 @@
             </div>
         </div>
     </div> -->
-    <div class="count-container">
-        <!-- Blog count -->
-        <div class="count max-w-md mx-auto bg-white shadow-lg rounded-lg overflow-hidden p-6">
-            <h2 class="text-xl font-semibold mb-2">Blogs</h2>
-            <div class="text-white font-bold rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-2 bg-blue-500">
-                <!-- Display the number of blogs dynamically here -->
-                {userData.blogs.length} <!-- Example: Replace with dynamic value -->
-            </div>
-            {#if userData.blogs.length > 1}
-                 <!-- content here -->
-                 <p class="text-gray-600">You've written <span class="font-bold">{userData.blogs.length} blogs </span> </p>
-            {:else if  userData.blogs.length == 1}
-                 <!-- else if content here -->
-                 <p class="text-gray-600">You've written <span class="font-bold">{userData.blogs.length} blog </span> </p>
-            {:else}
-                 <!-- else content here -->
-                 <p class="text-gray-600"> You haven't written any blogs yet  </p>
-            {/if}
-            <!-- </p> -->
-        </div>
+		<div class="count-container">
+			<!-- Blog count -->
+			<div class="count mx-auto max-w-md overflow-hidden rounded-lg bg-white p-6 shadow-lg">
+				<h2 class="mb-2 text-xl font-semibold">Blogs</h2>
+				<div
+					class="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-blue-500 font-bold text-white"
+				>
+					<!-- Display the number of blogs dynamically here -->
+					{userData.blogs.length}
+					<!-- Example: Replace with dynamic value -->
+				</div>
+				{#if userData.blogs.length > 1}
+					<!-- content here -->
+					<p class="text-gray-600">
+						You've written <span class="font-bold">{userData.blogs.length} blogs </span>
+					</p>
+				{:else if userData.blogs.length == 1}
+					<!-- else if content here -->
+					<p class="text-gray-600">
+						You've written <span class="font-bold">{userData.blogs.length} blog </span>
+					</p>
+				{:else}
+					<!-- else content here -->
+					<p class="text-gray-600">You haven't written any blogs yet</p>
+				{/if}
+				<!-- </p> -->
+			</div>
 
-        <!-- Session count -->
-        <div class="count max-w-md mx-auto bg-white shadow-lg rounded-lg overflow-hidden p-6">
-            <h2 class="text-xl font-semibold mb-2">Sessions</h2>
-            <div class="text-white font-bold rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-2 bg-green-500">
-                <!-- Display the number of sessions dynamically here -->
-                {userData.sessions.length} <!-- Example: Replace with dynamic value -->
-            </div>
-            <!-- <p class="text-gray-600">You've attended <span class="font-bold">5</span> sessions.</p> -->
-            {#if userData.sessions.length > 1}
-                 <!-- content here -->
-                 <p class="text-gray-600">You've written <span class="font-bold">{userData.sessions.length} blogs </span> </p>
-            {:else if  userData.sessions.length == 1}
-                 <!-- else if content here -->
-                 <p class="text-gray-600">You've written <span class="font-bold">{userData.sessions.length} blog </span> </p>
-            {:else}
-                 <!-- else content here -->
-                 <p class="text-gray-600"> You haven't opened any sessions yet  </p>
-            {/if}
-        </div>
-    </div>
+			<!-- Session count -->
+			<div class="count mx-auto max-w-md overflow-hidden rounded-lg bg-white p-6 shadow-lg">
+				<h2 class="mb-2 text-xl font-semibold">Sessions</h2>
+				<div
+					class="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-green-500 font-bold text-white"
+				>
+					<!-- Display the number of sessions dynamically here -->
+					{userData.sessions.length}
+					<!-- Example: Replace with dynamic value -->
+				</div>
+				<!-- <p class="text-gray-600">You've attended <span class="font-bold">5</span> sessions.</p> -->
+				{#if userData.sessions.length > 1}
+					<!-- content here -->
+					<p class="text-gray-600">
+						You've written <span class="font-bold">{userData.sessions.length} sessions </span>
+					</p>
+				{:else if userData.sessions.length == 1}
+					<!-- else if content here -->
+					<p class="text-gray-600">
+						You've written <span class="font-bold">{userData.sessions.length} session </span>
+					</p>
+				{:else}
+					<!-- else content here -->
+					<p class="text-gray-600">You haven't opened any sessions yet</p>
+				{/if}
+			</div>
+		</div>
 
-    
-    <div class="flex space-x-4 mb-6">
-        <!-- Friends-->
-        <a href="#" class="flex flex-col items-center p-2 bg-blue-100 border border-blue-200 hover:underline">
-            <i class="fa-solid fa-user-group text-2xl mb-2"></i>
-            <span class="text-sm">Friends</span>
-        </a>
+		<div class="mb-6 flex space-x-4">
+			<!-- Friends-->
+			<a
+				href="#"
+				class="flex flex-col items-center border border-blue-200 bg-blue-100 p-2 hover:underline"
+			>
+				<i class="fa-solid fa-user-group mb-2 text-2xl"></i>
+				<span class="text-sm">Friends</span>
+			</a>
 
-        <!-- Followers Link with Follower Logo and Box -->
-        <a href="#" class="flex flex-col items-center p-2 bg-green-100 border border-green-200 hover:underline">
-            <i class="fa-solid fa-user-plus text-2xl mb-2"></i>
-            <span class="text-sm">Followers</span>
-        </a>
+			<!-- Followers Link with Follower Logo and Box -->
+			<a
+				href="#"
+				class="flex flex-col items-center border border-green-200 bg-green-100 p-2 hover:underline"
+			>
+				<i class="fa-solid fa-user-plus mb-2 text-2xl"></i>
+				<span class="text-sm">Followers</span>
+			</a>
 
-        <!-- Sessions Link with Logo and Box -->
-        <a href="/home/session/my-session" class="flex flex-col items-center p-2 bg-purple-100 border border-purple-200 hover:underline">
-            <i class="fa-solid fa-book text-2xl mb-2"></i>
-            <span class="text-sm">Sessions</span>
-        </a>
+			<!-- Sessions Link with Logo and Box -->
+			<a
+				href="/home/session/my-session"
+				class="flex flex-col items-center border border-purple-200 bg-purple-100 p-2 hover:underline"
+			>
+				<i class="fa-solid fa-book mb-2 text-2xl"></i>
+				<span class="text-sm">Sessions</span>
+			</a>
 
-        <!-- Blogs Link with Logo and Box -->
-        <a href="/home/blogs/explore-blog" class="flex flex-col items-center p-2 bg-red-100 border border-red-200 hover:underline">
-            <i class="fas fa-blog text-red-500 text-lg mb-2"></i>
-            <span class="text-sm">Blogs</span>
-        </a>
+			<!-- Blogs Link with Logo and Box -->
+			<a
+				href="/home/blogs/explore-blog"
+				class="flex flex-col items-center border border-red-200 bg-red-100 p-2 hover:underline"
+			>
+				<i class="fas fa-blog mb-2 text-lg text-red-500"></i>
+				<span class="text-sm">Blogs</span>
+			</a>
 
-        <!-- Achievements Link with Logo and Box -->
-        <a href="#" class="flex flex-col items-center p-2 bg-orange-100 border border-orange-200 hover:underline">
-            <i class="fas fa-trophy text-orange-500 text-lg mb-2"></i>
-            <span class="text-sm">Achievements</span>
-        </a>
-    </div>
+			<!-- Achievements Link with Logo and Box -->
+			<a
+				href="#"
+				class="flex flex-col items-center border border-orange-200 bg-orange-100 p-2 hover:underline"
+			>
+				<i class="fas fa-trophy mb-2 text-lg text-orange-500"></i>
+				<span class="text-sm">Achievements</span>
+			</a>
+		</div>
 
-
-    <div class="flex space-x-4 mb-6">
-        <!-- Social Links -->
-        <a href="#" class="text-gray-600 hover:text-blue-500">
-            <i class="fab fa-facebook text-lg"></i>
-        </a>
-        <a href="#" class="text-gray-600 hover:text-blue-500">
-            <i class="fab fa-twitter text-lg"></i>
-        </a>
-        <a href="#" class="text-gray-600 hover:text-blue-500">
-            <i class="fab fa-linkedin-in text-lg"></i>
-        </a>
-    </div>
-
+		<div class="mb-6 flex space-x-4">
+			<!-- Social Links -->
+			<a href="#" class="text-gray-600 hover:text-blue-500">
+				<i class="fab fa-facebook text-lg"></i>
+			</a>
+			<a href="#" class="text-gray-600 hover:text-blue-500">
+				<i class="fab fa-twitter text-lg"></i>
+			</a>
+			<a href="#" class="text-gray-600 hover:text-blue-500">
+				<i class="fab fa-linkedin-in text-lg"></i>
+			</a>
+		</div>
+	</div>
 </div>
 
-</body>
-
 <style>
-    .blog-count {
-        border: 4px ; /* Border color */
-        margin-bottom: 20px;
-    }
+	.blog-count {
+		border: 4px; /* Border color */
+		margin-bottom: 20px;
+	}
 
-    .count-container {
-        display: flex; /* Use Flexbox layout */
-        justify-content: space-between; /* Align items with space between them */
-        margin-bottom: 20px; /* Add margin to create space between count containers and other items */
-    }
+	.count-container {
+		display: flex; /* Use Flexbox layout */
+		justify-content: space-between; /* Align items with space between them */
+		margin-bottom: 20px; /* Add margin to create space between count containers and other items */
+	}
 
-    /* Style for individual count container */
-    .count-container .count {
-        width: calc(50% - 10px); /* Set width for each count container */
-        border: 4px ; /* Border color */
-        text-align: center;
-        padding: 10px;
-    }
+	/* Style for individual count container */
+	.count-container .count {
+		width: calc(50% - 10px); /* Set width for each count container */
+		border: 4px; /* Border color */
+		text-align: center;
+		padding: 10px;
+	}
 </style>

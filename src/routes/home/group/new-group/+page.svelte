@@ -5,26 +5,33 @@
 	import { Label } from '$lib/components/ui/label';
 	import { enhance } from '$app/forms';
 	import { Textarea } from '$lib/components/ui/textarea';
+	import Breadcrumb from '$lib/components/others/breadcrumb.svelte';
 	import type { LayoutData } from '../$types';
 
 	export let data: LayoutData;
 
+	const userData = data.user[0];
 	let supabase = data.supabase;
 	let groupName = '';
 	let description = '';
-	let password = ''
-	let image : File|null
-	let timerId: any;
-	let theme = '#F7C427';
+	let password = '';
+	let image: File | null;
+
+	let items = [{ href: './', text: 'Create Group' }];
 
 	let isLoading = false;
+	let showMessage = false;
+	let successStatus: boolean;
+	let message: string;
+
 	async function onSubmit(event: Event) {
 		isLoading = true;
+		showMessage = false;
 
 		const form = event.target as HTMLFormElement;
 		const data = new FormData(form);
 
-		let name = data.get('groupName')!.toString();
+		let name = Date.now().toString();
 
 		const { data: res1, error: err1 } = await supabase.storage
 			.from('groupPhoto')
@@ -33,29 +40,35 @@
 				upsert: false
 			});
 
-		const { data: link } = supabase.storage
-			.from('groupPhoto')
-			.getPublicUrl((name));
+		const { data: link } = supabase.storage.from('groupPhoto').getPublicUrl(name);
 
 		let payload = {
-			"creatorId": data.get("creatorId"),
-			"groupName": data.get("groupName"),
-			"description": data.get("description"),
-			"imageLink": link.publicUrl,
-			"password": data.get("password")
-		}	
+			creatorId: data.get('creatorId'),
+			groupName: data.get('groupName'),
+			description: data.get('description'),
+			imageLink: link.publicUrl,
+			password: data.get('password')
+		};
 
 		await fetch('/api/group/add', {
 			method: 'POST',
 			body: JSON.stringify(payload)
 		})
+			.then((res) => {
+				return res.json();
+			})
+			.then((res) => {
+				successStatus = res.success;
+				message = res.message;
+				showMessage = true;
+			});
 
-		groupName = ""
-		description = ""
-		password = ""
-		image = null
+		groupName = '';
+		description = '';
+		password = '';
+		image = null;
 
-		isLoading = false
+		isLoading = false;
 	}
 
 	let chipInput = '';
@@ -79,22 +92,33 @@
 />
 
 <div class="flex grow flex-col items-center space-y-6">
+	<div class="flex w-full flex-row flex-wrap items-start justify-start">
+		<Breadcrumb {items} />
+	</div>
 	<div>
 		<h3 class="mt-10 text-center text-3xl font-medium">Create New Group</h3>
 		<p class="text-sm text-gray-800">Create a group with preferred settings</p>
 	</div>
-	<!-- {#if form?.success}
-		<div
-			class="w-[400px] rounded-sm border-2 border-green-500 bg-green-100 px-2 py-2 text-base text-green-500"
-		>
-			Group Successfully Created
-		</div>
-	{/if} -->
+	{#if showMessage}
+		{#if successStatus}
+			<div
+				class="w-[400px] rounded-sm border-2 border-green-500 bg-green-100 px-2 py-2 text-base text-green-500"
+			>
+				{message}
+			</div>
+		{:else}
+			<div
+				class="w-[400px] rounded-sm border-2 border-red-500 bg-red-100 px-2 py-2 text-base text-red-500"
+			>
+				{message}
+			</div>
+		{/if}
+	{/if}
 	<Separator />
 	<form on:submit|preventDefault={onSubmit}>
 		<button type="submit" disabled style="display: none" aria-hidden="true"></button>
 		<!-- svelte-ignore empty-block -->
-		<input hidden id="creatorId" name="creatorId" value={data.user[0].userId} />
+		<input hidden id="creatorId" name="creatorId" value={userData.userId} />
 		<div class="grid gap-10">
 			<div class="grid gap-2">
 				<Label for="groupName">Group Name</Label>

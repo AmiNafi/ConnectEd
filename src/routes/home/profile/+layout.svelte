@@ -7,18 +7,10 @@
 			title: 'My Profile',
 			href: '/home/profile/my-profile'
 		},
-		// {
-		// 	title: 'My Blogs',
-		// 	href: '/home/blogs/my-blog'
-		// },
-		// {
-		// 	title: 'Favorite Blogs',
-		// 	href: '/home/blogs/favorite-blog'
-		// },
-		// {
-		// 	title: 'Create Blog',
-		// 	href: '/home/blogs/new-blog'
-		// }
+		{
+			title: 'Settings',
+			href: '/home/profile/settings'
+		},
 	];
 </script>
 

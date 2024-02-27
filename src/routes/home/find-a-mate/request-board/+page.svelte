@@ -86,7 +86,7 @@
 		class="mt-5 flex w-[90%] flex-row justify-between gap-20"
 		use:enhance={() => {
 			return async ({ update }) => {
-				update({ reset: false });
+				update({ reset: false, invalidateAll:false });
 			};
 		}}
 		action="?/search"

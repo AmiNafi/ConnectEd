@@ -13,13 +13,14 @@
 	import { onMount } from 'svelte';
 	import { Circle } from 'svelte-loading-spinners';
 	import * as Card from '$lib/components/ui/card';
+	import {Button} from '$lib/components/ui/button'
 
 	export let data: PageData;
 
 	let userData = data.user[0];
 	let supabase = data.supabase;
 	let currentGroup: any = null;
-	let memberList: any = null;
+	let memberList: any[] = [];
 	let items = [
 		{ href: './', text: 'My Groups' }
 		// { href: './', text: currentSession.sessionName },
@@ -28,8 +29,8 @@
 	onMount(() => {
 		data.currentGroup.then((res) => {
 			currentGroup = res[0];
-			console.log(currentGroup);
-			items = [...items, { href: './', text: currentGroup.groupName }];
+			// console.log(currentGroup);
+			items = [...items, { href: './'+currentGroup.groupId, text: currentGroup.groupName }];
 
 			loadInitialMessages();
 			subscribeToNewMessages();
@@ -44,13 +45,13 @@
 	let newMessage: any;
 	async function sendMessage() {
 		if (!newMessage.trim()) return;
-		const { data: dt, error: err } = await supabase.from('groupChat').insert([
+		const { data: dt, error: err } = await supabase.from('group_chat_table').insert([
 			{
-				userId: userData.userId,
+				user_id: userData.userId,
 				message: newMessage,
-				groupId: currentGroup.groupId,
-				username: userData.userName,
-				imageLink: userData.imageLink
+				group_id: currentGroup.groupId,
+				user_name: userData.userName,
+				image_link: userData.imageLink
 			}
 		]);
 
@@ -62,11 +63,12 @@
 
 	async function loadInitialMessages() {
 		let { data: res, error: err1 } = await supabase
-			.from('groupChat')
+			.from('group_chat_table')
 			.select('*')
-			.eq('groupId', currentGroup.groupId);
+			.eq('group_id', currentGroup.groupId);
 
-		messages = [...messages, res];
+		messages = res  || [];
+		// console.log(res);
 		messages.sort((a: any, b: any) => {
 			return a.created_at - b.created_at;
 		});
@@ -77,7 +79,7 @@
 			.channel('custom-insert-channel')
 			.on(
 				'postgres_changes',
-				{ event: 'INSERT', schema: 'public', table: 'groupChat' },
+				{ event: 'INSERT', schema: 'public', table: 'group_chat_table' },
 				(payload) => {
 					console.log('Change received!', payload);
 
@@ -88,10 +90,19 @@
 			.subscribe();
 	}
 
-	$: {
-		console.log(messages);
-	}
 
+	async function kickMember(userID: number,index: number) {
+		await fetch('/api/group/leave', {
+			method: 'POST',
+			body: JSON.stringify({
+				userId: userID,
+				groupId: currentGroup.groupId
+			})
+		}).then((res)=>{
+			memberList.splice(index,1)
+			memberList = memberList
+		})
+	}
 </script>
 
 <link
@@ -100,6 +111,7 @@
 />
 
 <div class="flex grow flex-col items-center">
+	
 	<div class="flex w-full flex-row flex-wrap justify-between">
 		<Breadcrumb {items} />
 		{#if currentGroup && userData.userId == currentGroup.creatorId}
@@ -114,19 +126,21 @@
 		<Label class="mb-10 mt-10 text-center text-3xl font-medium">
 			{currentGroup.groupName}
 		</Label>
+		
 		<!-- Lecture Tab -->
 		<Tabs.Root value="home" class="w-5/6 min-w-8">
-			<Tabs.List class="grid w-full grid-cols-3">
+			<Tabs.List class="grid w-full grid-cols-4">
 				<Tabs.Trigger value="home">Home</Tabs.Trigger>
 				<Tabs.Trigger value="chat">Chat</Tabs.Trigger>
 				<Tabs.Trigger value="resources">Resources</Tabs.Trigger>
+				<Tabs.Trigger value="members">Members</Tabs.Trigger>
 				<!-- <Tabs.Trigger value="note">Settings</Tabs.Trigger> -->
 			</Tabs.List>
 
 			<Tabs.Content value="home">
 				<Card.Root class="m-10">
 					<Card.Header class="flex flex-row justify-center">
-						<img src={currentGroup.imageLink} alt="cover" width="500px" />
+						<img src={currentGroup.imageLink+ '?' + Date.now().toString()} alt="cover" width="500px" />
 					</Card.Header>
 					<Card.Header>
 						<Card.Title>{currentGroup.groupName}</Card.Title>
@@ -143,54 +157,98 @@
 			</Tabs.Content>
 
 			<Tabs.Content value="chat">
-				<div class="ml-72 mt-6 w-full">
-					<div class="ml-20 mr-20 min-h-screen">
-						{#each messages as message}
-							{#if message.sender === userData.userId}
-								<div class="chat chat-end">
-									<div class="chat-image avatar">
-										<div class="w-8 rounded-full">
-											<img alt="Tailwind CSS chat bubble component" src={message.imageLink} />
+				<div class="flex flex-row items-center">
+					<div class="ml-72 mt-6 w-full">
+						<div class="ml-20 mr-20 min-h-screen">
+							{#each messages as message}
+								{#if message.user_id === userData.userId}
+									<div class="mb-4 flex items-start justify-end">
+										<div class="h-8 w-8 overflow-hidden rounded-full">
+											<img
+												alt="Sender"
+												src={message.image_link}
+												class="h-full w-full object-cover"
+											/>
+										</div>
+										<div class="w-full max-w-md rounded-lg bg-blue-100 p-4 text-gray-800">
+											<p class="mb-1 text-xs text-gray-600">{message.user_name}</p>
+											<p class="text-sm">{message.message}</p>
+											<p class="mt-1 text-xs text-gray-600">Delivered</p>
 										</div>
 									</div>
-									<div class="chat-header">
-										{message.username}
-										<time class="text-xs opacity-50">{message.created_at}</time>
-									</div>
-									<div class="chat-bubble">{message.message}</div>
-									<div class="chat-footer opacity-50">Delivered</div>
-								</div>
-							{:else}
-								<div class="chat chat-start">
-									<div class="chat-image avatar">
-										<div class="w-10 rounded-full">
-											<img alt="Tailwind CSS chat bubble component" src={message.imageLink} />
+								{:else}
+									<div class="mb-4 flex items-start">
+										<div class="h-8 w-8 overflow-hidden rounded-full">
+											<img
+												alt="Receiver"
+												src={message.image_link}
+												class="h-full w-full object-cover"
+											/>
+										</div>
+										<div class="w-full max-w-md rounded-lg bg-gray-100 p-4 text-gray-800">
+											<p class="mb-1 text-xs text-gray-600">{message.user_name}</p>
+											<p class="text-sm">{message.message}</p>
+											<p class="mt-1 text-xs text-gray-600">Delivered</p>
 										</div>
 									</div>
-									<div class="chat-header">
-										{message.username}
-										<time class="text-xs opacity-50">{message.created_at}</time>
-									</div>
-									<div class="chat-bubble">{message.message}</div>
-									<div class="chat-footer opacity-50">Delivered</div>
-								</div>
-							{/if}
-						{/each}
-						<form class="mb-2" on:submit|preventDefault={sendMessage}>
-							<input
-								class="input input-bordered w-5/6"
-								type="text"
-								bind:value={newMessage}
-								placeholder="Type a message..."
-							/>
-							<button type="submit" class="btn btn-success">Send</button>
-						</form>
+								{/if}
+							{/each}
+							<div class="flex flex-row items-center">
+								<form class="mb-2 flex" on:submit|preventDefault={sendMessage}>
+									<input
+										class="flex-1 rounded-l-lg bg-gray-100 px-4 py-2 focus:border-blue-300 focus:outline-none focus:ring"
+										type="textarea"
+										bind:value={newMessage}
+										placeholder="Type a message..."
+									/>
+									<button type="submit" class="rounded-r-lg bg-blue-500 px-4 py-2 text-white"
+										>Send</button
+									>
+								</form>
+							</div>
+						</div>
 					</div>
 				</div>
 			</Tabs.Content>
+
 			<Tabs.Content value="resources"></Tabs.Content>
 
-			<Tabs.Content value="note"></Tabs.Content>
+			<Tabs.Content value="members">
+				{#each memberList as member,index}
+				<Card.Root class="my-5 w-11/12 hover:shadow">
+					<div class="flex flex-row">
+						<img
+							src={member.member.imageLink}
+							alt="cover"
+							class="h-24 w-24 rounded-full object-cover my-auto"
+						/>
+						<div class="w-full">
+							<Card.Header>
+								<Card.Title
+									>{member.member.userName}</Card.Title
+								>
+							</Card.Header>
+							<Card.Content>
+								<p>Member Since: {member.joinedAt.split('T')[0]}</p>
+							</Card.Content>
+						</div>
+						{#if userData.userId == currentGroup.creatorId && userData.userId != member.userId}
+						<form class="my-auto" on:submit={()=>{kickMember(member.userId, index)}}>
+							<Button
+								type="submit"
+								class="bg-red-400 mr-5 hover:bg-red-500"
+								
+								>
+								Kick
+								</Button
+							>
+						</form>
+						{/if}
+					</div>
+				</Card.Root>
+				{/each}
+			</Tabs.Content>
+
 		</Tabs.Root>
 	{/if}
 </div>

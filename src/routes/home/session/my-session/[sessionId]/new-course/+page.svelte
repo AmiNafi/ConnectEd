@@ -96,11 +96,11 @@
 		</div>
 	{/if}
 	<form
-		use:enhance={() => {
-			return async ({ update }) => {
-				update({ reset: false });
-			};
-		}}
+	use:enhance={() => {
+		return async ({ update }) => {
+			update({ reset: false, invalidateAll:false });
+		};
+	}}
 		action="?/create"
 		method="post"
 		on:submit={() => {

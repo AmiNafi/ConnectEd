@@ -3,6 +3,8 @@
 	import type { blog } from '$lib/server/schema';
 	import Breadcrumb from '$lib/components/others/breadcrumb.svelte';
 	import { Label } from '$lib/components/ui/label';
+	import Button from '$lib/components/ui/button/button.svelte';
+	import RightArrow from '$lib/components/others/right-arrow.svelte';
 
 	export let data: LayoutData;
 	const userData = data.user[0];
@@ -34,29 +36,37 @@
 	{#each userBlogs as blog}
 		<div class="mx-auto mt-8 w-full max-w-full p-4">
 			<!-- svelte-ignore a11y-missing-attribute -->
-			<a href="./my-blog/{blog.blogId}">
-				<!-- Blog Card -->
-				<div class="blog-card rounded-lg border bg-white p-6 shadow-md">
-					<h3 class="mb-2 text-2xl font-semibold text-gray-800">{blog.blogTitle}</h3>
-					<p class="mb-2 text-sm text-gray-600">
-						Written by <span class="font-medium">{userData.userName}</span>
-					</p>
-					<p class="mb-2 text-sm text-gray-600">
-						Created on <span class="font-medium">{blog.createdAt?.toString().split('T')[0]}</span>
-					</p>
-					<p class="mb-2 text-sm text-gray-600">
-						Upvotes: <span class="font-medium">{blog.upvote}</span>
-					</p>
-					<div class="flex flex-wrap gap-2">
-						{#each blog.tags as tag}
-							<span
-								class="rounded-full px-2 py-1 text-xs transition-colors hover:bg-gray-200"
-								style="background-color: {generateColour(tag)}">{tag}</span
-							>
-						{/each}
+			<!-- Blog Card -->
+			<div class="blog-card rounded-lg border bg-white p-6 shadow-md">
+				<div class="flex flex-row justify-between">
+					<div>
+						<h3 class="mb-2 text-2xl font-semibold text-gray-800">{blog.blogTitle}</h3>
+						<p class="mb-2 text-sm text-gray-600">
+							Written by <span class="font-medium">{userData.userName}</span>
+						</p>
+						<p class="mb-2 text-sm text-gray-600">
+							Created on <span class="font-medium">{blog.createdAt?.toString().split('T')[0]}</span>
+						</p>
+						<p class="mb-2 text-sm text-gray-600">
+							Upvotes: <span class="font-medium">{blog.upvote}</span>
+						</p>
+						<div class="flex flex-wrap gap-2">
+							{#each blog.tags as tag}
+								<span
+									class="rounded-full px-2 py-1 text-xs transition-colors hover:bg-gray-200"
+									style="background-color: {generateColour(tag)}">{tag}</span
+								>
+							{/each}
+						</div>
+					</div>
+					<div class="my-auto">
+						<Button
+							href="./my-blog/{blog.blogId}"
+							class="bg-white hover:bg-muted"><RightArrow /></Button
+						>
 					</div>
 				</div>
-			</a>
+			</div>
 			<!-- End Blog Card -->
 		</div>
 	{/each}

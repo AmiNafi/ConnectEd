@@ -1,0 +1,18 @@
+//Handle form action reset and invalidate
+
+use:enhance={() => {
+    return async ({ update, result }) => {
+        update({ reset: true, invalidateAll:false });
+    };
+}}
+
+//Is Loading Icon
+
+use:enhance={() => {
+    isLoading = true;
+    return async ({ update, result }) => {
+
+        isLoading = false;
+        update({ reset: true, invalidateAll:false });
+    };
+}}

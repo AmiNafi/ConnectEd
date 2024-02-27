@@ -33,7 +33,7 @@
 	});
 
 	const { form, errors, enhance, constraints, message } = superForm(data.form, {
-		validators: userSchema,
+		validators: userSchema
 	});
 
 	let isLoading = false;
@@ -56,25 +56,30 @@
 	<Button
 		href="/login"
 		variant="ghost"
-		class="invisible lg:visible lg:absolute right-4 top-4 md:right-8 md:top-8">Login</Button
+		class="invisible right-4 top-4 md:right-8 md:top-8 lg:visible lg:absolute">Login</Button
 	>
 	<Button
 		href="/register"
 		variant="ghost"
-		class="invisible lg:visible lg:absolute right-24 top-4 md:right-28 md:top-8">Register</Button
+		class="invisible right-24 top-4 md:right-28 md:top-8 lg:visible lg:absolute">Register</Button
 	>
 	<!-- <Button href="/landing-page" class="invisible lg:visible lg:absolute right-44 top-4 md:right-48 md:top-8">Test Landing Page</Button> -->
 	<div
-		class="relative hidden h-full flex-col bg-muted p-10 text-white dark:border-r lg:flex justify-center items-center"
+		class="relative hidden h-full flex-col items-center justify-center bg-muted p-10 text-white dark:border-r lg:flex"
 	>
-
 		<!-- <div class="absolute inset-0 bg-cover w-full h-full bg-gradient-to-b from-purple-500 to-blue-500 min-h-screen"></div> -->
 		<!-- <div class="absolute inset-0 bg-cover w-full h-full bg-gradient-to-b from-indigo-800 to-blue-900 min-h-screen"></div> -->
-		<div class="absolute inset-0 bg-cover w-full h-full bg-gradient-to-b from-gray-800 to-gray-900 min-h-screen"></div>
-		<div class="relative z-20 flex items-center text-5xl font-black text-white font-mono">Connected</div>
+		<div
+			class="absolute inset-0 h-full min-h-screen w-full bg-gradient-to-b from-gray-800 to-gray-900 bg-cover"
+		></div>
+		<div class="relative z-20 flex items-center font-mono text-5xl font-black text-white">
+			Connected
+		</div>
 		<div class="relative z-20">
 			<blockquote class="space-y-2">
-				<p class="text-2xl text-white font-mono text-center">A study resource management and collaborative study platform.</p>
+				<p class="text-center font-mono text-2xl text-white">
+					A study resource management and collaborative study platform.
+				</p>
 				<!-- <footer class="text-sm">Sofia Davis</footer> -->
 			</blockquote>
 		</div>
@@ -88,10 +93,25 @@
 			</div>
 
 			<div class={cn('grid gap-6', className)} {...$$restProps}>
-				<form use:enhance action="?/login" method="post" on:submit={()=>{onSubmit()}}>
+				<form
+					use:enhance={() => {
+						return async ({ update }) => {
+							update({ invalidateAll: false });
+						};
+					}}
+					action="?/login"
+					method="post"
+					on:submit={() => {
+						onSubmit();
+					}}
+				>
 					<div class="grid gap-2">
 						{#if $message}
-							<div class="text-red-500 border-red-500 border-2 bg-red-100 py-2 px-2 rounded-sm text-base">{$message}</div>
+							<div
+								class="rounded-sm border-2 border-red-500 bg-red-100 px-2 py-2 text-base text-red-500"
+							>
+								{$message}
+							</div>
 						{/if}
 						<div class="grid gap-2">
 							<Label for="email">Email</Label>
