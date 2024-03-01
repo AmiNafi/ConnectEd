@@ -13,7 +13,8 @@
 	import { onMount } from 'svelte';
 	import { Circle } from 'svelte-loading-spinners';
 	import * as Card from '$lib/components/ui/card';
-	import {Button} from '$lib/components/ui/button'
+	import { Button } from '$lib/components/ui/button';
+	import ScrollDownSVG from '$lib/components/others/scrollDownSVG.svelte';
 
 	export let data: PageData;
 
@@ -30,7 +31,7 @@
 		data.currentGroup.then((res) => {
 			currentGroup = res[0];
 			// console.log(currentGroup);
-			items = [...items, { href: './'+currentGroup.groupId, text: currentGroup.groupName }];
+			items = [...items, { href: './' + currentGroup.groupId, text: currentGroup.groupName }];
 
 			loadInitialMessages();
 			subscribeToNewMessages();
@@ -67,7 +68,7 @@
 			.select('*')
 			.eq('group_id', currentGroup.groupId);
 
-		messages = res  || [];
+		messages = res || [];
 		// console.log(res);
 		messages.sort((a: any, b: any) => {
 			return a.created_at - b.created_at;
@@ -90,18 +91,22 @@
 			.subscribe();
 	}
 
-
-	async function kickMember(userID: number,index: number) {
+	async function kickMember(userID: number, index: number) {
 		await fetch('/api/group/leave', {
 			method: 'POST',
 			body: JSON.stringify({
 				userId: userID,
 				groupId: currentGroup.groupId
 			})
-		}).then((res)=>{
-			memberList.splice(index,1)
-			memberList = memberList
-		})
+		}).then((res) => {
+			memberList.splice(index, 1);
+			memberList = memberList;
+		});
+	}
+
+	function goToBottom() {
+		let objDiv: HTMLElement | null = document.getElementById('chatDiv');
+		objDiv!.scrollTop = objDiv!.scrollHeight;
 	}
 </script>
 
@@ -111,7 +116,6 @@
 />
 
 <div class="flex grow flex-col items-center">
-	
 	<div class="flex w-full flex-row flex-wrap justify-between">
 		<Breadcrumb {items} />
 		{#if currentGroup && userData.userId == currentGroup.creatorId}
@@ -126,7 +130,7 @@
 		<Label class="mb-10 mt-10 text-center text-3xl font-medium">
 			{currentGroup.groupName}
 		</Label>
-		
+
 		<!-- Lecture Tab -->
 		<Tabs.Root value="home" class="w-5/6 min-w-8">
 			<Tabs.List class="grid w-full grid-cols-4">
@@ -140,7 +144,11 @@
 			<Tabs.Content value="home">
 				<Card.Root class="m-10">
 					<Card.Header class="flex flex-row justify-center">
-						<img src={currentGroup.imageLink+ '?' + Date.now().toString()} alt="cover" width="500px" />
+						<img
+							src={currentGroup.imageLink + '?' + Date.now().toString()}
+							alt="cover"
+							width="500px"
+						/>
 					</Card.Header>
 					<Card.Header>
 						<Card.Title>{currentGroup.groupName}</Card.Title>
@@ -157,98 +165,93 @@
 			</Tabs.Content>
 
 			<Tabs.Content value="chat">
-				<div class="flex flex-row items-center">
-					<div class="ml-72 mt-6 w-full">
-						<div class="ml-20 mr-20 min-h-screen">
-							{#each messages as message}
-								{#if message.user_id === userData.userId}
-									<div class="mb-4 flex items-start justify-end">
-										<div class="h-8 w-8 overflow-hidden rounded-full">
-											<img
-												alt="Sender"
-												src={message.image_link}
-												class="h-full w-full object-cover"
-											/>
-										</div>
-										<div class="w-full max-w-md rounded-lg bg-blue-100 p-4 text-gray-800">
-											<p class="mb-1 text-xs text-gray-600">{message.user_name}</p>
-											<p class="text-sm">{message.message}</p>
-											<p class="mt-1 text-xs text-gray-600">Delivered</p>
-										</div>
+				<div class="w-full">
+					<div class="m-2">
+						<Button href="./{$page.params.groupId}/video-call">Start Video Call</Button>
+					</div>
+					<div id="chatDiv" class="h-[600px] overflow-auto border border-slate-200 rounded-md">
+						{#each messages as message}
+							{#if message.user_id === userData.userId}
+								<div class="mb-4 flex items-start justify-end">
+									
+									<div class="w-full max-w-md rounded-lg bg-blue-100 p-4 text-gray-800">
+										<p class="mb-1 text-xs text-gray-600">{message.user_name}</p>
+										<p class="text-sm">{message.message}</p>
+										<p class="mt-1 text-xs text-gray-600">Delivered</p>
 									</div>
-								{:else}
-									<div class="mb-4 flex items-start">
-										<div class="h-8 w-8 overflow-hidden rounded-full">
-											<img
-												alt="Receiver"
-												src={message.image_link}
-												class="h-full w-full object-cover"
-											/>
-										</div>
-										<div class="w-full max-w-md rounded-lg bg-gray-100 p-4 text-gray-800">
-											<p class="mb-1 text-xs text-gray-600">{message.user_name}</p>
-											<p class="text-sm">{message.message}</p>
-											<p class="mt-1 text-xs text-gray-600">Delivered</p>
-										</div>
+									<div class="mr-4 ml-4 h-8 w-8 overflow-hidden rounded-full border border-slate-300">
+										<img alt="Sender" src={message.image_link} class="h-full w-full object-cover" />
 									</div>
-								{/if}
-							{/each}
-							<div class="flex flex-row items-center">
-								<form class="mb-2 flex" on:submit|preventDefault={sendMessage}>
-									<input
-										class="flex-1 rounded-l-lg bg-gray-100 px-4 py-2 focus:border-blue-300 focus:outline-none focus:ring"
-										type="textarea"
-										bind:value={newMessage}
-										placeholder="Type a message..."
-									/>
-									<button type="submit" class="rounded-r-lg bg-blue-500 px-4 py-2 text-white"
-										>Send</button
-									>
-								</form>
-							</div>
-						</div>
+								</div>
+							{:else}
+								<div class="mb-4 flex items-start">
+									<div class="mr-4 ml-4 h-8 w-8 overflow-hidden rounded-full border border-slate-300">
+										<img
+											alt="Receiver"
+											src={message.image_link}
+											class="h-full w-full object-cover"
+										/>
+									</div>
+									<div class="w-full max-w-md rounded-lg bg-gray-100 p-4 text-gray-800">
+										<p class="mb-1 text-xs text-gray-600">{message.user_name}</p>
+										<p class="text-sm">{message.message}</p>
+										<p class="mt-1 text-xs text-gray-600">Delivered</p>
+									</div>
+								</div>
+							{/if}
+						{/each}
+					</div>
+					<div class="mt-5 mb-10 flex flex-row items-center justify-center">
+						<form class="mb-2 flex" on:submit|preventDefault={sendMessage}>
+							<input
+								class="flex-1 rounded-l-lg bg-gray-100 px-4 py-2 focus:border-blue-300 focus:outline-none focus:ring"
+								type="textarea"
+								bind:value={newMessage}
+								placeholder="Type a message..."
+							/>
+							<button type="submit" class="rounded-r-lg bg-blue-500 px-4 py-2 text-white"
+								>Send</button
+							>
+						</form>
+						<button class="ml-5" on:click={goToBottom}><ScrollDownSVG /></button>
 					</div>
 				</div>
+				<!-- </div> -->
 			</Tabs.Content>
 
 			<Tabs.Content value="resources"></Tabs.Content>
 
 			<Tabs.Content value="members">
-				{#each memberList as member,index}
-				<Card.Root class="my-5 w-11/12 hover:shadow">
-					<div class="flex flex-row">
-						<img
-							src={member.member.imageLink}
-							alt="cover"
-							class="h-24 w-24 rounded-full object-cover my-auto"
-						/>
-						<div class="w-full">
-							<Card.Header>
-								<Card.Title
-									>{member.member.userName}</Card.Title
+				{#each memberList as member, index}
+					<Card.Root class="my-5 w-11/12 hover:shadow">
+						<div class="flex flex-row">
+							<img
+								src={member.member.imageLink}
+								alt="cover"
+								class="my-auto h-24 w-24 rounded-full object-cover"
+							/>
+							<div class="w-full">
+								<Card.Header>
+									<Card.Title>{member.member.userName}</Card.Title>
+								</Card.Header>
+								<Card.Content>
+									<p>Member Since: {member.joinedAt.split('T')[0]}</p>
+								</Card.Content>
+							</div>
+							{#if userData.userId == currentGroup.creatorId && userData.userId != member.userId}
+								<form
+									class="my-auto"
+									on:submit={() => {
+										kickMember(member.userId, index);
+									}}
 								>
-							</Card.Header>
-							<Card.Content>
-								<p>Member Since: {member.joinedAt.split('T')[0]}</p>
-							</Card.Content>
+									<Button type="submit" class="mr-5 bg-red-400 hover:bg-red-500">Kick</Button>
+								</form>
+							{/if}
 						</div>
-						{#if userData.userId == currentGroup.creatorId && userData.userId != member.userId}
-						<form class="my-auto" on:submit={()=>{kickMember(member.userId, index)}}>
-							<Button
-								type="submit"
-								class="bg-red-400 mr-5 hover:bg-red-500"
-								
-								>
-								Kick
-								</Button
-							>
-						</form>
-						{/if}
-					</div>
-				</Card.Root>
+					</Card.Root>
 				{/each}
 			</Tabs.Content>
-
 		</Tabs.Root>
 	{/if}
 </div>

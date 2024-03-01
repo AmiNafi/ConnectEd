@@ -11,6 +11,8 @@
 	import { goto } from '$app/navigation';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import RightArrow from '$lib/components/others/right-arrow.svelte';
+	import * as Card from '$lib/components/ui/card';
+	import BlogSVG from '$lib/components/others/blogSVG.svelte';
 	import { Circle } from 'svelte-loading-spinners';
 	import { onMount } from 'svelte';
 
@@ -120,7 +122,7 @@
 		class="mt-5 flex w-[90%] flex-row justify-between gap-20"
 		use:enhance={() => {
 			return async ({ update, result }) => {
-				update({ reset: false, invalidateAll:false });
+				update({ reset: false, invalidateAll: false });
 			};
 		}}
 		on:submit={() => {
@@ -153,10 +155,77 @@
 		<Pagination.Root count={cnt} {perPage} let:pages let:currentPage>
 			{#each Array(perPage) as _, i}
 				{#if i < Object.keys(searchResult).length}
-					<!-- svelte-ignore a11y-click-events-have-key-events -->
-					<!-- svelte-ignore a11y-no-static-element-interactions -->
-					<div class="blog-card">
-						<!-- <div class="blog-card"> -->
+					<Card.Root class="my-5 w-11/12 hover:shadow">
+						<div class="flex flex-row">
+							<BlogSVG />
+							<div class="w-full">
+								<Card.Header>
+									<Card.Title>
+										{searchResult[perPage * ((currentPage || 1) - 1) + i].blogTitle}
+									</Card.Title>
+								</Card.Header>
+								<Card.Content>
+									<p>
+										Written by <span class=""
+											>{searchResult[perPage * ((currentPage || 1) - 1) + i].writer.userName}</span
+										>
+									</p>
+									<p>
+										Created on <span class=""
+											>{searchResult[perPage * ((currentPage || 1) - 1) + i].createdAt
+												?.toString()
+												.split('T')[0]}</span
+										>
+									</p>
+									<p>
+										Upvotes: <span class=""
+											>{searchResult[perPage * ((currentPage || 1) - 1) + i].upvote}</span
+										>
+									</p>
+								</Card.Content>
+								<Card.Footer class="flex flex-wrap gap-2">
+									{#each searchResult[perPage * ((currentPage || 1) - 1) + i].tags as tag}
+										<span
+											class="rounded-full px-2 py-1 text-xs transition-colors hover:bg-gray-200"
+											style="background-color: {generateColour(tag)}">{tag}</span
+										>
+									{/each}
+								</Card.Footer>
+							</div>
+							<div class="flex flex-col">
+								<div class="my-auto">
+									{#if searchResult[perPage * ((currentPage || 1) - 1) + i].blogFavs[0] == undefined}
+										<button
+											on:click={() => {
+												onFav(
+													perPage * ((currentPage || 1) - 1) + i,
+													searchResult[perPage * ((currentPage || 1) - 1) + i].blogId
+												);
+											}}
+											><Favorite design="hover:scale-110" />
+										</button>
+									{:else}
+										<button
+											on:click={() => {
+												onUnFav(
+													perPage * ((currentPage || 1) - 1) + i,
+													searchResult[perPage * ((currentPage || 1) - 1) + i].blogId
+												);
+											}}
+											><Favorited design="hover:scale-110" />
+										</button>
+									{/if}
+								</div>
+								<div class="my-auto">
+									<Button
+									href="./explore-blog/{searchResult[perPage * ((currentPage || 1) - 1) + i].blogId}"
+										class="bg-white hover:bg-muted"><RightArrow />
+									</Button>
+								</div>
+							</div>
+						</div>
+					</Card.Root>
+					<!-- <div class="blog-card">
 						<div class="flex justify-end">
 							<button class="flex items-center rounded-full px-4 py-2 text-white">
 								{#if searchResult[perPage * ((currentPage || 1) - 1) + i].blogFavs[0] == undefined}
@@ -182,9 +251,6 @@
 								{/if}
 							</button>
 						</div>
-						<!-- on:click={() => {
-						goto('explore-blog/' + searchResult[perPage * ((currentPage || 1) - 1) + i].blogId);
-					}} -->
 						<div class="flex flex-row justify-between">
 							<div>
 								<h2>{searchResult[perPage * ((currentPage || 1) - 1) + i].blogTitle}</h2>
@@ -211,16 +277,7 @@
 								>
 							</div>
 						</div>
-						<!-- {#if Object.keys(searchResult[perPage * ((currentPage || 1) - 1) + i].courses).length > 0}
-						<p class="blog-info">
-							Courses: {searchResult[perPage * ((currentPage || 1) - 1) + i].courses
-								.map((course) => course.courseName)
-								.join(', ')}
-						</p>
-					{:else}
-						<p class="message">No courses available</p>
-					{/if} -->
-					</div>
+					</div> -->
 				{/if}
 			{/each}
 			<Pagination.Content>

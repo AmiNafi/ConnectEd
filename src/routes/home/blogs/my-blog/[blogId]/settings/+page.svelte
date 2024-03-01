@@ -36,6 +36,7 @@
 	let timerId: any;
 	let showMessage = false;
 	let isLoading = false;
+	let isDeleting = false;
 
 	async function onSubmit() {
 		showMessage = false
@@ -198,6 +199,26 @@
         </div>
 		</div>
 	</form>
+	<form use:enhance={() => {
+		isDeleting = true;
+		return async ({ update }) => {
+			isDeleting = false;
+			update({ invalidateAll:false });
+		};
+	}}
+		action="?/delete"
+		method="post"
+		class="w-[800px] flex flex-row justify-end"
+	>
+		<input hidden id="blogId" name="blogId" value={currentBlog.blogId} />
+		<Button type="submit" disabled={isDeleting} class="mb-20 min-w-40 bg-red-500" >
+			{#if isDeleting}
+				<i class="fa fa-spinner fa-spin px-3" style="font-size:24px" />
+			{/if}
+			Delete
+		</Button>
+	</form>
+
 </div>
 
 <style>

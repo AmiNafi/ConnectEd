@@ -1,0 +1,1 @@
+ALTER TABLE "course_table" ADD COLUMN "instructor" text;

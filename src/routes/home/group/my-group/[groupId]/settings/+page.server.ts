@@ -1,3 +1,5 @@
+import { redirect, type Actions } from "@sveltejs/kit";
+
 export const load = async ({ params, fetch }) => {
 	let groupId = params.groupId;
 
@@ -15,3 +17,17 @@ export const load = async ({ params, fetch }) => {
 		currentGroup: getGroupInfo()
     }
 }
+
+export const actions = {
+	delete: async(event) => {
+		const data = await event.request.formData();
+		let formData = Object.fromEntries(data.entries()) as any;
+
+		await event.fetch('/api/group/delete', {
+			method: 'POST',
+			body: JSON.stringify(formData)
+		})
+
+		redirect(301,'../')
+	}
+} satisfies Actions;

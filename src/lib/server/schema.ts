@@ -100,6 +100,7 @@ export const courseTable = pgTable('course_table', {
 	imageLink: text('image_link'),
 	tags: text('tags').array(),
 	theme: text('theme').notNull(),
+	instructor: text('instructor'),
 	createdAt: timestamp('created_at').defaultNow()
 });
 
@@ -112,6 +113,7 @@ export const lectureTable = pgTable('lecture_table', {
 	description: text('description'),
 	lectureLink: text('lecture_link').notNull(),
 	savedName: text('saved_name').notNull(),
+	fileType: text('file_type').notNull(),
 	createdAt: timestamp('created_at').defaultNow()
 });
 
@@ -135,6 +137,7 @@ export const resourceTable = pgTable('resource_table', {
 	description: text('description'),
 	resourceLink: text('resource_link').notNull(),
 	savedName: text('saved_name').notNull(),
+	fileType: text('file_type').notNull(),
 	createdAt: timestamp('created_at').defaultNow()
 });
 

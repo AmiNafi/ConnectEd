@@ -32,7 +32,8 @@
 
 	let courseName = '';
 	let description = '';
-	let isLock = ''
+	let instructor = '';
+	let isLock = '';
 	let timerId: any;
 	let theme = '#CD7F32';
 
@@ -51,10 +52,10 @@
 			clearTimeout(timerId);
 
 			chips = [];
-			courseName=''
-			description=''
-			isLock=''
-			theme='#CD7F32'
+			courseName = '';
+			description = '';
+			isLock = '';
+			theme = '#CD7F32';
 
 			showMessage = true;
 			form.success = false;
@@ -96,11 +97,11 @@
 		</div>
 	{/if}
 	<form
-	use:enhance={() => {
-		return async ({ update }) => {
-			update({ reset: false, invalidateAll:false });
-		};
-	}}
+		use:enhance={() => {
+			return async ({ update }) => {
+				update({ reset: false, invalidateAll: false });
+			};
+		}}
 		action="?/create"
 		method="post"
 		on:submit={() => {
@@ -138,6 +139,19 @@
 					autocapitalize="none"
 					disabled={isLoading}
 					bind:value={description}
+				/>
+			</div>
+
+			<div class="grid gap-2">
+				<Label>Instructor Name</Label>
+				<Input
+					class="w-[400px] bg-white"
+					name="instructor"
+					placeholder="Type instructor name"
+					type="text"
+					autocapitalize="none"
+					disabled={isLoading}
+					bind:value={instructor}
 				/>
 			</div>
 

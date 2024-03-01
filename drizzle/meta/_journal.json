@@ -64,6 +64,20 @@
       "when": 1708960454472,
       "tag": "0008_exotic_blazing_skull",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "5",
+      "when": 1709025540331,
+      "tag": "0009_known_skrulls",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "5",
+      "when": 1709296835630,
+      "tag": "0010_solid_hellcat",
+      "breakpoints": true
     }
   ]
 }

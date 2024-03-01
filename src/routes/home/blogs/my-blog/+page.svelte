@@ -5,6 +5,8 @@
 	import { Label } from '$lib/components/ui/label';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import RightArrow from '$lib/components/others/right-arrow.svelte';
+	import * as Card from '$lib/components/ui/card';
+	import BlogSVG from '$lib/components/others/blogSVG.svelte';
 
 	export let data: LayoutData;
 	const userData = data.user[0];
@@ -34,10 +36,40 @@
 	</div>
 	<Label class="mt-10 text-center text-3xl font-medium">My Blogs</Label>
 	{#each userBlogs as blog}
-		<div class="mx-auto mt-8 w-full max-w-full p-4">
-			<!-- svelte-ignore a11y-missing-attribute -->
-			<!-- Blog Card -->
+		<Card.Root class="my-5 w-11/12 hover:shadow">
+			<div class="flex flex-row">
+				<BlogSVG/>
+				<div class="w-full">
+					<Card.Header>
+						<Card.Title>{blog.blogTitle}</Card.Title>
+					</Card.Header>
+					<Card.Content>
+						<p>Written by <span class="">{userData.userName}</span></p>
+						<p>
+							Created on <span class="">{blog.createdAt?.toString().split('T')[0]}</span>
+						</p>
+						<p>Upvotes: <span class="">{blog.upvote}</span></p>
+					</Card.Content>
+					<Card.Footer class="flex flex-wrap gap-2">
+						{#each blog.tags as tag}
+							<span
+								class="rounded-full px-2 py-1 text-xs transition-colors hover:bg-gray-200"
+								style="background-color: {generateColour(tag)}">{tag}</span
+							>
+						{/each}
+					</Card.Footer>
+				</div>
+				<div class="my-auto">
+					<Button href="./my-blog/{blog.blogId}" class="bg-white hover:bg-muted"
+						><RightArrow /></Button
+					>
+				</div>
+			</div>
+		</Card.Root>
+		<!-- <div class="mx-auto mt-8 w-full max-w-full p-4">
+
 			<div class="blog-card rounded-lg border bg-white p-6 shadow-md">
+
 				<div class="flex flex-row justify-between">
 					<div>
 						<h3 class="mb-2 text-2xl font-semibold text-gray-800">{blog.blogTitle}</h3>
@@ -67,8 +99,7 @@
 					</div>
 				</div>
 			</div>
-			<!-- End Blog Card -->
-		</div>
+		</div> -->
 	{/each}
 </div>
 

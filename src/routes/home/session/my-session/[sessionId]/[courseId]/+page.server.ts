@@ -1,6 +1,13 @@
 import { supabase } from '$lib/supabaseClient';
 import type { Actions, PageServerLoad } from './$types';
 
+// File {
+// 	size: 17079,
+// 	type: 'image/jpeg',
+// 	name: '5_929.jpg',
+// 	lastModified: 1709297666582
+// }
+
 export const actions = {
 	uploadLecture: async (event) => {
 		const data = await event.request.formData();
@@ -8,8 +15,9 @@ export const actions = {
 
 		let timestamp = new Date().getTime();
 
-		let name =
-			newLecture.userId + '_' + newLecture.sessionId + '_' + newLecture.courseId + '_' + timestamp;
+		let name = timestamp + '_' + newLecture.file.name  ;
+
+		newLecture.fileType = newLecture.file.type;
 
 		const { data: res, error: err } = await supabase.storage
 			.from('lectures')
@@ -54,6 +62,7 @@ export const actions = {
 		console.log('Here');
 
 		if (lecture.file.size != 0) {
+			lecture.fileType = lecture.file.type;
 			const { data: res1, error: err1 } = await supabase.storage
 				.from('lectures')
 				.update(lecture.savedName, lecture.file, {
@@ -77,8 +86,9 @@ export const actions = {
 		console.log(newResource)
 		let timestamp = new Date().getTime();
 
-		let name =
-			newResource.userId + '_' + newResource.sessionId + '_' + newResource.courseId + '_' + timestamp;
+		let name = timestamp + '_' + newResource.file.name  ;
+
+		newResource.fileType = newResource.file.type;
 
 		const { data: res, error: err } = await supabase.storage
 			.from('resources')
@@ -121,8 +131,9 @@ export const actions = {
 		let resource = Object.fromEntries(data.entries()) as any;
 
 		// console.log('Here');
-
+		
 		if (resource.file.size != 0) {
+			resource.fileType = resource.file.type;
 			const { data: res1, error: err1 } = await supabase.storage
 				.from('resources')
 				.update(resource.savedName, resource.file, {

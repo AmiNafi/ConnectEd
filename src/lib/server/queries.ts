@@ -78,9 +78,18 @@ export async function getUser(newUser: user) {
 	});
 }
 
+export async function getUserId(email: string){
+	const ret = await db.select().from(userTable).where(eq(userTable.email, email));
+	return ret[0].userId
+}
+
 //Session
 export async function insertSession(newSession: session) {
 	await db.insert(sessionTable).values(newSession);
+}
+
+export async function deleteSession(newSession: session) {
+	await db.delete(sessionTable).where(eq(sessionTable.sessionId ,newSession.sessionId!));
 }
 
 export async function getSession(newSession: session) {
@@ -187,6 +196,10 @@ export async function insertCourse(newCourse: course) {
 	await db.insert(courseTable).values(newCourse);
 }
 
+export async function deleteCourse(newCourse: course) {
+	await db.delete(courseTable).where(eq(courseTable.courseId, newCourse.courseId!));
+}
+
 export async function updateCourse(newCourse: course) {
 	await db
 		.update(courseTable)
@@ -226,7 +239,8 @@ export async function updateLecture(newLecture: lecture) {
 		.update(lectureTable)
 		.set({
 			lectureName: newLecture.lectureName,
-			description: newLecture.description
+			description: newLecture.description,
+			fileType: newLecture.fileType
 		})
 		.where(eq(lectureTable.lectureId, newLecture.lectureId!));
 }
@@ -245,7 +259,8 @@ export async function updateResource(newResource: resource) {
 		.update(resourceTable)
 		.set({
 			resourceName: newResource.resourceName,
-			description: newResource.description
+			description: newResource.description,
+			fileType: newResource.fileType
 		})
 		.where(eq(resourceTable.resourceId, newResource.resourceId!));
 }

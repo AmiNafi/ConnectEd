@@ -232,6 +232,7 @@
 		<Table.Row>
 			<Table.Head>Resource name</Table.Head>
 			<Table.Head>Description</Table.Head>
+			<Table.Head>File Type</Table.Head>
 			<Table.Head>Date</Table.Head>
 		</Table.Row>
 	</Table.Header>
@@ -249,6 +250,7 @@
 					></Table.Cell
 				>
 				<Table.Cell class="max-w-72"><p class="break-all">{item.description}</p></Table.Cell>
+				<Table.Cell>{item.fileType}</Table.Cell>		
 
 				{#if item.createdAt != null}
 					<Table.Cell>{item.createdAt.toString().split('T')[0]}</Table.Cell>
@@ -408,6 +410,7 @@ c0,1.657-1.343,3-3,3s-3-1.343-3-3V25c0-1.657,1.343-3,3-3s3,1.343,3,3V51z"
 				>
 					<button type="submit" disabled style="display: none" aria-hidden="true"></button>
 
+					<input hidden  name="fileType" value={selected.fileType} />
 					<input hidden id="resourceId" name="resourceId" value={selected.resourceId} />
 					<input hidden id="savedName" name="savedName" value={selected.savedName} />
 

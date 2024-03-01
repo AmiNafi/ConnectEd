@@ -41,7 +41,7 @@
 		isLoading = true;
 		setTimeout(() => {
 			isLoading = false;
-		}, 10000);
+		}, 3000);
 	}
 </script>
 
@@ -94,11 +94,7 @@
 
 			<div class={cn('grid gap-6', className)} {...$$restProps}>
 				<form
-					use:enhance={() => {
-						return async ({ update }) => {
-							update({ invalidateAll: false });
-						};
-					}}
+					use:enhance
 					action="?/login"
 					method="post"
 					on:submit={() => {
