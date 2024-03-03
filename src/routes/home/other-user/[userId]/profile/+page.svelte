@@ -26,7 +26,6 @@
 	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
 	rel="stylesheet"
 />
-<title>User Profile</title>
 
 <div class="flex grow flex-col items-center">
 	<div class="flex w-full flex-row flex-wrap justify-between">
@@ -37,7 +36,7 @@
 			<Circle size="60" color="#FF3E00" unit="px" duration="1s" />
 		</div>
 	{:else}
-		<Profile userData={otherUserData} />
+		<Profile viewerData={userData} userData={otherUserData} />
 	{/if}
 </div>
 <!-- <Profile bind:userData/> -->

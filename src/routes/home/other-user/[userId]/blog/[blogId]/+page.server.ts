@@ -22,12 +22,18 @@ export const actions = {
 	}
 } satisfies Actions;
 
-export const load = async ({ params, fetch }) => {
+export const load = async ({locals:{supabase}, params, fetch }) => {
 	let blogId = params.blogId;
-	let id: number;
-	userId.subscribe((value) => {
-		id = value!;
-	});
+	
+	let email = (await supabase.auth.getUser()).data.user?.email;
+	async function getUserId(email: string){
+		const res = await fetch('/api/user/get-user-id', {
+			method: 'POST',
+			body: JSON.stringify({ email: email })
+		});
+		const data = await res.json();
+		return data;
+	}
 
 
 	async function getComments() {
@@ -40,9 +46,10 @@ export const load = async ({ params, fetch }) => {
 	}
 	
 	async function getBlog(){
+		let userId = await getUserId(email!)
 		const res = await fetch('/api/blog/get', {
 			method: 'POST',
-			body: JSON.stringify({ blogId: blogId, userId: id })
+			body: JSON.stringify({ blogId: blogId, userId: userId })
 		});
 		const data = await res.json();
 		return data;

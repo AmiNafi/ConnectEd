@@ -15,7 +15,9 @@ import {
 	requestTable,
 	groupTable,
 	memberTable,
-	noteTable
+	noteTable,
+	friendRequestTable,
+	friendTable
 } from './schema';
 import type {
 	user,
@@ -32,7 +34,9 @@ import type {
 	blogComment,
 	request,
 	group,
-	member
+	member,
+	friendRequest,
+	friend
 } from './schema';
 import { eq, lt, gte, ne, inArray, and, or, sql } from 'drizzle-orm';
 
@@ -54,7 +58,11 @@ export async function updateUser(newUser: user) {
 	await db
 		.update(userTable)
 		.set({
-			userName: newUser.userName
+			userName: newUser.userName,
+			facebook: newUser.facebook,
+			twitter: newUser.twitter,
+			github: newUser.github,
+			linkedin: newUser.linkedin
 		})
 		.where(eq(userTable.userId, newUser.userId!));
 
@@ -776,4 +784,108 @@ export async function deleteMember(newMember: member) {
 		${memberTable.userId} = ${newMember.userId}
 		`
 	);
+}
+
+//Friend Request
+
+export async function insertFriendRequest(newReq: friendRequest){
+	await db.insert(friendRequestTable).values(newReq)
+}
+
+export async function deleteFriendRequest(newReq: friendRequest){
+	await db.delete(friendRequestTable).where(
+		sql`
+		(${friendRequestTable.senderId} = ${newReq.senderId} AND ${friendRequestTable.receiverId} = ${newReq.receiverId}) OR
+		(${friendRequestTable.senderId} = ${newReq.receiverId} AND ${friendRequestTable.receiverId} = ${newReq.senderId})
+		`
+	)
+}
+
+export async function getSentFriendRequests(userId: number){
+	return await db.select().from(friendRequestTable).where(
+		eq(friendRequestTable.senderId, userId)
+	)
+}
+
+export async function getReceivedFriendRequests(userId: number){
+	return await db.select().from(friendRequestTable).where(
+		eq(friendRequestTable.receiverId, userId)
+	)
+}
+
+export async function getPairStatus(viewerId: number, profileId: number){
+	let ret1 = await db.select().from(friendTable).where(
+		sql`
+		(${friendTable.user1Id} = ${viewerId} AND ${friendTable.user2Id} = ${profileId}) OR
+		(${friendTable.user1Id} = ${profileId} AND ${friendTable.user2Id} = ${viewerId})
+		`
+	)
+
+	if(ret1.length>0){
+		return {
+			reqStatus: "friend"
+		}
+	}
+
+
+	let ret2 = await db.select().from(friendRequestTable).where(
+		sql`
+		${friendRequestTable.senderId} = ${viewerId} AND
+		${friendRequestTable.receiverId} = ${profileId}
+		`
+	)
+
+	if(ret2.length>0){
+		return {
+			reqStatus: "sent"
+		}
+	}
+
+	let ret3 = await db.select().from(friendRequestTable).where(
+		sql`
+		${friendRequestTable.senderId} = ${profileId} AND
+		${friendRequestTable.receiverId} = ${viewerId}
+		`
+	)
+
+	if(ret3.length>0){
+		return {
+			reqStatus: "received"
+		}
+	}
+
+	return {
+		reqStatus: "none"
+	}
+}
+
+//Friend
+
+export async function insertFriend(newFriend: friend){
+	let friendReq = {
+		senderId: newFriend.user1Id,
+		receiverId: newFriend.user2Id
+	}
+
+	deleteFriendRequest(friendReq)
+
+	await db.insert(friendTable).values(newFriend)
+}
+
+export async function deleteFriend(newFriend: friend){
+	await db.delete(friendTable).where(
+		sql`
+		(${friendTable.user1Id} = ${newFriend.user1Id} AND ${friendTable.user2Id} = ${newFriend.user2Id}) OR
+		(${friendTable.user1Id} = ${newFriend.user2Id} AND ${friendTable.user2Id} = ${newFriend.user1Id})
+		`
+	)
+}
+
+export async function getFriends(userId: number){
+	return await db.select().from(friendTable).where(
+		sql`
+		${friendTable.user1Id} = ${userId} OR
+		${friendTable.user2Id} = ${userId}
+		`
+	)
 }

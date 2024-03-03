@@ -69,7 +69,10 @@ export const userTable = pgTable('user_table', {
 	inboxSetting: text('inbox_setting').default('public'),
 	userType: integer('user_type').default(0),
 	isBanned: boolean('is_banned').default(false),
-	socialLinks: json('social_links'),
+	facebook: text('facebook'),
+	twitter: text('twitter'),
+	linkedin: text('linkedin'),
+	github: text('github'),
 	createdAt: timestamp('created_at').defaultNow()
 });
 
@@ -239,6 +242,10 @@ export const friendRequestTable = pgTable(
 		receiverId: integer('receiver_id')
 			.references(() => userTable.userId, { onDelete: 'cascade' })
 			.notNull(),
+		senderName: text('sender_name'),
+		senderImage: text('sender_image'),
+		receiverName: text('receiver_name'),
+		receiverImage: text('receiver_image'),
 		sentAt: timestamp('sent_at').defaultNow()
 	},
 	(table) => {
@@ -261,6 +268,10 @@ export const friendTable = pgTable(
 		user2Id: integer('user2_id')
 			.references(() => userTable.userId, { onDelete: 'cascade' })
 			.notNull(),
+		user1Name: text('user1_name'),
+		user1Image: text('user1_image'),
+		user2Name: text('user2_name'),
+		user2Image: text('user2_image'),
 		createdAt: timestamp('created_at').defaultNow()
 	},
 	(table) => {

@@ -102,6 +102,46 @@
 					disabled={isLoading}
 				/>
 			</div>
+			
+			<div class="grid gap-2">
+				<Label>Socials</Label>
+				<Input
+					class="w-[400px] bg-white"
+					name="facebook"
+					placeholder="facebook"
+					type="text"
+					autocapitalize="none"
+					disabled={isLoading}
+                    bind:value={userData.facebook}
+				/>
+				<Input
+					class="w-[400px] bg-white"
+					name="twitter"
+					placeholder="twitter"
+					type="text"
+					autocapitalize="none"
+					disabled={isLoading}
+                    bind:value={userData.twitter}
+				/>
+				<Input
+					class="w-[400px] bg-white"
+					name="linkedin"
+					placeholder="linkedin"
+					type="text"
+					autocapitalize="none"
+					disabled={isLoading}
+                    bind:value={userData.linkedin}
+				/>
+				<Input
+					class="w-[400px] bg-white"
+					name="github"
+					placeholder="github"
+					type="text"
+					autocapitalize="none"
+					disabled={isLoading}
+                    bind:value={userData.github}
+				/>
+			</div>
 
 			<Button type="submit" disabled={isLoading} class="mb-20">
 				{#if isLoading}

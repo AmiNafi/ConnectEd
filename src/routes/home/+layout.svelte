@@ -3,7 +3,8 @@
 	import * as Avatar from '$lib/components/ui/avatar';
 	import type { LayoutData } from './$types';
 	import { onMount } from 'svelte';
-	import type { user } from '$lib/server/schema';
+	import logo from '$lib/assets/logo.png'
+	import logo2 from '$lib/assets/logo2.png'
 	import { page } from '$app/stores';
 
 	export let data: LayoutData;
@@ -20,17 +21,8 @@
 	<body class="inset-0 flex min-h-screen w-full flex-col bg-white">
 		<nav class="flex w-full flex-wrap items-center justify-between bg-gray-800 p-6">
 			<div class="mr-6 flex flex-shrink-0 items-center text-white">
-				<svg
-					class="mr-2 h-8 w-8 fill-current"
-					width="54"
-					height="54"
-					viewBox="0 0 54 54"
-					xmlns="http://www.w3.org/2000/svg"
-					><path
-						d="M13.5 22.1c1.8-7.2 6.3-10.8 13.5-10.8 10.8 0 12.15 8.1 17.55 9.45 3.6.9 6.75-.45 9.45-4.05-1.8 7.2-6.3 10.8-13.5 10.8-10.8 0-12.15-8.1-17.55-9.45-3.6-.9-6.75.45-9.45 4.05zM0 38.3c1.8-7.2 6.3-10.8 13.5-10.8 10.8 0 12.15 8.1 17.55 9.45 3.6.9 6.75-.45 9.45-4.05-1.8 7.2-6.3 10.8-13.5 10.8-10.8 0-12.15-8.1-17.55-9.45-3.6-.9-6.75.45-9.45 4.05z"
-					/></svg
-				>
-				<span class="text-xl font-semibold tracking-tight">Connected</span>
+				<img src={logo2} width="180px" class="mb-1" alt="logo"/>
+				<!-- <span class="text-3xl font-medium tracking-tight">Connected</span> -->
 			</div>
 
 			<div class="flex w-auto flex-grow items-center">

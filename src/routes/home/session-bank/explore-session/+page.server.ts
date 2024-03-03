@@ -52,13 +52,21 @@ export const actions = {
 	}
 };
 
-export const load: PageServerLoad = async ({ fetch }) => {
-	let id;
-	userId.subscribe((value) => {
-		id = value;
-	});
+export const load: PageServerLoad = async ({locals:{supabase}, fetch }) => {
 
-	let payload = { userId: id };
+	let email = (await supabase.auth.getUser()).data.user?.email;
+	async function getUserId(email: string){
+		const res = await fetch('/api/user/get-user-id', {
+			method: 'POST',
+			body: JSON.stringify({ email: email })
+		});
+		const data = await res.json();
+		return data;
+	}
+
+	let userId = await getUserId(email!);
+
+	let payload = { userId: userId };
 	// console.log(payload)
 
 	async function getSearchResult() {

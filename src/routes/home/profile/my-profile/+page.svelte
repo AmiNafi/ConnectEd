@@ -10,6 +10,5 @@
 	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
 	rel="stylesheet"
 />
-<title>My Profile</title>
 
-<Profile bind:userData/>
+<Profile viewerData={userData} {userData}/>

@@ -1,5 +1,92 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
+	import Button from '../ui/button/button.svelte';
+
+	export let viewerData: any;
 	export let userData: any;
+
+	let status : string = ""
+
+	async function sendReq(){
+		let payload = {
+			senderId: viewerData.userId,
+			senderName: viewerData.userName,
+			senderImage: viewerData.imageLink,
+
+			receiverId: userData.userId,
+			receiverName: userData.userName,
+			receiverImage: userData.imageLink,
+			
+		}
+		await fetch('/api/friend-request/add', {
+			method: 'POST',
+			body: JSON.stringify(payload)
+		})
+		status = "sent";
+	}
+
+	async function cancelReq(){
+		let payload = {
+			senderId: viewerData.userId,
+			receiverId: userData.userId
+		}
+		await fetch('/api/friend-request/delete', {
+			method: 'POST',
+			body: JSON.stringify(payload)
+		})
+		status = "none";
+	}
+
+	async function accReq(){
+		let payload = {
+			user1Id: viewerData.userId,
+			user1Name: viewerData.userName,
+			user1Image: viewerData.imageLink,
+
+			user2Id: userData.userId,
+			user2Name: userData.userName,
+			user2Image: userData.imageLink,
+			
+		}
+		await fetch('/api/friend/add', {
+			method: 'POST',
+			body: JSON.stringify(payload)
+		})
+		status = "friend";
+	}
+
+	async function unfriend(){
+		let payload = {
+			user1Id: viewerData.userId,
+			user2Id: userData.userId,	
+		}
+		await fetch('/api/friend/delete', {
+			method: 'POST',
+			body: JSON.stringify(payload)
+		})
+		status = "none";
+	}
+
+	async function getStatus(){
+		let payload = {
+			viewerId: viewerData.userId,
+			profileId: userData.userId
+		}
+		// console.log(payload)
+		let ret = await fetch('/api/friend-request/status', {
+			method: 'POST',
+			body: JSON.stringify(payload)
+		})
+		let res = await ret.json()
+
+		status = res.reqStatus
+		console.log(status)
+	}
+
+	onMount(()=>{
+		getStatus()
+	})
+
 </script>
 
 <link
@@ -7,7 +94,7 @@
 	rel="stylesheet"
 />
 
-<div class="flex grow flex-col items-center space-y-6">
+<div class="mb-12 flex grow flex-col items-center space-y-6">
 	<div class="mx-auto mt-8 max-w-4xl rounded-lg bg-white p-6 shadow-md">
 		<div class="mb-6 flex flex-row justify-center">
 			<!-- svelte-ignore a11y-missing-attribute -->
@@ -86,8 +173,7 @@
 			</div>
 		</div>
 
-		<div class="mb-6 flex space-x-4">
-			<!-- Friends-->
+		<!-- <div class="mb-6 flex space-x-4">
 			<a
 				href="#"
 				class="flex flex-col items-center border border-blue-200 bg-blue-100 p-2 hover:underline"
@@ -96,7 +182,6 @@
 				<span class="text-sm">Friends</span>
 			</a>
 
-			<!-- Followers Link with Follower Logo and Box -->
 			<a
 				href="#"
 				class="flex flex-col items-center border border-green-200 bg-green-100 p-2 hover:underline"
@@ -105,7 +190,6 @@
 				<span class="text-sm">Followers</span>
 			</a>
 
-			<!-- Sessions Link with Logo and Box -->
 			<a
 				href="/home/session/my-session"
 				class="flex flex-col items-center border border-purple-200 bg-purple-100 p-2 hover:underline"
@@ -114,7 +198,6 @@
 				<span class="text-sm">Sessions</span>
 			</a>
 
-			<!-- Blogs Link with Logo and Box -->
 			<a
 				href="/home/blogs/explore-blog"
 				class="flex flex-col items-center border border-red-200 bg-red-100 p-2 hover:underline"
@@ -123,7 +206,6 @@
 				<span class="text-sm">Blogs</span>
 			</a>
 
-			<!-- Achievements Link with Logo and Box -->
 			<a
 				href="#"
 				class="flex flex-col items-center border border-orange-200 bg-orange-100 p-2 hover:underline"
@@ -131,20 +213,54 @@
 				<i class="fas fa-trophy mb-2 text-lg text-orange-500"></i>
 				<span class="text-sm">Achievements</span>
 			</a>
-		</div>
+		</div> -->
 
 		<div class="mb-6 flex space-x-4">
 			<!-- Social Links -->
-			<a href="#" class="text-gray-600 hover:text-blue-500">
-				<i class="fab fa-facebook text-lg"></i>
-			</a>
-			<a href="#" class="text-gray-600 hover:text-blue-500">
-				<i class="fab fa-twitter text-lg"></i>
-			</a>
-			<a href="#" class="text-gray-600 hover:text-blue-500">
-				<i class="fab fa-linkedin-in text-lg"></i>
-			</a>
+			{#if userData.facebook}
+				<a href={userData.facebook} target="_blank" class="text-gray-600 hover:text-blue-500">
+					<i class="fab fa-facebook text-lg"></i>
+				</a>
+			{/if}
+
+			{#if userData.twitter}
+				<a href={userData.twitter} target="_blank" class="text-gray-600 hover:text-blue-500">
+					<i class="fab fa-twitter text-lg"></i>
+				</a>
+			{/if}
+
+			{#if userData.linkedin}
+				<a href={userData.linkedin} target="_blank" class="text-gray-600 hover:text-blue-500">
+					<i class="fab fa-linkedin-in text-lg"></i>
+				</a>
+			{/if}
+
+			{#if userData.github}
+				<a href={userData.github} target="_blank" class="text-gray-600 hover:text-blue-500">
+					<i class="fab fa-github text-lg"></i>
+				</a>
+			{/if}
 		</div>
+		{#if viewerData.userId != userData.userId}
+			{#if status === "none"}
+			<div class="flex flex-row justify-end ">
+				<Button class="bg-green-500 hover:bg-green-600" on:click={sendReq}>Send Friend Request</Button>
+			</div>
+			{:else if status === "sent"}
+			<div class="flex flex-row justify-end ">
+				<Button class="bg-green-500 hover:bg-green-600" on:click={cancelReq}>Cancel Friend Request</Button>
+			</div>
+			{:else if status === "received"}
+			<div class="flex flex-row justify-between">
+				<Button class="bg-green-500 hover:bg-green-600" on:click={accReq}>Accept Friend Request</Button>
+				<Button class="bg-red-500 hover:bg-red-600" on:click={cancelReq}>Cancel Friend Request</Button>
+			</div>
+			{:else if status === "friend"}
+			<div class="flex flex-row justify-end ">
+				<Button class="bg-red-500 hover:bg-red-600" on:click={unfriend}>Unfriend</Button>
+			</div>
+			{/if}
+		{/if}
 	</div>
 </div>
 
