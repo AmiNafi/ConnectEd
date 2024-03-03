@@ -14,7 +14,8 @@ import {
 	blogCommentTable,
 	requestTable,
 	groupTable,
-	memberTable
+	memberTable,
+	noteTable
 } from './schema';
 import type {
 	user,
@@ -40,24 +41,27 @@ export async function insertUser(newUser: user) {
 	await db.insert(userTable).values(newUser);
 }
 
-export async function updateUser(newUser:user){
-	const tmp = await db.select().from(userTable).where(eq(userTable.userName, newUser.userName))
+export async function updateUser(newUser: user) {
+	const tmp = await db.select().from(userTable).where(eq(userTable.userName, newUser.userName));
 
-	if(tmp.length>0 && tmp[0].userId!=newUser.userId){
+	if (tmp.length > 0 && tmp[0].userId != newUser.userId) {
 		return {
 			success: false,
-			message: "User with this name already exists"
-		}
+			message: 'User with this name already exists'
+		};
 	}
 
-	await db.update(userTable).set({
-		userName: newUser.userName
-	}).where(eq(userTable.userId,newUser.userId!))
+	await db
+		.update(userTable)
+		.set({
+			userName: newUser.userName
+		})
+		.where(eq(userTable.userId, newUser.userId!));
 
 	return {
 		success: true,
-		message: "User profile updated"
-	}
+		message: 'User profile updated'
+	};
 }
 
 export async function doesUserExist(newUser: user) {
@@ -78,9 +82,47 @@ export async function getUser(newUser: user) {
 	});
 }
 
-export async function getUserId(email: string){
+export async function getUserFromId(userId: number) {
+	return await db.query.userTable.findMany({
+		where: eq(userTable.userId, userId),
+		with: {
+			sessions: {
+				where: (sessions, { eq }) => eq(sessions.visibility, 'publish'),
+				with: {
+					courses: true,
+					sessionFavs: {
+						where: (sessionFavs, { eq }) => eq(sessionFavs.userId, userId),
+						columns: {
+							userId: true
+						}
+					}
+				}
+			},
+			blogs: {
+				columns: {
+					blogId: true,
+					writerId: true,
+					blogTitle: true,
+					createdAt: true,
+					tags: true,
+					upvote: true
+				},
+				with: {
+					blogFavs: {
+						where: (blogFavs, { eq }) => eq(blogFavs.userId, userId),
+						columns: {
+							userId: true
+						}
+					}
+				}
+			}
+		}
+	});
+}
+
+export async function getUserId(email: string) {
 	const ret = await db.select().from(userTable).where(eq(userTable.email, email));
-	return ret[0].userId
+	return ret[0].userId;
 }
 
 //Session
@@ -89,7 +131,7 @@ export async function insertSession(newSession: session) {
 }
 
 export async function deleteSession(newSession: session) {
-	await db.delete(sessionTable).where(eq(sessionTable.sessionId ,newSession.sessionId!));
+	await db.delete(sessionTable).where(eq(sessionTable.sessionId, newSession.sessionId!));
 }
 
 export async function getSession(newSession: session) {
@@ -283,6 +325,25 @@ export async function updateLink(newLink: link) {
 			link: newLink.link
 		})
 		.where(eq(linkTable.linkId, newLink.linkId!));
+}
+
+//Note
+export async function insertNote(newNote: note) {
+	await db.insert(noteTable).values(newNote);
+}
+
+export async function deleteNote(newNote: note) {
+	await db.delete(noteTable).where(eq(noteTable.noteId, newNote.noteId!));
+}
+
+export async function updateNote(newNote: note) {
+	await db
+		.update(noteTable)
+		.set({
+			noteName: newNote.noteName,
+			noteContent: newNote.noteContent
+		})
+		.where(eq(noteTable.noteId, newNote.noteId!));
 }
 
 //Blogs

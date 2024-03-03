@@ -9,7 +9,10 @@
 	import LectureTab from '$lib/components/others/lectureTab.svelte';
 	import ResourceTab from '$lib/components/others/resourceTab.svelte';
 	import LinkTab from '$lib/components/others/linkTab.svelte';
+	import NoteTab from '$lib/components/others/noteTab.svelte';
 	import { Link } from 'lucide-svelte';
+	import { Input } from '$lib/components/ui/input';
+	import { Textarea } from '$lib/components/ui/textarea';
 
 	export let form: ActionData;
 	export let data: PageData;
@@ -43,6 +46,7 @@
 	let resourceData = data.courseData[0].resources as resource[];
 	let linkData = data.courseData[0].links as link[];
 	let noteData = data.courseData[0].notes as note[];
+
 </script>
 
 <link
@@ -68,19 +72,47 @@
 		</Tabs.List>
 
 		<Tabs.Content value="lecture">
-			<LectureTab bind:tabData={lectureData} bind:userData={userData} bind:currentCourse={currentCourse} bind:currentSession={currentSession} bind:data={data} bind:form={form}/>
+			<LectureTab
+				bind:tabData={lectureData}
+				bind:userData
+				bind:currentCourse
+				bind:currentSession
+				bind:data
+				bind:form
+			/>
 		</Tabs.Content>
 
 		<Tabs.Content value="resource">
-			<ResourceTab bind:tabData={resourceData} bind:userData={userData} bind:currentCourse={currentCourse} bind:currentSession={currentSession} bind:data={data} bind:form={form}/>
+			<ResourceTab
+				bind:tabData={resourceData}
+				bind:userData
+				bind:currentCourse
+				bind:currentSession
+				bind:data
+				bind:form
+			/>
 		</Tabs.Content>
 
 		<Tabs.Content value="link">
-			<LinkTab bind:tabData={linkData} bind:userData={userData} bind:currentCourse={currentCourse} bind:currentSession={currentSession} bind:data={data} bind:form={form}></LinkTab>
+			<LinkTab
+				bind:tabData={linkData}
+				bind:userData
+				bind:currentCourse
+				bind:currentSession
+				bind:data
+				bind:form
+			></LinkTab>
 		</Tabs.Content>
 
 		<Tabs.Content value="note">
-
+			<NoteTab
+				bind:tabData={noteData}
+				bind:userData
+				bind:currentCourse
+				bind:currentSession
+				bind:data
+				bind:form
+			></NoteTab>
 		</Tabs.Content>
 	</Tabs.Root>
 </div>

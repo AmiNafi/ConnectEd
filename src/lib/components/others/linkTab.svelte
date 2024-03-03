@@ -70,7 +70,7 @@
 	}
 
 	$: {
-		console.log(form?.success);
+		// console.log(form?.success);
 		if (form?.success == 'linkUpload') {
 			isLoading = false;
 			clearTimeout(timerId);
@@ -408,7 +408,6 @@ c0,1.657-1.343,3-3,3s-3-1.343-3-3V25c0-1.657,1.343-3,3-3s3,1.343,3,3V51z"
 					<button type="submit" disabled style="display: none" aria-hidden="true"></button>
 
 					<input hidden id="linkId" name="linkId" value={selected.linkId} />
-					<input hidden id="savedName" name="savedName" value={selected.savedName} />
 
 					<div class="grid gap-4 py-4">
 						<div class="grid grid-cols-4 items-center gap-4">
@@ -490,7 +489,6 @@ c0,1.657-1.343,3-3,3s-3-1.343-3-3V25c0-1.657,1.343-3,3-3s3,1.343,3,3V51z"
 					}}
 				>
 					<input hidden id="linkId" name="linkId" value={selected.linkId} />
-					<input hidden id="savedName" name="savedName" value={selected.savedName} />
 
 					{#if showMessage}
 						<div

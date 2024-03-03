@@ -15,7 +15,7 @@ export const actions = {
 
 		let timestamp = new Date().getTime();
 
-		let name = timestamp + '_' + newLecture.file.name  ;
+		let name = timestamp + '_' + newLecture.file.name;
 
 		newLecture.fileType = newLecture.file.type;
 
@@ -83,10 +83,10 @@ export const actions = {
 	uploadResource: async (event) => {
 		const data = await event.request.formData();
 		let newResource = Object.fromEntries(data.entries()) as any;
-		console.log(newResource)
+		console.log(newResource);
 		let timestamp = new Date().getTime();
 
-		let name = timestamp + '_' + newResource.file.name  ;
+		let name = timestamp + '_' + newResource.file.name;
 
 		newResource.fileType = newResource.file.type;
 
@@ -131,7 +131,7 @@ export const actions = {
 		let resource = Object.fromEntries(data.entries()) as any;
 
 		// console.log('Here');
-		
+
 		if (resource.file.size != 0) {
 			resource.fileType = resource.file.type;
 			const { data: res1, error: err1 } = await supabase.storage
@@ -154,7 +154,7 @@ export const actions = {
 	uploadLink: async (event) => {
 		const data = await event.request.formData();
 		let newResource = Object.fromEntries(data.entries()) as any;
-		console.log(newResource)
+		console.log(newResource);
 		let timestamp = new Date().getTime();
 
 		await event.fetch('/api/link/add', {
@@ -193,12 +193,54 @@ export const actions = {
 		return {
 			success: 'linkUpdate'
 		};
+	},
+	uploadNote: async (event) => {
+		const data = await event.request.formData();
+		let newResource = Object.fromEntries(data.entries()) as any;
+		console.log(newResource);
+
+		await event.fetch('/api/note/add', {
+			method: 'POST',
+			body: JSON.stringify(newResource)
+		});
+
+		// console.log(newLecture);
+
+		return {
+			success: 'noteUpload'
+		};
+	},
+	deleteNote: async (event) => {
+		const data = await event.request.formData();
+		let resource = Object.fromEntries(data.entries()) as any;
+
+		event.fetch('/api/note/delete', {
+			method: 'POST',
+			body: JSON.stringify(resource)
+		});
+
+		return {
+			success: 'noteDelete'
+		};
+	},
+	updateNote: async (event) => {
+		const data = await event.request.formData();
+		let resource = Object.fromEntries(data.entries()) as any;
+
+		event.fetch('/api/note/update', {
+			method: 'POST',
+			body: JSON.stringify(resource)
+		});
+
+		return {
+			success: 'noteUpdate'
+		};
 	}
 } satisfies Actions;
 
 export const load = async ({ params, fetch }) => {
 	let courseId = params.courseId;
-	
+
 	async function getCourseData() {
 		const res = await fetch('/api/course/get', {
 			method: 'POST',

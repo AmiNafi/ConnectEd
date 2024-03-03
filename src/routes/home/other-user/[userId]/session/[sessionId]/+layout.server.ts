@@ -1,7 +1,8 @@
+import type { PageServerLoad } from "../$types";
 
 export const load = async ({ params, fetch }) => {
 	let sessionId = params.sessionId;
-	// console.log(sessionId)
+	console.log(sessionId)
 
 	async function getData() {
 		const res = await fetch('/api/session/get', {
@@ -14,19 +15,9 @@ export const load = async ({ params, fetch }) => {
     
     const ret = await getData()
 
-	// console.log(ret[0])
+    // console.log(ret)
 
-    if(ret[0].visibility!='public'){
-		return{
-			success: false,
-			otherSessionData: null
-		}
-	}
-	else{
-		return{
-			success: true,
-			otherSessionData: ret
-		}
-	}
-
+	return {
+		otherSessionData: ret
+	};
 };

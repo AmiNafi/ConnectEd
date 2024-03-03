@@ -148,7 +148,6 @@ export const noteTable = pgTable('note_table', {
 		.notNull(),
 	noteName: text('note_name').notNull(),
 	noteContent: text('note_content').notNull(),
-	savedName: text('saved_name').notNull(),
 	createdAt: timestamp('created_at').defaultNow()
 });
 

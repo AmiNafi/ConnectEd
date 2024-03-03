@@ -10,14 +10,15 @@
 	import ResourceTab from '$lib/components/others/resourceTab.svelte';
 	import LinkTab from '$lib/components/others/linkTab.svelte';
 	import { Link } from 'lucide-svelte';
+	import NoteTab from '$lib/components/others/noteTab.svelte';
 
 	export let form: ActionData;
 	export let data: PageData;
 
 	let userData = data.user[0];
 	let userSessions = userData.sessions;
-    let currentSession = data.otherSessionData[0]
-	let sessionCoursess = currentSession.courses as course[]
+	let currentSession = data.otherSessionData[0];
+	let sessionCoursess = currentSession.courses as course[];
 	let currentCourse = sessionCoursess.filter((course: course) => {
 		return course.courseId?.toString() == $page.params.courseId;
 	})[0];
@@ -63,19 +64,51 @@
 		</Tabs.List>
 
 		<Tabs.Content value="lecture">
-			<LectureTab bind:tabData={lectureData} bind:userData={userData} bind:currentCourse={currentCourse} bind:currentSession={currentSession} bind:data={data} bind:form={form} editable={false}/>
+			<LectureTab
+				bind:tabData={lectureData}
+				bind:userData
+				bind:currentCourse
+				bind:currentSession
+				bind:data
+				bind:form
+				editable={false}
+			/>
 		</Tabs.Content>
 
 		<Tabs.Content value="resource">
-			<ResourceTab bind:tabData={resourceData} bind:userData={userData} bind:currentCourse={currentCourse} bind:currentSession={currentSession} bind:data={data} bind:form={form} editable={false}/>
+			<ResourceTab
+				bind:tabData={resourceData}
+				bind:userData
+				bind:currentCourse
+				bind:currentSession
+				bind:data
+				bind:form
+				editable={false}
+			/>
 		</Tabs.Content>
 
 		<Tabs.Content value="link">
-			<LinkTab bind:tabData={linkData} bind:userData={userData} bind:currentCourse={currentCourse} bind:currentSession={currentSession} bind:data={data} bind:form={form} editable={false}></LinkTab>
+			<LinkTab
+				bind:tabData={linkData}
+				bind:userData
+				bind:currentCourse
+				bind:currentSession
+				bind:data
+				bind:form
+				editable={false}
+			></LinkTab>
 		</Tabs.Content>
 
 		<Tabs.Content value="note">
-
+			<NoteTab
+				bind:tabData={noteData}
+				bind:userData
+				bind:currentCourse
+				bind:currentSession
+				bind:data
+				bind:form
+				editable={false}
+			></NoteTab>
 		</Tabs.Content>
 	</Tabs.Root>
 </div>

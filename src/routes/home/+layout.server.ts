@@ -1,5 +1,3 @@
-import { setUserId } from '$lib/stores/user.js';
-
 export const load = async ({ locals: { supabase }, fetch }) => {
 	async function getUserData() {
 		const {
@@ -19,7 +17,6 @@ export const load = async ({ locals: { supabase }, fetch }) => {
 
 	const ret = await getUserData()
 
-	setUserId(ret[0].userId)
 	return {
 		user: ret
 	};

@@ -70,7 +70,7 @@
 	}
 
 	$: {
-		console.log(form?.success);
+		// console.log(form?.success);
 		if (form?.success == 'lectureUpload') {
 			isLoading = false;
 			clearTimeout(timerId);

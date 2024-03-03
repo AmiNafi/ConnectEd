@@ -70,7 +70,7 @@
 	}
 
 	$: {
-		console.log(form?.success);
+		// console.log(form?.success);
 		if (form?.success == 'resourceUpload') {
 			isLoading = false;
 			clearTimeout(timerId);

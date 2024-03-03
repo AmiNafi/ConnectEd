@@ -20,7 +20,7 @@ export async function load({ locals:{supabase}, params, fetch }) {
         }
         const channel = groupId;
         const userId = await getUserId();
-
+        console.log(channel)
         if (!channel) {
             throw error(400, 'channel is required');
         }

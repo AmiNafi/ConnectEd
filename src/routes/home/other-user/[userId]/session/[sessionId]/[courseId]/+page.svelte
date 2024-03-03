@@ -27,7 +27,7 @@
 	);
 
 	let items = [
-		{ href: '../', text: 'Explore Sessions' },
+		{ href: '../', text: 'Public Sessions' },
 		{ href: './', text: currentSession.sessionName },
 		{
 			href: './' + currentCourse.courseId,

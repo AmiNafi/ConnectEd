@@ -1,46 +1,22 @@
 <script lang="ts">
-	import { page } from '$app/stores';
-	import Breadcrumb from '$lib/components/others/breadcrumb.svelte';
-	import { Label } from '$lib/components/ui/label';
+	import { Separator } from '$lib/components/ui/separator';
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
-	import type { session } from '$lib/server/schema';
-	import type { LayoutData } from '../../../$types';
-	import { Textarea } from '$lib/components/ui/textarea';
-	import Setting from '$lib/components/others/setting.svelte';
+	import { Label } from '$lib/components/ui/label';
 	import { enhance } from '$app/forms';
-
-	import { Separator } from '$lib/components/ui/separator';
+	import { Textarea } from '$lib/components/ui/textarea';
 	import type { ActionData } from './$types';
+	import type { LayoutData } from '../$types';
 
-	export let data: LayoutData;
 	export let form: ActionData;
+	export let data: LayoutData;
 
-	const userData = data.user[0];
-	const userSessions = userData.sessions as session[];
-	const currentSession = userSessions.filter((session) => {
-		return session.sessionId?.toString() == $page.params.sessionId;
-	})[0];
-	const sessionIndex = userSessions.findIndex(
-		(session) => session.sessionId?.toString() == $page.params.sessionId
-	);
-
-	let items = [
-		{ href: './', text: 'My Sessions' },
-		{ href: './', text: currentSession.sessionName },
-		{ href: './settings', text: 'Settings' }
-	];
-
-	let sessionName = currentSession.sessionName;
-	let description = currentSession.description;
-	let visibility = currentSession.visibility;
-
+	let sessionName = '';
+	let description = '';
 	let timerId: any;
-	let theme = currentSession.theme;
+	let theme = '#F7C427';
 
 	let isLoading = false;
-	let isDeleting = false;
-
 	async function onSubmit() {
 		isLoading = true;
 		timerId = setTimeout(() => {
@@ -50,14 +26,9 @@
 
 	$: {
 		if (form?.success) {
-			data.user[0].sessions[sessionIndex].sessionName = sessionName;
-			data.user[0].sessions[sessionIndex].description = description;
-			data.user[0].sessions[sessionIndex].visibility = visibility;
-			data.user[0].sessions[sessionIndex].tags = chips;
-			data.user[0].sessions[sessionIndex].theme = theme;
-
 			isLoading = false;
 			clearTimeout(timerId);
+			chips = [];
 		}
 	}
 
@@ -89,7 +60,7 @@
 	}
 
 	let chipInput = '';
-	let chips: string[] = currentSession.tags || [];
+	let chips: string[] = [];
 
 	function addChip() {
 		if (chipInput.trim() !== '') {
@@ -101,19 +72,6 @@
 	function removeChip(index: number) {
 		chips = chips.filter((_, i) => i !== index);
 	}
-
-	let linkInput: HTMLInputElement;
-
-	function copyLink() {
-		navigator.clipboard
-			.writeText(linkInput.value)
-			.then(() => {
-				alert('Link copied to clipboard!');
-			})
-			.catch((err) => {
-				console.error('Failed to copy: ', err);
-			});
-	}
 </script>
 
 <link
@@ -121,38 +79,30 @@
 	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
 />
 
-<div class="flex grow flex-col items-center">
-	<div class="flex w-full flex-row flex-wrap justify-between">
-		<Breadcrumb {items} />
-		<a href="./settings"><Setting /></a>
+<div class="flex grow flex-col items-center space-y-6">
+	<div>
+		<h3 class="mt-10 text-center text-3xl font-medium">Create New Session</h3>
+		<p class="text-sm text-gray-800">Create a session with preferred settings</p>
 	</div>
-	<Label class="mb-10 mt-10 text-center text-3xl font-medium"
-		>{currentSession.sessionName}/Settings</Label
-	>
 	{#if form?.success}
 		<div
-			class="mb-10 w-[400px] rounded-sm border-2 border-green-500 bg-green-100 px-2 py-2 text-base text-green-500"
+			class="w-[400px] rounded-sm border-2 border-green-500 bg-green-100 px-2 py-2 text-base text-green-500"
 		>
-			Session Successfully Updated
+			Session Successfully Created
 		</div>
 	{/if}
+	<Separator />
 	<form
-		use:enhance={() => {
-			return async ({ update }) => {
-				update({ reset: false, invalidateAll: false });
-			};
-		}}
-		action="?/update"
+		use:enhance
+		action="?/create"
 		method="post"
 		on:submit={() => {
 			onSubmit();
 		}}
 	>
 		<button type="submit" disabled style="display: none" aria-hidden="true"></button>
-
+		<!-- svelte-ignore empty-block -->
 		<input hidden id="userId" name="userId" value={data.user[0].userId} />
-		<input hidden id="sessionId" name="sessionId" value={currentSession.sessionId} />
-
 		<div class="grid gap-10">
 			<div class="grid gap-2">
 				<Label for="sessionName">Session Name</Label>
@@ -181,6 +131,18 @@
 					bind:value={description}
 				/>
 			</div>
+			<div class="grid gap-2">
+				<Label for="shortDesc">Session Short Description (Optional)</Label>
+				<Textarea
+					class="w-[400px] bg-white"
+					id="description"
+					name="shortDesc"
+					placeholder="Type description here."
+					autocapitalize="none"
+					disabled={isLoading}
+					bind:value={description}
+				/>
+			</div>
 
 			<div class="grid gap-2">
 				<Label for="visibility">Visibility Setting</Label>
@@ -188,7 +150,6 @@
 					disabled={isLoading}
 					name="visibility"
 					id="visibility"
-					bind:value={visibility}
 					required
 					class="inline-flex h-10 items-center justify-center whitespace-nowrap rounded-md bg-muted px-4 py-2 text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2
 			focus-visible:ring-ring
@@ -196,28 +157,9 @@
 				>
 					<option value="" disabled selected hidden>--Please choose an option--</option>
 					<option value="private">Private</option>
-					<option value="public">Shared</option>
-					<option value="publish">Public</option>
+					<option value="public">Public</option>
+					<option value="publish">Publish</option>
 				</select>
-				{#if visibility === 'public'}
-					<div
-						class="inline-flex h-10 items-center justify-center whitespace-nowrap rounded-md bg-slate-200 px-4 py-2 text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2
-					focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
-					>
-						<input
-							bind:this={linkInput}
-							type="text"
-							class="w-full border-none bg-transparent px-2 py-1 focus:outline-none"
-							value="http://localhost:5173/home/session/shared/{$page.params.sessionId}"
-						/>
-						<button
-							on:click={copyLink}
-							class="ml-2 rounded bg-blue-500 px-3 py-1 text-sm font-medium text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-						>
-							Copy Link
-						</button>
-					</div>
-				{/if}
 			</div>
 
 			<div class="grid gap-2">
@@ -280,29 +222,9 @@
 				{#if isLoading}
 					<i class="fa fa-spinner fa-spin px-3" style="font-size:24px" />
 				{/if}
-				Update
+				Create
 			</Button>
 		</div>
-	</form>
-	<form
-		use:enhance={() => {
-			isDeleting = true;
-			return async ({ update }) => {
-				isDeleting = false;
-				update({ invalidateAll: false });
-			};
-		}}
-		action="?/delete"
-		method="post"
-		class="flex w-[800px] flex-row justify-end"
-	>
-		<input hidden name="sessionId" value={currentSession.sessionId} />
-		<Button type="submit" disabled={isDeleting} class="mb-20 min-w-40 bg-red-500">
-			{#if isDeleting}
-				<i class="fa fa-spinner fa-spin px-3" style="font-size:24px" />
-			{/if}
-			Delete
-		</Button>
 	</form>
 </div>
 

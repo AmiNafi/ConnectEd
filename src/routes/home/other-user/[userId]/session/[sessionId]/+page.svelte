@@ -3,27 +3,23 @@
 	import Breadcrumb from '$lib/components/others/breadcrumb.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { Label } from '$lib/components/ui/label';
-	import type { LayoutData } from '../../$types';
 	import type { session, course } from '$lib/server/schema';
-	import { Input } from '$lib/components/ui/input';
-	import { Separator } from '$lib/components/ui/separator';
 	import Notebook from '$lib/components/others/notebook.svelte';
 	import Setting from '$lib/components/others/setting.svelte';
+	import { Input } from '$lib/components/ui/input';
+	import { Separator } from '$lib/components/ui/separator';
+	import type { LayoutData, PageData } from './$types';
 
 	export let data: LayoutData;
 	const userData = data.user[0];
 	const userSessions = userData.sessions;
-	const currentSession = userSessions.filter((session: session) => {
-		return session.sessionId?.toString() == $page.params.sessionId;
-	})[0];
-	const sessionIndex = userSessions.findIndex(
-		(session: session) => session.sessionId?.toString() == $page.params.sessionId
-	);
+	const currentSession = data.otherSessionData[0];
+
 	const currentCourses = currentSession.courses as course[];
 	let filteredCourses = currentCourses;
 
 	let items = [
-		{ href: './', text: 'Saved Sessions' },
+		{ href: './', text: 'Public Sessions' },
 		{ href: './' + $page.params.sessionId, text: currentSession.sessionName }
 	];
 
@@ -60,7 +56,7 @@
 					}
 					return false;
 				}
-				if(tag.length==0) return true
+				if (tag.length == 0) return true;
 				else return false;
 			});
 		}
@@ -97,7 +93,9 @@
 					><Notebook cl="hover:scale-105" theme={course.theme} /></a
 				>
 				<Label class="mt-2 text-center text-xl font-medium">{course.courseName}</Label>
+				{#if course.instructor}
 				<Label class="mt-2 text-center text-sm font-normal">{course.instructor}</Label>
+				{/if}
 				{#if course.tags}
 					<div class="mt-2 flex flex-row flex-wrap justify-center gap-2">
 						{#each course.tags as tag}
