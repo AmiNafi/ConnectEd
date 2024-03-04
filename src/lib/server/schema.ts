@@ -518,7 +518,7 @@ export const chatNotification = pgTable('chat_notification', {
 
 export const blogReportTable = pgTable('blog_report',{
 	reportId: serial('id').primaryKey(),
-	blogId: integer('blog_id').references(()=>blogTable.blogId, {onDelete: 'cascade'}),
+	blogId: integer('blog_id'),
 	blogTitle: text('blog_title').notNull(),
 	message:text('message').notNull(),
 	status:text('status').default("pending"),
@@ -527,7 +527,7 @@ export const blogReportTable = pgTable('blog_report',{
 
 export const sessionReportTable = pgTable('session_report',{
 	reportId: serial('id').primaryKey(),
-	sessionId: integer('session_id').references(()=>sessionTable.sessionId, {onDelete: 'cascade'}),
+	sessionId: integer('session_id'),
 	sessionName: text('blog_title').notNull(),
 	message:text('message').notNull(),
 	status:text('status').default("pending"),

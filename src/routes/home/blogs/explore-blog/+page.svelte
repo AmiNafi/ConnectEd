@@ -55,6 +55,7 @@
 		data.searchResult.then((res) => {
 			searchResult = res;
 			cnt = Math.max(Object.keys(searchResult).length, 1);
+			console.log(searchResult);
 		});
 	});
 
@@ -63,7 +64,7 @@
 	let sortBy = '';
 
 	$: {
-		console.log(form?.success);
+		// console.log(form?.success);
 		if (form?.success == 'search') {
 			searchResult = form.searchResult;
 			cnt = Math.max(Object.keys(searchResult).length, 1);
@@ -167,9 +168,13 @@
 								</Card.Header>
 								<Card.Content>
 									<p>
-										Written by 
+										Written by
 										<span class="">
-											<a href="../other-user/{searchResult[perPage * ((currentPage || 1) - 1) + i].writer.userId}/profile" class="hover:underline">
+											<a
+												href="../other-user/{searchResult[perPage * ((currentPage || 1) - 1) + i]
+													.writer.userId}/profile"
+												class="hover:underline"
+											>
 												{searchResult[perPage * ((currentPage || 1) - 1) + i].writer.userName}
 											</a>
 										</span>
@@ -188,12 +193,14 @@
 									</p>
 								</Card.Content>
 								<Card.Footer class="flex flex-wrap gap-2">
-									{#each searchResult[perPage * ((currentPage || 1) - 1) + i].tags as tag}
-										<span
-											class="rounded-full px-2 py-1 text-xs transition-colors hover:bg-gray-200"
-											style="background-color: {generateColour(tag)}">{tag}</span
-										>
-									{/each}
+									{#if searchResult[perPage * ((currentPage || 1) - 1) + i].tags}
+										{#each searchResult[perPage * ((currentPage || 1) - 1) + i].tags as tag}
+											<span
+												class="rounded-full px-2 py-1 text-xs transition-colors hover:bg-gray-200"
+												style="background-color: {generateColour(tag)}">{tag}</span
+											>
+										{/each}
+									{/if}
 								</Card.Footer>
 							</div>
 							<div class="flex flex-col">
@@ -222,8 +229,10 @@
 								</div>
 								<div class="my-auto">
 									<Button
-									href="./explore-blog/{searchResult[perPage * ((currentPage || 1) - 1) + i].blogId}"
-										class="bg-white hover:bg-muted"><RightArrow />
+										href="./explore-blog/{searchResult[perPage * ((currentPage || 1) - 1) + i]
+											.blogId}"
+										class="bg-white hover:bg-muted"
+										><RightArrow />
 									</Button>
 								</div>
 							</div>

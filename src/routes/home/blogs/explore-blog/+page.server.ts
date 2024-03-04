@@ -15,11 +15,13 @@ export const load = async ({ locals:{supabase}, fetch }) => {
 	async function getSearchResult(){
 		let userId = await getUserId(email!);
 		let payload = { userId: userId };
+	
 		const res = await fetch('/api/blog/search', {
 			method: 'POST',
 			body: JSON.stringify(payload)
 		});
 		const data = await res.json();
+		// console.log(data)
 		return data;
 	}
 	return {

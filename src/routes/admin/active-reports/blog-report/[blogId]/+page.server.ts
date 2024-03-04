@@ -1,6 +1,6 @@
 import type { Actions } from './$types';
 import { userId } from '$lib/stores/user.js';
-import { addBG } from '$lib/server/queries';
+import { addBG, getBlog2, updateBG } from '$lib/server/queries';
 
 export const actions = {
 	comment: async (event) => {
@@ -8,7 +8,6 @@ export const actions = {
 		let data = Object.fromEntries(formData.entries()) as any;
 
 		// console.log(data);
-
 		const ret = await event.fetch('/api/blog/comment', {
 			method: 'POST',
 			body: JSON.stringify(data)
@@ -27,22 +26,12 @@ export const actions = {
 		console.log(data)
 
 		addBG(data)
-	}
+	},
 } satisfies Actions;
 
 export const load = async ({ locals:{supabase}, params, fetch }) => {
 	let blogId = params.blogId;
-	
-	let email = (await supabase.auth.getUser()).data.user?.email;
-	async function getUserId(email: string){
-		const res = await fetch('/api/user/get-user-id', {
-			method: 'POST',
-			body: JSON.stringify({ email: email })
-		});
-		const data = await res.json();
-		return data;
-	}
-
+	console.log(blogId)
 	async function getComments() {
 		const res = await fetch('/api/blog/get-comment', {
 			method: 'POST',
@@ -52,18 +41,8 @@ export const load = async ({ locals:{supabase}, params, fetch }) => {
 		return data;
 	}
 	
-	async function getBlog(){
-		let userId = await getUserId(email!)
-		const res = await fetch('/api/blog/get', {
-			method: 'POST',
-			body: JSON.stringify({ blogId: blogId, userId: userId })
-		});
-		const data = await res.json();
-		return data;
-	}
-
 	return {
 		blogComments: getComments(),
-		currentBlog: getBlog()
+		currentBlog: getBlog2(parseInt(blogId))
 	};
 };

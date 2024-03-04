@@ -420,6 +420,10 @@ export async function getBlog(blogId: number, userId: number) {
 	return ret;
 }
 
+export async function getBlog2(blogId: number) {
+	return await db.select().from(blogTable).where(eq(blogTable.blogId, blogId))
+}
+
 export async function updateBlog(newBlog: blog) {
 	await db
 		.update(blogTable)
@@ -516,6 +520,7 @@ export async function searchBlog(name: string, tag: string, userId: number) {
 		});
 		return ret;
 	} else {
+		console.log(userId)
 		const ret = await db.query.blogTable.findMany({
 			columns: {
 				blogId: true,

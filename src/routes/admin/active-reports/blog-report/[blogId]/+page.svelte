@@ -20,13 +20,13 @@
 	export let form: ActionData;
 
 	// const blogs = data.searchResult;
-	let currentBlog: any;
-	let blogComments: any;
+	let currentBlog: any = null;
+	let blogComments: any = null;
 
-	let items = [
-		{ href: './', text: 'Explore Blogs' }
-		// { href: './' + $page.params.blogId, text: currentBlog.blogTitle }
-	];
+	// let items = [
+	// { href: './', text: 'Explore Blogs' }
+	// { href: './' + $page.params.blogId, text: currentBlog.blogTitle }
+	// ];
 
 	function generateColour(str: string) {
 		// Simple hash function to generate a color based on the tag name
@@ -49,7 +49,7 @@
 		data.currentBlog.then((res) => {
 			currentBlog = res[0];
 			console.log(res[0]);
-			items = [...items, { href: './' + $page.params.blogId, text: currentBlog.blogTitle }];
+			// items = [...items, { href: './' + $page.params.blogId, text: currentBlog.blogTitle }];
 		});
 
 		data.blogComments.then((res) => {
@@ -60,7 +60,7 @@
 
 <div class="flex grow flex-col items-center">
 	<div class="flex w-full flex-row flex-wrap justify-between">
-		<Breadcrumb {items} />
+		<!-- <Breadcrumb {items} /> -->
 		<!-- <a href="./{currentBlog.blogId}/settings"><Setting/></a> -->
 	</div>
 	{#if currentBlog && blogComments}
@@ -85,23 +85,25 @@
 
 			<!-- Tags in a line below the information -->
 			<div class="flex flex-wrap gap-2">
-				{#each currentBlog.tags as tag}
-					<span
-						class="rounded-full bg-gray-200 px-2 py-1 text-xs"
-						style="background-color: {generateColour(tag)}">{tag}</span
-					>
-				{/each}
+				{#if currentBlog.tags}
+					{#each currentBlog.tags as tag}
+						<span
+							class="rounded-full bg-gray-200 px-2 py-1 text-xs"
+							style="background-color: {generateColour(tag)}">{tag}</span
+						>
+					{/each}
+				{/if}
 			</div>
+
 			<Separator class="m-5" />
 			<!-- Content of the blog -->
 			{@html currentBlog.blogContent}
 			<Separator class="m-5" />
-				
-			</div>
-			<!-- Upvote and Downvote section at the bottom with SVG icons -->
-			<!-- <div class="mt-4 flex items-center justify-start"></div> -->
-		<div class="comment-section max-w-screen-l w-full">
+		</div>
 
+		<!-- Upvote and Downvote section at the bottom with SVG icons -->
+		<!-- <div class="mt-4 flex items-center justify-start"></div> -->
+		<div class="comment-section max-w-screen-l w-full">
 			<div class="antialiased">
 				<h3 class="mb-4 text-lg font-semibold text-gray-900">Comments</h3>
 
