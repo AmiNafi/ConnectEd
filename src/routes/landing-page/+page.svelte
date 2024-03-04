@@ -1,129 +1,266 @@
-<script lang="ts">
+<script>
+	import logo2 from '$lib/assets/logo2.png'
 	import Button from '$lib/components/ui/button/button.svelte';
 </script>
 
-<body class="bg-gray-100">
-	<!-- Navigation -->
-	<nav class="bg-blue-600 p-4 text-white">
-		<div class="container mx-auto">
-			<div class="flex items-center justify-between">
-				<div class="text-2xl font-semibold">ConnectED</div>
-				<div>
-					<Button href="/register" class="bg-blue-800">Signup</Button>
-					<Button href="/login" class="bg-blue-800">Login</Button>
+<main class="bg-[#fdf6f1]">
+	<section>
+		<div class="relative h-[130px] bg-[#1f7dc5]">
+			<div class="flex justify-between mx-6 p-6 z-[5]">
+				<img
+					src={logo2}
+					class="transform transition duration-300 hover:scale-105"
+					alt="title"
+					width={300}
+				/>
+				<div class="flex flex-row space-x-4">
+					<div>
+						<Button href="/register" class="bg-primary">Signup</Button>
+						<Button href="/login" class="bg-primary">Login</Button>
+					</div>
 				</div>
 			</div>
 		</div>
-	</nav>
-
-	<!-- Hero Section -->
-	<header class="bg-blue-800 py-24 text-white">
-		<div class="container mx-auto text-center">
-			<h1 class="mb-4 text-4xl font-extrabold leading-tight md:text-5xl lg:text-6xl">
-				Empowering Your Learning Journey
-			</h1>
-			<p class="mb-8 text-lg md:text-xl lg:text-2xl">
-				Your all-in-one platform to organize, collaborate, and elevate your study experience.
-			</p>
-			<a
-				href="#features"
-				class="rounded-full bg-white px-6 py-3 font-semibold text-blue-600 transition duration-300 hover:bg-blue-600 hover:text-white"
-				>Explore Features</a
-			>
+		
+		<div class="relative">
+			<div class="wave-header">
+				<svg
+					data-name="Layer 1"
+					xmlns="http://www.w3.org/2000/svg"
+					viewBox="0 0 1200 120"
+					preserveAspectRatio="none"
+				>
+					<path
+						d="M985.66,92.83C906.67,72,823.78,31,743.84,14.19c-82.26-17.34-168.06-16.33-250.45.39-57.84,11.73-114,31.07-172,41.86A600.21,600.21,0,0,1,0,27.35V120H1200V95.8C1132.19,118.92,1055.71,111.31,985.66,92.83Z"
+						class="shape-fill"
+					></path>
+				</svg>
+			</div>
 		</div>
-	</header>
+	</section>
+	<section class="mt-[7%] mb-32">
+		<div class="flex justify-center mx-auto space-x-40 max-w-7xl">
+			<div class="flex flex-col w-1/2 z-[2]">
+				<h1 class="text-5xl font-bold font-heading mb-1">Manage and share your study materials</h1>
 
-	<!-- Features Section -->
-	<section id="features" class="py-16">
-		<div class="container mx-auto text-center">
-			<h2 class="mb-8 text-3xl font-extrabold md:text-4xl lg:text-5xl">Key Features</h2>
+				<p class="text-l font-semibold mb-9 w-4/5 mt-4">
+					Join ConnectED today and embark on a collaborative learning adventure!
+				</p>
+				<a
+					href="/login"
+					target="_self"
+					class="font-bold text-xl p-4 bg-[#77B8De] rounded-xl shadow-md hover:bg-[#619ecf] hover:text-[21px] hover:shadow-lg w-1/2 text-center"
+				>
+					Get Started
+				</a>
+			</div>
+			<div class="relative flex items-center justify-center w-1/2 z-[2]">
+				<img
+					src="https://rxkhdqhbxkogcnbfvquu.supabase.co/storage/v1/object/public/statics/imagecoding.gif?t=2024-02-14T11%3A09%3A57.444Z"
+					width="90%"
+					height="70%"
+					alt="Pixi Logo"
+					class="absolute -bottom-32"
+				/>
+				<img
+					src="https://dxpcgmtdvyvcxbaffqmt.supabase.co/storage/v1/object/public/demo/Other%2015.png"
+					class="absolute left-0 -top-10"
+					width={200}
+					height={200}
+					alt="Other 15"
+				/>
+				<img
+					src="https://rxkhdqhbxkogcnbfvquu.supabase.co/storage/v1/object/public/statics/vscode-svgrepo-com.svg"
+					class="absolute right-0 -top-1"
+					width={185}
+					height={185}
+					alt="Other 15"
+				/>
+				<img
+					src="https://rxkhdqhbxkogcnbfvquu.supabase.co/storage/v1/object/public/statics/f3ebee30-bd9b-43f0-80cf-aca4982ca152.png"
+					class="absolute -left-0 -bottom-56 -rotate-12"
+					width={185}
+					height={185}
+					alt="Other 15"
+				/>
 
-			<div class="grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-3">
-				<!-- Feature 1 -->
-				<div class="flex flex-col items-center rounded-lg bg-white p-8 shadow-md">
-					<i class="fas fa-book mb-4 text-4xl text-blue-600"></i>
-					<h3 class="mb-4 text-xl font-semibold lg:text-2xl">Study Resource Management</h3>
-					<p class="text-gray-700">
-						Effortlessly organize and keep track of all your study materials in one place for
+				<svg
+					class="absolute -right-0 -bottom-12 w-20 h-20 -rotate-12"
+					version="1"
+					xmlns="http://www.w3.org/2000/svg"
+					viewBox="0 0 48 48"
+					enable-background="new 0 0 48 48"
+				>
+					<path
+						fill="#4CAF50"
+						d="M8,12h22c2.2,0,4,1.8,4,4v16c0,2.2-1.8,4-4,4H8c-2.2,0-4-1.8-4-4V16C4,13.8,5.8,12,8,12z"
+					/>
+					<polygon fill="#388E3C" points="44,35 34,29 34,19 44,13" />
+				</svg>
+
+				<img
+					src="https://dxpcgmtdvyvcxbaffqmt.supabase.co/storage/v1/object/public/demo/Other%2004.png"
+					class="absolute -bottom-60 right-0"
+					width={180}
+					height={180}
+					alt="Other 04"
+				/>
+			</div>
+		</div>
+	</section>
+	<section class="py-20 max-w-screen-lg mx-auto mt-72">
+		<div class="flex justify-center text-center">
+			<div class="flex flex-col space-y-3">
+				<h2 class="text-4xl font-bold font-heading">All-in-one platform</h2>
+				<p>A complete study resource management platform in your hand</p>
+			</div>
+		</div>
+		<div class="grid grid-cols-3 gap-12 mt-20">
+			<div
+				class="flex flex-col p-4 space-y-3 hover:shadow-2xl transition duration-300 cursor-pointer"
+			>
+				<div class="flex space-x-3">
+					<img
+						src="https://rxkhdqhbxkogcnbfvquu.supabase.co/storage/v1/object/public/statics/code-svgrepo-com.svg"
+						class="transform transition duration-300 hover:rotate-12"
+						alt="title"
+						width={25}
+						height={25}
+					/>
+					<h5 class="font-bold font-heading">Study Resource Management</h5>
+				</div>
+				<p>
+					Effortlessly organize and keep track of all your study materials in one place for
 						efficient learning.
-					</p>
+				</p>
+			</div>
+			<div
+				class="flex flex-col p-4 space-y-3 hover:shadow-2xl transition duration-300 cursor-pointer"
+			>
+				<div class="flex space-x-3">
+					<img
+						src="https://dxpcgmtdvyvcxbaffqmt.supabase.co/storage/v1/object/public/demo/connection-network-internet-seo-svgrepo-com.svg"
+						class="transform transition duration-300 hover:rotate-12"
+						alt="title"
+						width={30}
+						height={30}
+					/>
+					<h5 class="font-bold font-heading">Collaborative Study Sessions</h5>
 				</div>
+				<p>Share your study sessions with others or join sessions created by fellow learners,
+					enhancing collaboration and knowledge exchange.</p>
+			</div>
 
-				<!-- Feature 2 -->
-				<div class="flex flex-col items-center rounded-lg bg-white p-8 shadow-md">
-					<i class="fas fa-users mb-4 text-4xl text-blue-600"></i>
-					<h3 class="mb-4 text-xl font-semibold lg:text-2xl">Collaborative Study Sessions</h3>
-					<p class="text-gray-700">
-						Share your study sessions with others or join sessions created by fellow learners,
-						enhancing collaboration and knowledge exchange.
-					</p>
+			<div
+				class="flex flex-col p-4 space-y-3 hover:shadow-2xl transition duration-300 cursor-pointer"
+			>
+				<div class="flex space-x-3">
+					<img
+						src="https://dxpcgmtdvyvcxbaffqmt.supabase.co/storage/v1/object/public/demo/teacher%20(1).svg"
+						class="transform transition duration-300 hover:rotate-12"
+						alt="title"
+						height={30}
+						width={30}
+					/>
+					<h5 class="font-bold font-heading">Study Groups</h5>
 				</div>
+				<p>Form study groups with friends, fostering a supportive environment for collaborative
+					learning.</p>
+			</div>
+			<div
+				class="flex flex-col p-4 space-y-3 hover:shadow-2xl transition duration-300 cursor-pointer"
+			>
+				<div class="flex space-x-3">
+					<img
+						src="https://dxpcgmtdvyvcxbaffqmt.supabase.co/storage/v1/object/public/demo/robot.svg"
+						class="transform transition duration-300 hover:rotate-12"
+						alt="title"
+						height={30}
+						width={30}
+					/>
+					<h5 class="font-bold font-heading">Study Partners</h5>
+				</div>
+				<p>Connect with learners who share similar interests and academic goals for effective study
+					partnerships.</p>
+			</div>
+			<div
+				class="flex flex-col p-4 space-y-3 hover:shadow-2xl transition duration-300 cursor-pointer"
+			>
+				<div class="flex space-x-3">
+					<img
+						src="https://rxkhdqhbxkogcnbfvquu.supabase.co/storage/v1/object/public/statics/share-1099-svgrepo-com.svg"
+						class="transform transition duration-300 hover:rotate-12"
+						alt="title"
+						height={30}
+						width={30}
+					/>
+					<h5 class="font-bold font-heading">Blogs</h5>
+				</div>
+				<p>Create and share blogs about your learning experiences, methods, and conclusions, or
+					explore insights from others in the community.</p>
+			</div>
 
-				<!-- Feature 3 -->
-				<div class="flex flex-col items-center rounded-lg bg-white p-8 shadow-md">
-					<i class="fas fa-users-class mb-4 text-4xl text-blue-600"></i>
-					<h3 class="mb-4 text-xl font-semibold lg:text-2xl">Study Groups</h3>
-					<p class="text-gray-700">
-						Form study groups with friends, fostering a supportive environment for collaborative
-						learning.
-					</p>
+			<div
+				class="flex flex-col p-4 space-y-3 hover:shadow-2xl transition duration-300 cursor-pointer"
+			>
+				<div class="flex space-x-3">
+					<img
+						src="https://dxpcgmtdvyvcxbaffqmt.supabase.co/storage/v1/object/public/demo/analysis-svgrepo-com.svg"
+						class="transform transition duration-300 hover:rotate-12"
+						alt="title"
+						height={30}
+						width={30}
+					/>
+					<h5 class="font-bold font-heading">Analysis</h5>
 				</div>
-
-				<!-- Feature 4 -->
-				<div class="flex flex-col items-center rounded-lg bg-white p-8 shadow-md">
-					<i class="fas fa-user-friends mb-4 text-4xl text-blue-600"></i>
-					<h3 class="mb-4 text-xl font-semibold lg:text-2xl">Find Study Partners</h3>
-					<p class="text-gray-700">
-						Connect with learners who share similar interests and academic goals for effective study
-						partnerships.
-					</p>
-				</div>
-
-				<!-- Feature 5 -->
-				<div class="flex flex-col items-center rounded-lg bg-white p-8 shadow-md">
-					<i class="fas fa-blog mb-4 text-4xl text-blue-600"></i>
-					<h3 class="mb-4 text-xl font-semibold lg:text-2xl">Blogs and Experiences</h3>
-					<p class="text-gray-700">
-						Create and share blogs about your learning experiences, methods, and conclusions, or
-						explore insights from others in the community.
-					</p>
-				</div>
-
-				<!-- Feature 6 -->
-				<div class="flex flex-col items-center rounded-lg bg-white p-8 shadow-md">
-					<i class="fas fa-medal mb-4 text-4xl text-blue-600"></i>
-					<h3 class="mb-4 text-xl font-semibold lg:text-2xl">Gamified Motivation</h3>
-					<p class="text-gray-700">
-						Stay motivated with a gamified system featuring levels and achievements, making learning
-						an exciting and rewarding journey.
-					</p>
-				</div>
+				<p>Analyse your Progress & Take steps from Recommendations</p>
 			</div>
 		</div>
-	</section>
-
-	<!-- CTA Section -->
-	<section class="bg-blue-800 py-20 text-white">
-		<div class="container mx-auto text-center">
-			<h2 class="mb-4 text-4xl font-extrabold md:text-5xl lg:text-6xl">
-				Ready to Elevate Your Learning Experience?
-			</h2>
-			<p class="mb-8 text-lg md:text-xl lg:text-2xl">
-				Join ConnectED today and embark on a collaborative learning adventure!
-			</p>
-			<a
-				href="/register"
-				class="rounded-full bg-white px-8 py-4 font-semibold text-blue-600 transition duration-300 hover:bg-blue-600 hover:text-white"
-				>Get Started</a
+		<div class="flex justify-center mt-12 space-x-8">
+			<!-- <a
+				href="https://www.youtube.com/"
+				class="font-bold text-xl p-4 bg-[#77B8De] rounded-xl shadow-md hover:bg-[#619ecf] hover:text-[21px] hover:shadow-lg w-1/3 text-center"
 			>
+				Get Demo
+			</a> -->
+			<a
+				href="/login"
+				target="_self"
+				class="font-bold text-xl p-4 bg-[#cf9261] rounded-xl shadow-md hover:bg-[#FFB26D] hover:text-[21px] hover:shadow-lg w-1/3 text-center"
+			>
+				Get Started
+			</a>
 		</div>
 	</section>
-
-	<!-- Footer Section -->
 	<footer class="bg-gray-800 py-8 text-white">
 		<div class="container mx-auto text-center">
 			<p class="text-sm">&copy; 2024 ConnectED. All rights reserved.</p>
 			<!-- Add social media links or other footer content as needed -->
 		</div>
 	</footer>
-</body>
+</main>
+
+<style>
+	.wave-header {
+		position: absolute;
+		top: -20px;
+		left: 0;
+		width: 100%;
+		overflow: hidden;
+		line-height: 0;
+		transform: rotate(180deg);
+		z-index: 0;
+	}
+
+	.wave-header svg {
+		position: relative;
+		display: block;
+		width: calc(181% + 1.3px);
+		height: 550px;
+	}
+
+	.wave-header .shape-fill {
+		fill: #b7dbf6;
+	}
+</style>
+

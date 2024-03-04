@@ -11,6 +11,7 @@
 	import { goto } from '$app/navigation';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import RightArrow from '$lib/components/others/right-arrow.svelte';
+	import Folder from '$lib/components/others/folder.svelte';
 	import { onMount } from 'svelte';
 	import { Circle } from 'svelte-loading-spinners';
 
@@ -42,7 +43,7 @@
 	onMount(() => {
 		data.searchResult.then((res) => {
 			searchResult = res;
-			console.log(res)
+			console.log(res);
 			cnt = Math.max(Object.keys(searchResult).length, 1);
 		});
 	});
@@ -93,10 +94,12 @@
 		class="mt-5 flex w-[90%] flex-row justify-between gap-20"
 		use:enhance={() => {
 			return async ({ update }) => {
-				update({ reset: false, invalidateAll:false });
+				update({ reset: false, invalidateAll: false });
 			};
 		}}
-		on:submit={()=>{searchResult=null}}
+		on:submit={() => {
+			searchResult = null;
+		}}
 		action="?/search"
 		method="post"
 	>
@@ -127,95 +130,107 @@
 					<!-- svelte-ignore a11y-no-static-element-interactions -->
 					<div class="session-card">
 						<!-- <div class="session-card"> -->
-						<div class="flex justify-end">
-							<button class="flex items-center rounded-full px-4 py-2 text-white">
-								{#if searchResult[perPage * ((currentPage || 1) - 1) + i].sessionFavs[0] == undefined}
-									<form
-									use:enhance={() => {
-										return async ({ update }) => {
-											update({ invalidateAll:false });
-										};
-									}}
-										action="?/favorite"
-										method="post"
-										on:submit={() => {
-											onFav(
-												perPage * ((currentPage || 1) - 1) + i,
-												searchResult[perPage * ((currentPage || 1) - 1) + i].sessionId
-											);
-										}}
-									>
-										<input hidden id="userId" name="userId" value={userData.userId} />
-										<input
-											hidden
-											id="sessionId"
-											name="sessionId"
-											value={searchResult[perPage * ((currentPage || 1) - 1) + i].sessionId}
-										/>
-										<button type="submit"><Favorite design="hover:scale-110" /></button>
-									</form>
-								{:else}
-									<form
-									use:enhance={() => {
-										return async ({ update }) => {
-											update({invalidateAll:false });
-										};
-									}}
-										action="?/unfavorite"
-										method="post"
-										on:submit={() => {
-											onUnFav(
-												perPage * ((currentPage || 1) - 1) + i,
-												searchResult[perPage * ((currentPage || 1) - 1) + i].sessionId
-											);
-										}}
-									>
-										<input hidden id="userId" name="userId" value={userData.userId} />
-										<input
-											hidden
-											id="sessionId"
-											name="sessionId"
-											value={searchResult[perPage * ((currentPage || 1) - 1) + i].sessionId}
-										/>
-										<button type="submit"><Favorited design="hover:scale-110" /></button>
-									</form>
-								{/if}
-							</button>
-						</div>
-						<div class="flex flex-row justify-between">
-							<div>
-								<h2>{searchResult[perPage * ((currentPage || 1) - 1) + i].sessionName}</h2>
-								<p class="session-info">
-									Created by {searchResult[perPage * ((currentPage || 1) - 1) + i].user.userName} on
-									{searchResult[perPage * ((currentPage || 1) - 1) + i].createdAt.split('T')[0]}
-								</p>
 
-								<div class="tags">
-									{#if searchResult[perPage * ((currentPage || 1) - 1) + i].tags != null}
-										{#each searchResult[perPage * ((currentPage || 1) - 1) + i].tags as tag (tag)}
-											<span class="tag">{tag}</span>
-										{/each}
+						<div class="flex flex-row justify-between">
+							<div class="flex flex-row">
+								<Folder
+									theme={searchResult[perPage * ((currentPage || 1) - 1) + i].theme}
+									width="150px"
+								/>
+								<div class="ml-10">
+									<h2>{searchResult[perPage * ((currentPage || 1) - 1) + i].sessionName}</h2>
+									<p class="session-info">
+										Created by 
+										<a href="../other-user/{searchResult[perPage * ((currentPage || 1) - 1) + i].user.userId}/profile" 
+										class="hover:underline">{searchResult[perPage * ((currentPage || 1) - 1) + i].user.userName}</a>
+										on
+										{searchResult[perPage * ((currentPage || 1) - 1) + i].createdAt.split('T')[0]}
+									</p>
+
+									<div class="tags">
+										{#if searchResult[perPage * ((currentPage || 1) - 1) + i].tags != null}
+											{#each searchResult[perPage * ((currentPage || 1) - 1) + i].tags as tag (tag)}
+												<span class="tag">{tag}</span>
+											{/each}
+										{:else}
+											<p class="message">No tags available</p>
+										{/if}
+									</div>
+
+									{#if Object.keys(searchResult[perPage * ((currentPage || 1) - 1) + i].courses).length > 0}
+										<p class="session-info">
+											Courses: {searchResult[perPage * ((currentPage || 1) - 1) + i].courses
+												.map((course) => course.courseName)
+												.join(', ')}
+										</p>
 									{:else}
-										<p class="message">No tags available</p>
+										<p class="message">No courses available</p>
 									{/if}
 								</div>
-
-								{#if Object.keys(searchResult[perPage * ((currentPage || 1) - 1) + i].courses).length > 0}
-									<p class="session-info">
-										Courses: {searchResult[perPage * ((currentPage || 1) - 1) + i].courses
-											.map((course) => course.courseName)
-											.join(', ')}
-									</p>
-								{:else}
-									<p class="message">No courses available</p>
-								{/if}
 							</div>
 							<div class="my-auto">
-								<Button
-									href="explore-session/{searchResult[perPage * ((currentPage || 1) - 1) + i]
-										.sessionId}"
-									class="bg-white hover:bg-muted"><RightArrow /></Button
-								>
+								<div class="flex flex-col">
+									<div class="flex justify-end">
+										<button class="flex items-center rounded-full px-4 py-2 text-white">
+											{#if searchResult[perPage * ((currentPage || 1) - 1) + i].sessionFavs[0] == undefined}
+												<form
+													use:enhance={() => {
+														return async ({ update }) => {
+															update({ invalidateAll: false });
+														};
+													}}
+													action="?/favorite"
+													method="post"
+													on:submit={() => {
+														onFav(
+															perPage * ((currentPage || 1) - 1) + i,
+															searchResult[perPage * ((currentPage || 1) - 1) + i].sessionId
+														);
+													}}
+												>
+													<input hidden id="userId" name="userId" value={userData.userId} />
+													<input
+														hidden
+														id="sessionId"
+														name="sessionId"
+														value={searchResult[perPage * ((currentPage || 1) - 1) + i].sessionId}
+													/>
+													<button type="submit"><Favorite design="hover:scale-110" /></button>
+												</form>
+											{:else}
+												<form
+													use:enhance={() => {
+														return async ({ update }) => {
+															update({ invalidateAll: false });
+														};
+													}}
+													action="?/unfavorite"
+													method="post"
+													on:submit={() => {
+														onUnFav(
+															perPage * ((currentPage || 1) - 1) + i,
+															searchResult[perPage * ((currentPage || 1) - 1) + i].sessionId
+														);
+													}}
+												>
+													<input hidden id="userId" name="userId" value={userData.userId} />
+													<input
+														hidden
+														id="sessionId"
+														name="sessionId"
+														value={searchResult[perPage * ((currentPage || 1) - 1) + i].sessionId}
+													/>
+													<button type="submit"><Favorited design="hover:scale-110" /></button>
+												</form>
+											{/if}
+										</button>
+									</div>
+									<Button
+										href="explore-session/{searchResult[perPage * ((currentPage || 1) - 1) + i]
+											.sessionId}"
+										class="bg-white hover:bg-muted"><RightArrow /></Button
+									>
+								</div>
 							</div>
 						</div>
 					</div>

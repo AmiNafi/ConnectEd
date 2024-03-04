@@ -10,6 +10,7 @@
 	import { applyAction, enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
 	import Button from '$lib/components/ui/button/button.svelte';
+
 	import RightArrow from '$lib/components/others/right-arrow.svelte';
 	import * as Card from '$lib/components/ui/card';
 	import BlogSVG from '$lib/components/others/blogSVG.svelte';
@@ -166,9 +167,12 @@
 								</Card.Header>
 								<Card.Content>
 									<p>
-										Written by <span class=""
-											>{searchResult[perPage * ((currentPage || 1) - 1) + i].writer.userName}</span
-										>
+										Written by 
+										<span class="">
+											<a href="../other-user/{searchResult[perPage * ((currentPage || 1) - 1) + i].writer.userId}/profile" class="hover:underline">
+												{searchResult[perPage * ((currentPage || 1) - 1) + i].writer.userName}
+											</a>
+										</span>
 									</p>
 									<p>
 										Created on <span class=""

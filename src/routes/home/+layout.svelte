@@ -2,6 +2,7 @@
 	import { Button } from '$lib/components/ui/button';
 	import * as Avatar from '$lib/components/ui/avatar';
 	import type { LayoutData } from './$types';
+	import * as Popover from "$lib/components/ui/popover";
 	import { onMount } from 'svelte';
 	import logo from '$lib/assets/logo.png'
 	import logo2 from '$lib/assets/logo2.png'
@@ -9,9 +10,13 @@
 
 	export let data: LayoutData;
 	$: pathName = $page.url.pathname as string;
+
+	let unreadList: any = null
+
 	onMount(() => {
-		console.log($page.url.pathname);
-		// console.log(data.user[0].sessions[0]);
+		data.unreadList.then((res)=>{
+			unreadList = res
+		})
 	});
 </script>
 
@@ -104,6 +109,58 @@
 					{/if}
 				</div>
 				<div class="flex flex-row gap-5">
+					{#if !unreadList}
+					<img src="https://dgymikmkauskxfhmhudw.supabase.co/storage/v1/object/public/Misc/notification-bell-svgrepo-com.svg?t=2024-03-04T03%3A31%3A46.795Z"
+					width="40px" alt="asd"/>
+					{:else if unreadList.length==0 }
+					<img src="https://dgymikmkauskxfhmhudw.supabase.co/storage/v1/object/public/Misc/notification-bell-svgrepo-com.svg?t=2024-03-04T03%3A31%3A46.795Z"
+					width="40px" alt="asd"/>
+					{:else}
+					<Popover.Root>
+						<Popover.Trigger><img src="https://dgymikmkauskxfhmhudw.supabase.co/storage/v1/object/public/Misc/noti-3.svg?t=2024-03-04T03%3A49%3A12.134Z"
+							width="40px" alt="asd" class="hover:scale-110"/></Popover.Trigger>
+						<Popover.Content>
+							<div class="space-y-4">
+							{#each unreadList as it}
+							
+								<!-- Notification 1 -->
+								<div class="bg-blue-100 border-t-4 border-blue-500 rounded-b text-blue-900 px-4 py-3 shadow-md" role="alert">
+								  <div class="flex">
+									<div class="py-1"><svg class="fill-current h-6 w-6 text-blue-500 mr-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M10 12a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm0 2a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM4 4a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm12 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/></svg></div>
+									<div>
+									  <p class="font-bold">Unread Message</p>
+									  <p class="text-sm"><a href="../profile/chat/{it.user1Id}">{it.user1Name} sent a message</a></p>
+									</div>
+								  </div>
+								</div>
+							
+							{/each}
+						</div>
+							  
+								<!-- <div class="bg-green-100 border-t-4 border-green-500 rounded-b text-green-900 px-4 py-3 shadow-md" role="alert">
+								  <div class="flex">
+									<div class="py-1"><svg class="fill-current h-6 w-6 text-green-500 mr-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M10 12a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm0 2a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM4 4a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm12 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/></svg></div>
+									<div>
+									  <p class="font-bold">Notification 2</p>
+									  <p class="text-sm">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+									</div>
+								  </div>
+								</div>
+							  
+								<div class="bg-yellow-100 border-t-4 border-yellow-500 rounded-b text-yellow-900 px-4 py-3 shadow-md" role="alert">
+								  <div class="flex">
+									<div class="py-1"><svg class="fill-current h-6 w-6 text-yellow-500 mr-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M10 12a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm0 2a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM4 4a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm12 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/></svg></div>
+									<div>
+									  <p class="font-bold">Notification 3</p>
+									  <p class="text-sm">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+									</div>
+								  </div>
+								</div>
+							  </div> -->
+						</Popover.Content>
+					  </Popover.Root>
+					
+					{/if}
 					<a href="/home/profile/my-profile">
 						{#await data.user}
 							<Avatar.Root>

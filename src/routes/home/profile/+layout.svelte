@@ -16,6 +16,10 @@
 			href: '/home/profile/my-friend'
 		},
 		{
+			title: 'Chat',
+			href: '/home/profile/chat'
+		},
+		{
 			title: 'Settings',
 			href: '/home/profile/settings'
 		}

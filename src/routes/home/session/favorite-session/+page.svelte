@@ -11,6 +11,7 @@
 	import { Circle } from 'svelte-loading-spinners';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import RightArrow from '$lib/components/others/right-arrow.svelte';
+	import Folder from '$lib/components/others/folder.svelte';
 	import { onMount } from 'svelte';
 
 	let items = [{ href: '../', text: 'Favorite Sessions' }];
@@ -36,7 +37,7 @@
 	<div class="flex w-full flex-row flex-wrap items-start justify-start">
 		<Breadcrumb {items} />
 	</div>
-	<Label class="mb-10 mt-10 text-center text-3xl font-medium">Favorite Sessions</Label>
+	<Label class="mb-10 mt-10 text-center text-3xl font-medium">Saved Sessions</Label>
 
 	{#if !favoriteSessions}
 		<div class="flex h-full w-full items-center justify-center">
@@ -55,71 +56,87 @@
 					<!-- svelte-ignore a11y-no-static-element-interactions -->
 					<div class="session-card">
 						<!-- <div class="session-card"> -->
-						<div class="flex justify-end">
-							<button class="flex items-center rounded-full px-4 py-2 text-white">
-								<form
-								use:enhance={() => {
-									return async ({ update }) => {
-										update({invalidateAll:false });
-									};
-								}}
-									action="?/unfavorite"
-									method="post"
-									on:submit={() => {
-										onUnFav(
-											perPage * ((currentPage || 1) - 1) + i,
-											favoriteSessions[perPage * ((currentPage || 1) - 1) + i].sessionId
-										);
-									}}
-								>
-									<input hidden id="userId" name="userId" value={userData.userId} />
-									<input
-										hidden
-										id="sessionId"
-										name="sessionId"
-										value={favoriteSessions[perPage * ((currentPage || 1) - 1) + i].sessionId}
-									/>
-									<button type="submit"><Favorited design="hover:scale-110" /></button>
-								</form>
-							</button>
-						</div>
 						<div class="flex flex-row justify-between">
-							<div>
-								<h2>
-									{favoriteSessions[perPage * ((currentPage || 1) - 1) + i].session.sessionName}
-								</h2>
-								<p class="session-info">
-									Created by {favoriteSessions[perPage * ((currentPage || 1) - 1) + i].session.user
-										.userName} on
-									{favoriteSessions[perPage * ((currentPage || 1) - 1) + i].session.createdAt.split(
-										'T'
-									)[0]}
-								</p>
+							<div class="flex flex-row">
+								<Folder
+									theme={favoriteSessions[perPage * ((currentPage || 1) - 1) + i].session.theme}
+									width="150px"
+								/>
+								<div class="ml-10">
+									<h2>
+										{favoriteSessions[perPage * ((currentPage || 1) - 1) + i].session.sessionName}
+									</h2>
+									<p class="session-info">
+										Created by 
+										<a href="../other-user/{favoriteSessions[perPage * ((currentPage || 1) - 1) + i].session
+											.user.userId}/profile" 
+										class="hover:underline">{favoriteSessions[perPage * ((currentPage || 1) - 1) + i].session
+											.user.userName}</a>
+										on
+										{favoriteSessions[
+											perPage * ((currentPage || 1) - 1) + i
+										].session.createdAt.split('T')[0]}
+									</p>
 
-								<div class="tags">
-									{#if favoriteSessions[perPage * ((currentPage || 1) - 1) + i].session.tags != null}
-										{#each favoriteSessions[perPage * ((currentPage || 1) - 1) + i].session.tags as tag (tag)}
-											<span class="tag">{tag}</span>
-										{/each}
+									<div class="tags">
+										{#if favoriteSessions[perPage * ((currentPage || 1) - 1) + i].session.tags != null}
+											{#each favoriteSessions[perPage * ((currentPage || 1) - 1) + i].session.tags as tag (tag)}
+												<span class="tag">{tag}</span>
+											{/each}
+										{:else}
+											<p class="message">No tags available</p>
+										{/if}
+									</div>
+
+									{#if Object.keys(favoriteSessions[perPage * ((currentPage || 1) - 1) + i].session.courses).length > 0}
+										<p class="session-info">
+											Courses: {favoriteSessions[
+												perPage * ((currentPage || 1) - 1) + i
+											].session.courses
+												.map((course) => course.courseName)
+												.join(', ')}
+										</p>
 									{:else}
-										<p class="message">No tags available</p>
+										<p class="message">No courses available</p>
 									{/if}
 								</div>
-
-								{#if Object.keys(favoriteSessions[perPage * ((currentPage || 1) - 1) + i].session.courses).length > 0}
-									<p class="session-info">
-										Courses: {favoriteSessions[
-											perPage * ((currentPage || 1) - 1) + i
-										].session.courses
-											.map((course) => course.courseName)
-											.join(', ')}
-									</p>
-								{:else}
-									<p class="message">No courses available</p>
-								{/if}
 							</div>
 							<div class="my-auto">
-								<Button href='favorite-session/{favoriteSessions[perPage * ((currentPage || 1) - 1) + i].sessionId}' class="bg-white hover:bg-muted"><RightArrow /></Button>
+								<div class="flex flex-col">
+									<div class="flex justify-end">
+										<button class="flex items-center rounded-full px-4 py-2 text-white">
+											<form
+												use:enhance={() => {
+													return async ({ update }) => {
+														update({ invalidateAll: false });
+													};
+												}}
+												action="?/unfavorite"
+												method="post"
+												on:submit={() => {
+													onUnFav(
+														perPage * ((currentPage || 1) - 1) + i,
+														favoriteSessions[perPage * ((currentPage || 1) - 1) + i].sessionId
+													);
+												}}
+											>
+												<input hidden id="userId" name="userId" value={userData.userId} />
+												<input
+													hidden
+													id="sessionId"
+													name="sessionId"
+													value={favoriteSessions[perPage * ((currentPage || 1) - 1) + i].sessionId}
+												/>
+												<button type="submit"><Favorited design="hover:scale-110" /></button>
+											</form>
+										</button>
+									</div>
+									<Button
+										href="favorite-session/{favoriteSessions[perPage * ((currentPage || 1) - 1) + i]
+											.sessionId}"
+										class="bg-white hover:bg-muted"><RightArrow /></Button
+									>
+								</div>
 							</div>
 						</div>
 					</div>

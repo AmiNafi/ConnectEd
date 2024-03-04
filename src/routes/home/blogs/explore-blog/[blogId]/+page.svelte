@@ -8,10 +8,13 @@
 	import Upvoted from '$lib/components/svg/upvoted.svelte';
 	import Downvote from '$lib/components/svg/downvote.svelte';
 	import Downvoted from '$lib/components/svg/downvoted.svelte';
+	import Button from '$lib/components/ui/button/button.svelte';
 	import type { ActionData, PageData } from './$types';
 	import { enhance } from '$app/forms';
 	import { onMount } from 'svelte';
 	import { Circle } from 'svelte-loading-spinners';
+	import * as Dialog from '$lib/components/ui/dialog';
+	import { Textarea } from '$lib/components/ui/textarea';
 
 	export let data: PageData;
 	export let form: ActionData;
@@ -54,14 +57,13 @@
 	}
 
 	function upvote() {
-		let tmp: number
-		if(currentBlog.blogVotes[0]){
-			tmp = currentBlog.blogVotes[0].vote
-			currentBlog.upvote += 2
-		}
-		else{
-			currentBlog.upvote += 1
-			tmp = 0
+		let tmp: number;
+		if (currentBlog.blogVotes[0]) {
+			tmp = currentBlog.blogVotes[0].vote;
+			currentBlog.upvote += 2;
+		} else {
+			currentBlog.upvote += 1;
+			tmp = 0;
 		}
 		currentBlog.blogVotes = [];
 		currentBlog.blogVotes = [...currentBlog.blogVotes, { vote: 1 }];
@@ -78,14 +80,13 @@
 	}
 
 	function downvote() {
-		let tmp: number
-		if(currentBlog.blogVotes[0]){
-			tmp = currentBlog.blogVotes[0].vote
-			currentBlog.upvote -= 2
-		}
-		else{
-			currentBlog.upvote -= 1
-			tmp = 0
+		let tmp: number;
+		if (currentBlog.blogVotes[0]) {
+			tmp = currentBlog.blogVotes[0].vote;
+			currentBlog.upvote -= 2;
+		} else {
+			currentBlog.upvote -= 1;
+			tmp = 0;
 		}
 		currentBlog.blogVotes = [];
 		currentBlog.blogVotes = [...currentBlog.blogVotes, { vote: -1 }];
@@ -102,8 +103,8 @@
 	}
 
 	function unvote() {
-		let tmp = currentBlog.blogVotes[0].vote
-		currentBlog.upvote -= tmp
+		let tmp = currentBlog.blogVotes[0].vote;
+		currentBlog.upvote -= tmp;
 		currentBlog.blogVotes = [];
 
 		fetch('/api/blog/unvote', {
@@ -166,19 +167,32 @@
 			<!-- Content of the blog -->
 			{@html currentBlog.blogContent}
 			<Separator class="m-5" />
-			<div class="flex flex-row">
-				{#if currentBlog.blogVotes[0]}
-					{#if currentBlog.blogVotes[0].vote == 1}
-						<button
-							on:click={() => {
-								unvote();
-							}}><Upvoted design="hover:scale-105" /></button
-						>
-						<button
-							on:click={() => {
-								downvote();
-							}}><Downvote design="hover:scale-105" /></button
-						>
+			<div class="flex flex-row justify-between">
+				<div class="felx-row flex">
+					{#if currentBlog.blogVotes[0]}
+						{#if currentBlog.blogVotes[0].vote == 1}
+							<button
+								on:click={() => {
+									unvote();
+								}}><Upvoted design="hover:scale-105" /></button
+							>
+							<button
+								on:click={() => {
+									downvote();
+								}}><Downvote design="hover:scale-105" /></button
+							>
+						{:else}
+							<button
+								on:click={() => {
+									upvote();
+								}}><Upvote design="hover:scale-105" /></button
+							>
+							<button
+								on:click={() => {
+									unvote();
+								}}><Downvoted design="hover:scale-105" /></button
+							>
+						{/if}
 					{:else}
 						<button
 							on:click={() => {
@@ -187,23 +201,36 @@
 						>
 						<button
 							on:click={() => {
-								unvote();
-							}}><Downvoted design="hover:scale-105" /></button
+								downvote();
+							}}><Downvote design="hover:scale-105" /></button
 						>
 					{/if}
-				{:else}
-					<button
-						on:click={() => {
-							upvote();
-						}}><Upvote design="hover:scale-105" /></button
+
+					<div class="ml-5">{currentBlog.upvote}</div>
+				</div>
+				<Dialog.Root>
+					<Dialog.Trigger
+						><Button class="bg-red-500 hover:bg-red-600">Report</Button></Dialog.Trigger
 					>
-					<button
-						on:click={() => {
-							downvote();
-						}}><Downvote design="hover:scale-105" /></button
-					>
-				{/if}
-				<div class="ml-5">{currentBlog.upvote}</div>
+					<Dialog.Content>
+						<Dialog.Header>
+							<Dialog.Title>Report Blog</Dialog.Title>
+							<Dialog.Description></Dialog.Description>
+						</Dialog.Header>
+						<form use:enhance={() => {
+							return async ({ update }) => {
+								update({ invalidateAll: false });
+							};
+						}} action="?/report" method="post">
+							<input type='hidden' name="blogId" value={currentBlog.blogId}/>
+							<input type='hidden' name="blogTitle" value={currentBlog.blogTitle}/>
+							<Textarea required placeholder="report" name="message" value="" class="max-w-xs bg-muted" />
+							<Dialog.Footer>
+								<Button type="submit">Report</Button>
+							</Dialog.Footer>
+						</form>
+					</Dialog.Content>
+				</Dialog.Root>
 			</div>
 			<!-- Upvote and Downvote section at the bottom with SVG icons -->
 			<!-- <div class="mt-4 flex items-center justify-start"></div> -->
@@ -211,11 +238,11 @@
 		<div class="comment-section max-w-screen-l w-full">
 			<h2>Leave a Comment</h2>
 			<form
-			use:enhance={() => {
-				return async ({ update }) => {
-					update({ reset: false, invalidateAll:false });
-				};
-			}}
+				use:enhance={() => {
+					return async ({ update }) => {
+						update({ reset: false, invalidateAll: false });
+					};
+				}}
 				action="?/comment"
 				method="post"
 				on:submit={() => {

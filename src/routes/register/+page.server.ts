@@ -15,11 +15,6 @@ const localPath="http://localhost:5173/register/verified"
 
 const newUserSchema = z
 	.object({
-		username: z
-			.string({ required_error: 'Username is required' })
-			.min(1, { message: 'Username is required' })
-			.max(64, { message: 'Username must be less than 64 characters' })
-			.trim(),
 		email: z
 			.string({ required_error: 'Email is required' })
 			.min(1, { message: 'Email is required' })

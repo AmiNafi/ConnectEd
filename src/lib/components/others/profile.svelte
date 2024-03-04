@@ -215,7 +215,8 @@
 			</a>
 		</div> -->
 
-		<div class="mb-6 flex space-x-4">
+		<div class="flex flex-row justify-between mb-4">
+		<div class="flex space-x-4">
 			<!-- Social Links -->
 			{#if userData.facebook}
 				<a href={userData.facebook} target="_blank" class="text-gray-600 hover:text-blue-500">
@@ -242,13 +243,21 @@
 			{/if}
 		</div>
 		{#if viewerData.userId != userData.userId}
+		<div>
+			<a href="../../profile/chat/{userData.userId}">
+				<img class="hover:scale-110" src="https://dgymikmkauskxfhmhudw.supabase.co/storage/v1/object/public/Misc/send-alt-1-svgrepo-com.svg?t=2024-03-04T01%3A41%3A21.165Z" width="50px"/>
+			</a>
+		</div>
+		{/if}
+		</div>
+		{#if viewerData.userId != userData.userId}
 			{#if status === "none"}
 			<div class="flex flex-row justify-end ">
 				<Button class="bg-green-500 hover:bg-green-600" on:click={sendReq}>Send Friend Request</Button>
 			</div>
 			{:else if status === "sent"}
 			<div class="flex flex-row justify-end ">
-				<Button class="bg-green-500 hover:bg-green-600" on:click={cancelReq}>Cancel Friend Request</Button>
+				<Button class="bg-red-500 hover:bg-red-600" on:click={cancelReq}>Cancel Friend Request</Button>
 			</div>
 			{:else if status === "received"}
 			<div class="flex flex-row justify-between">

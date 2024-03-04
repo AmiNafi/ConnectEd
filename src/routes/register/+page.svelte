@@ -14,11 +14,6 @@
 
 	const newUserSchema = z
 		.object({
-			username: z
-				.string({ required_error: 'Username is required' })
-				.min(1, { message: 'Username is required' })
-				.max(64, { message: 'Username must be less than 64 characters' })
-				.trim(),
 			email: z
 				.string({ required_error: 'Email is required' })
 				.min(1, { message: 'Email is required' })
@@ -125,11 +120,7 @@
 
 			<div class={cn('grid gap-6', className)} {...$$restProps}>
 				<form
-					use:enhance={() => {
-						return async ({ update }) => {
-							update({ invalidateAll: false });
-						};
-					}}
+					use:enhance
 					action="?/register"
 					method="post"
 				>
@@ -141,21 +132,6 @@
 								{$message}
 							</div>
 						{/if}
-						<div class="grid gap-2">
-							<Label for="username">Username</Label>
-							<Input
-								id="username"
-								name="username"
-								placeholder="username"
-								type="text"
-								disabled={isLoading}
-								bind:value={$form.username}
-								class={$errors.username ? 'border-red-500' : null}
-							/>
-							{#if $errors.username}
-								<small class="text-red-500">{$errors.username[0]}</small>
-							{/if}
-						</div>
 						<div class="grid gap-2">
 							<Label for="email">Email</Label>
 							<Input

@@ -8,7 +8,10 @@
 	import Setting from '$lib/components/others/setting.svelte';
 	import { Input } from '$lib/components/ui/input';
 	import { Separator } from '$lib/components/ui/separator';
+	import * as Dialog from '$lib/components/ui/dialog';
+	import { Textarea } from '$lib/components/ui/textarea';
 	import type { LayoutData, PageData } from './$types';
+	import { enhance } from '$app/forms';
 
 	export let data: LayoutData;
 	const userData = data.user[0];
@@ -66,7 +69,29 @@
 <div class="flex grow flex-col items-center">
 	<div class="flex w-full flex-row flex-wrap justify-between">
 		<Breadcrumb {items} />
-		<!-- <a href="./{currentSession.sessionId}/settings"><Setting /></a> -->
+		<Dialog.Root>
+			<Dialog.Trigger
+				><Button class="bg-red-500 hover:bg-red-600 m-5">Report</Button></Dialog.Trigger
+			>
+			<Dialog.Content>
+				<Dialog.Header>
+					<Dialog.Title>Report Session</Dialog.Title>
+					<Dialog.Description></Dialog.Description>
+				</Dialog.Header>
+				<form use:enhance={() => {
+					return async ({ update }) => {
+						update({ invalidateAll: false });
+					};
+				}} action="?/report" method="post">
+					<input type='hidden' name="sessionId" value={currentSession.sessionId}/>
+					<input type='hidden' name="sessionName" value={currentSession.sessionName}/>
+					<Textarea required placeholder="report" name="message" value="" class="max-w-xs bg-muted" />
+					<Dialog.Footer>
+						<Button type="submit">Report</Button>
+					</Dialog.Footer>
+				</form>
+			</Dialog.Content>
+		</Dialog.Root>
 	</div>
 	<Label class="mb-10 mt-10 text-center text-3xl font-medium"
 		>{currentSession.sessionName}/Courses</Label

@@ -6,10 +6,7 @@
 	import * as Tabs from '$lib/components/ui/tabs';
 	import Setting from '$lib/components/others/setting.svelte';
 	import type { ActionData, PageData } from './$types';
-	import LectureTab from '$lib/components/others/lectureTab.svelte';
-	import ResourceTab from '$lib/components/others/resourceTab.svelte';
-	import LinkTab from '$lib/components/others/linkTab.svelte';
-	import { Link } from 'lucide-svelte';
+	import ResourceTab from '$lib/components/others/groupResourceTab.svelte';
 	import { onMount } from 'svelte';
 	import { Circle } from 'svelte-loading-spinners';
 	import * as Card from '$lib/components/ui/card';
@@ -17,11 +14,15 @@
 	import ScrollDownSVG from '$lib/components/others/scrollDownSVG.svelte';
 
 	export let data: PageData;
+	export let form: ActionData;
 
 	let userData = data.user[0];
 	let supabase = data.supabase;
 	let currentGroup: any = null;
 	let memberList: any[] = [];
+	let groupResources: any = null
+	let groupId: number = parseInt($page.params.groupId)
+
 	let items = [
 		{ href: './', text: 'My Groups' }
 		// { href: './', text: currentSession.sessionName },
@@ -40,6 +41,9 @@
 			memberList = res;
 			console.log(memberList);
 		});
+		data.groupResources.then((res)=>{
+			groupResources = res;
+		})
 	});
 
 	let messages: any = [];
@@ -80,7 +84,7 @@
 			.channel('custom-insert-channel')
 			.on(
 				'postgres_changes',
-				{ event: 'INSERT', schema: 'public', table: 'group_chat_table' },
+				{ event: 'INSERT', schema: 'public', table: 'group_chat_table', filter:`group_id=eq.${currentGroup.groupId}` },
 				(payload) => {
 					console.log('Change received!', payload);
 
@@ -122,7 +126,7 @@
 			<a href="./{$page.params.groupId}/settings"><Setting /></a>
 		{/if}
 	</div>
-	{#if !currentGroup || !memberList}
+	{#if !currentGroup || !memberList || !groupResources}
 		<div class="flex h-full w-full items-center justify-center">
 			<Circle size="60" color="#FF3E00" unit="px" duration="1s" />
 		</div>
@@ -219,7 +223,13 @@
 				<!-- </div> -->
 			</Tabs.Content>
 
-			<Tabs.Content value="resources"></Tabs.Content>
+			<Tabs.Content value="resources">
+				<ResourceTab
+				bind:tabData={groupResources}
+				bind:groupId={groupId}
+				bind:form
+			/>
+			</Tabs.Content>
 
 			<Tabs.Content value="members">
 				{#each memberList as member, index}
@@ -232,7 +242,10 @@
 							/>
 							<div class="w-full">
 								<Card.Header>
-									<Card.Title>{member.member.userName}</Card.Title>
+									<Card.Title>
+										<a href="../../other-user/{member.member.userId}/profile" 
+										class="hover:underline">{member.member.userName}</a>	
+									</Card.Title>
 								</Card.Header>
 								<Card.Content>
 									<p>Member Since: {member.joinedAt.split('T')[0]}</p>

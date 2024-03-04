@@ -3,7 +3,7 @@ import {getFriends} from "$lib/server/queries"
 
 export const POST: RequestHandler = async (event) => {
     const it = await event.request.json()
-    const ret = await getFriends(it.userId)
+    const ret = await getFriends(it)
 
     return new Response(
         JSON.stringify(ret)

@@ -1,0 +1,1 @@
+ALTER TABLE "chat_table" ADD COLUMN "index" integer NOT NULL;

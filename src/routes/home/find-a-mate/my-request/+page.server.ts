@@ -11,19 +11,22 @@ export const load = async ({ locals:{supabase}, fetch }) => {
 		const data = await res.json();
 		return data;
 	}
-	let userId = await getUserId(email!);
+	
 
-	let payload = { userId: userId };
-
-
-	const res = await fetch('/api/request/get', {
-		method: 'POST',
-		body: JSON.stringify(payload)
-	});
-	const data = await res.json();
+	async function getRequests() {
+		let userId = await getUserId(email!);
+		let payload = { userId: userId };
+		const res = await fetch('/api/request/get', {
+			method: 'POST',
+			body: JSON.stringify(payload)
+		});
+		const data = await res.json();
+		return data
+	}
+	
     // console.log(data)
 
 	return {
-		myRequest: data
+		myRequest: getRequests()
 	};
 };

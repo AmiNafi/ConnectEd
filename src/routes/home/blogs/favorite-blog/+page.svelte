@@ -80,8 +80,9 @@
 								<Card.Content>
 									<p>
 										Written by <span class=""
-											>{searchResult[perPage * ((currentPage || 1) - 1) + i].blog.writer
-												.userName}</span
+											><a href="../other-user/{searchResult[perPage * ((currentPage || 1) - 1) + i].blog.writer.userId}/profile" class="hover:underline">
+												{searchResult[perPage * ((currentPage || 1) - 1) + i].blog.writer.userName}
+											</a></span
 										>
 									</p>
 									<p>

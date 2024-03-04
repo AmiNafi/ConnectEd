@@ -17,7 +17,11 @@ import {
 	memberTable,
 	noteTable,
 	friendRequestTable,
-	friendTable
+	friendTable,
+	chatNotification,
+	groupResourceTable,
+	blogReportTable,
+	sessionReportTable
 } from './schema';
 import type {
 	user,
@@ -36,11 +40,18 @@ import type {
 	group,
 	member,
 	friendRequest,
-	friend
+	friend,
+	CN,
+	groupResource,
+	bg,
+	sg
 } from './schema';
 import { eq, lt, gte, ne, inArray, and, or, sql } from 'drizzle-orm';
 
 //User
+export async function getUser2(email: string){
+	return db.select().from(userTable).where(eq(userTable.email, email!))
+}
 export async function insertUser(newUser: user) {
 	await db.insert(userTable).values(newUser);
 }
@@ -131,6 +142,10 @@ export async function getUserFromId(userId: number) {
 export async function getUserId(email: string) {
 	const ret = await db.select().from(userTable).where(eq(userTable.email, email));
 	return ret[0].userId;
+}
+
+export async function getUserName(userId: number){
+	return await db.select().from(userTable).where(eq(userTable.userId, userId));
 }
 
 //Session
@@ -313,6 +328,33 @@ export async function updateResource(newResource: resource) {
 			fileType: newResource.fileType
 		})
 		.where(eq(resourceTable.resourceId, newResource.resourceId!));
+}
+
+//Group Resource
+export async function insertGResource(newResource: groupResource) {
+	const ret = await db.insert(groupResourceTable).values(newResource).returning();
+	return ret[0]
+}
+
+export async function deleteGResource(newResource: groupResource) {
+	await db.delete(groupResourceTable).where(eq(resourceTable.resourceId, newResource.resourceId!));
+}
+
+export async function updateGResource(newResource: groupResource) {
+	await db
+		.update(groupResourceTable)
+		.set({
+			resourceName: newResource.resourceName,
+			description: newResource.description,
+			fileType: newResource.fileType
+		})
+		.where(eq(groupResourceTable.resourceId, newResource.resourceId!));
+}
+
+export async function getGResource(groupId: number) {
+	return await db.select().from(groupResourceTable).where(
+		eq(groupResourceTable.groupId, groupId)
+	)
 }
 
 //Link
@@ -589,6 +631,10 @@ export async function getBlogComment(blogId: number) {
 //Request
 export async function addRequest(newReq: request) {
 	return await db.insert(requestTable).values(newReq).returning();
+}
+
+export async function deleteRequest(newReq: request) {
+	await db.delete(requestTable).where(eq(requestTable.requestId, newReq.requestId!))
 }
 
 export async function getRequest(userId: number) {
@@ -888,4 +934,103 @@ export async function getFriends(userId: number){
 		${friendTable.user2Id} = ${userId}
 		`
 	)
+}
+
+//Chat Notification
+export async function insertCN(newCN: CN){
+	// console.log(newCN)
+	const ret = await db.select().from(chatNotification).where(
+		sql`
+		(${chatNotification.user1Id} = ${newCN.user1Id} AND ${chatNotification.user2Id} = ${newCN.user2Id}) OR
+		(${chatNotification.user1Id} = ${newCN.user2Id} AND ${chatNotification.user2Id} = ${newCN.user1Id})
+		`
+	)
+	console.log(ret)
+	if(ret.length>0){
+		await db.update(chatNotification).set({
+			user1Id: newCN.user1Id,
+			user1Name: newCN.user1Name,
+
+			user2Id: newCN.user2Id,
+			user2Name: newCN.user2Name,
+			status: "unread"
+		}).
+		where(
+			sql`
+		(${chatNotification.user1Id} = ${newCN.user1Id} AND ${chatNotification.user2Id} = ${newCN.user2Id}) OR
+		(${chatNotification.user1Id} = ${newCN.user2Id} AND ${chatNotification.user2Id} = ${newCN.user1Id})
+		`
+		)
+	}
+	else{
+		newCN.status = "unread"
+		await db.insert(chatNotification).values(newCN)
+	}
+}
+
+export async function deleteCN(newCN: CN){
+	await db.update(chatNotification).set({
+		status: "read"
+	}).
+	where(
+		sql`
+		(${chatNotification.user1Id} = ${newCN.user2Id} AND ${chatNotification.user2Id} = ${newCN.user1Id})
+		`
+	)
+}
+
+export async function getChatList(userId: number){
+	return await db.select().from(chatNotification).where(
+		sql`
+		${chatNotification.user1Id} = ${userId} OR
+		${chatNotification.user2Id} = ${userId}
+		`
+	)
+}
+
+export async function getUnread(userId: number){
+	return await db.select().from(chatNotification).where(
+		sql`
+		${chatNotification.user2Id} = ${userId} AND
+		${chatNotification.status} = 'unread'
+		`
+	)
+}
+
+// Reports
+export async function addBG(it: bg){
+	await db.insert(blogReportTable).values(it)
+}
+export async function addSG(it: sg){
+	await db.insert(sessionReportTable).values(it)
+}
+
+export async function getBG1(){
+	return await db.select().from(blogReportTable).where(eq(blogReportTable.status,'pending'))
+}
+
+export async function getBG2(){
+	return await db.select().from(blogReportTable).where(ne(blogReportTable.status,'pending'))
+}
+
+export async function getSG1(){
+	return await db.select().from(sessionReportTable).where(eq(sessionReportTable.status,'pending'))
+}
+
+export async function getSG2(){
+	return await db.select().from(sessionReportTable).where(ne(sessionReportTable.status,'pending'))
+}
+
+export async function updateBG(it: bg){
+	await db.update(blogReportTable).set({
+		status: it.status
+	}).
+	where(eq(blogReportTable.reportId, it.reportId!))
+}
+
+export async function updateSG(it: sg){
+	await db.update(sessionReportTable).set({
+		status: it.status
+	}).
+	where(eq(sessionReportTable.reportId, it.reportId!))
 }

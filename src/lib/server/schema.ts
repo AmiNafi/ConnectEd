@@ -9,6 +9,7 @@ import {
 	primaryKey
 } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
+import { number } from 'zod';
 
 /*
 Tables
@@ -57,7 +58,10 @@ export type blogVote = typeof blogVoteTable.$inferInsert;
 export type blogFav = typeof blogFavTable.$inferInsert;
 export type blogComment = typeof blogCommentTable.$inferInsert;
 export type request = typeof requestTable.$inferInsert;
-export type groupMessage = typeof groupChatTable.$inferInsert;
+export type CN = typeof chatNotification.$inferInsert
+export type groupResource = typeof groupResourceTable.$inferInsert;
+export type bg = typeof blogReportTable.$inferInsert
+export type sg = typeof sessionReportTable.$inferInsert
 
 export const userTable = pgTable('user_table', {
 	userId: serial('user_id').primaryKey(),
@@ -135,6 +139,19 @@ export const resourceTable = pgTable('resource_table', {
 	resourceId: serial('resource_id').primaryKey(),
 	courseId: integer('course_id')
 		.references(() => courseTable.courseId, { onDelete: 'cascade' })
+		.notNull(),
+	resourceName: text('resource_name').notNull(),
+	description: text('description'),
+	resourceLink: text('resource_link').notNull(),
+	savedName: text('saved_name').notNull(),
+	fileType: text('file_type').notNull(),
+	createdAt: timestamp('created_at').defaultNow()
+});
+
+export const groupResourceTable = pgTable('group_resource_table', {
+	resourceId: serial('resource_id').primaryKey(),
+	groupId: integer('group_id')
+		.references(() => groupTable.groupId, { onDelete: 'cascade' })
 		.notNull(),
 	resourceName: text('resource_name').notNull(),
 	description: text('description'),
@@ -466,6 +483,56 @@ export const groupChatTable = pgTable('group_chat_table', {
 	imageLink: text('image_link').notNull(),
 	message: text('message').notNull()
 });
+
+export const chatTable = pgTable('chat_table', {
+	messageId: serial('message_id').primaryKey(),
+	index: integer('index').notNull(),
+	createdAt: timestamp('created_at').defaultNow(),
+	otherId: integer('other_id')
+		.references(() => userTable.userId, { onDelete: 'cascade' })
+		.notNull(),
+	userId: integer('user_id')
+		.references(() => userTable.userId, { onDelete: 'cascade' })
+		.notNull(),
+	userName: text('user_name').notNull(),
+	imageLink: text('image_link').notNull(),
+	message: text('message').notNull()
+});
+
+export const chatNotification = pgTable('chat_notification', {
+	id: serial('id').primaryKey(),
+	user1Id: integer('user1_id')
+		.references(() => userTable.userId, { onDelete: 'cascade' })
+		.notNull(),
+	user2Id: integer('user2_id')
+	.references(() => userTable.userId, { onDelete: 'cascade' })
+	.notNull(),
+	user1Name: text('user1_name'),
+	user2Name: text('user2_name'),
+	user1Image: text('user1_image'),
+	user2Image: text('user2_image'),
+	status: text('status'),
+	createdAt: timestamp('created_at').defaultNow(),
+
+})
+
+export const blogReportTable = pgTable('blog_report',{
+	reportId: serial('id').primaryKey(),
+	blogId: integer('blog_id').references(()=>blogTable.blogId, {onDelete: 'cascade'}),
+	blogTitle: text('blog_title').notNull(),
+	message:text('message').notNull(),
+	status:text('status').default("pending"),
+	createdAt: timestamp('created_at').defaultNow(),
+})
+
+export const sessionReportTable = pgTable('session_report',{
+	reportId: serial('id').primaryKey(),
+	sessionId: integer('session_id').references(()=>sessionTable.sessionId, {onDelete: 'cascade'}),
+	sessionName: text('blog_title').notNull(),
+	message:text('message').notNull(),
+	status:text('status').default("pending"),
+	createdAt: timestamp('created_at').defaultNow(),
+})
 
 /*
 	Relationships  
