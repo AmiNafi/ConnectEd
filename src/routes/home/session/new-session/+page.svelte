@@ -131,7 +131,7 @@
 					bind:value={description}
 				/>
 			</div>
-			<div class="grid gap-2">
+			<!-- <div class="grid gap-2">
 				<Label for="shortDesc">Session Short Description (Optional)</Label>
 				<Textarea
 					class="w-[400px] bg-white"
@@ -141,6 +141,16 @@
 					autocapitalize="none"
 					disabled={isLoading}
 					bind:value={description}
+				/>
+			</div> -->
+			<div class="grid gap-2">
+				<Label for="shortDesc">Department Name</Label>
+				<Input
+					class="w-[400px] bg-white"
+					name="deptName"
+					placeholder="Type department name here."
+					autocapitalize="none"
+					disabled={isLoading}
 				/>
 			</div>
 

@@ -152,6 +152,7 @@
 					/></svg
 				>
 				<Label class="text-center text-xl font-medium">{session.sessionName}</Label>
+				<Label class="text-center text-md font-medium">{session.deptName}</Label>
 				{#if session.tags}
 					<div class="mt-2 flex flex-row flex-wrap justify-center gap-2">
 						{#each session.tags as tag}

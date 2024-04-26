@@ -88,6 +88,7 @@ export const sessionTable = pgTable('session_table', {
 	sessionName: text('session_name').notNull(),
 	description: text('description'),
 	visibility: text('visibility').notNull(),
+	deptName: text('department_name').default("Not Set"),
 	imageLink: text('image_link'),
 	tags: text('tags').array(),
 	theme: text('theme').notNull(),
