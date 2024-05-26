@@ -121,7 +121,7 @@
 			<div class={cn('grid gap-6', className)} {...$$restProps}>
 				<form
 					use:enhance
-					action="?/search"
+					action="?/register"
 					method="post"
 					enctype="multipart/form-data"
 				>
