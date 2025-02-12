@@ -2,8 +2,11 @@
     "version": 2,
     "builds": [
       {
-        "src": "svelte.config.js",
-        "use": "@sveltejs/adapter-vercel"
+        "src": "package.json",
+        "use": "@sveltejs/adapter-vercel",
+        "config": {
+          "split": true
+        }
       }
     ],
     "env": {
