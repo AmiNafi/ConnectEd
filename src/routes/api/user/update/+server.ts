@@ -7,7 +7,7 @@ export const POST: RequestHandler = async (event) => {
     const ret = await updateUser(data)
 
     // console.log(data);
-    return new Response(
+    return new Response(    
         JSON.stringify(ret)
     )
 }
