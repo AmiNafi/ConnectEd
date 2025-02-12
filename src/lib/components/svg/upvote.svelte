@@ -2,7 +2,7 @@
     export let design: string=""
 </script>
 
-<svg
+<svg	
 	fill="#000000"
     class={design}
 	width="32px"
