@@ -6,11 +6,8 @@
         "use": "@sveltejs/adapter-vercel"
       }
     ],
-    "routes": [
-      {
-        "src": "/(.*)",
-        "dest": "/$1"
-      }
-    ]
+    "env": {
+      "VERCEL_ENV": "production"
+    }
   }
   
