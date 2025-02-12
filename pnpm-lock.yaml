@@ -16,10 +16,10 @@ importers:
         version: 3.7.0
       '@supabase/auth-helpers-sveltekit':
         specifier: ^0.11.0
-        version: 0.11.0(@supabase/supabase-js@2.48.1)(@sveltejs/kit@2.17.1(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.19)(vite@5.4.14(@types/node@22.13.1)))(svelte@4.2.19)(vite@5.4.14(@types/node@22.13.1)))
+        version: 0.11.0(@supabase/supabase-js@2.48.1(bufferutil@4.0.9)(utf-8-validate@6.0.5))(@sveltejs/kit@2.17.1(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.19)(vite@5.4.14(@types/node@22.13.1)))(svelte@4.2.19)(vite@5.4.14(@types/node@22.13.1)))
       '@supabase/supabase-js':
         specifier: ^2.48.1
-        version: 2.48.1
+        version: 2.48.1(bufferutil@4.0.9)(utf-8-validate@6.0.5)
       agora-rtc-sdk-ng:
         specifier: ^4.23.1
         version: 4.23.1
@@ -29,6 +29,9 @@ importers:
       bits-ui:
         specifier: ^0.15.1
         version: 0.15.1(svelte@4.2.19)
+      bufferutil:
+        specifier: ^4.0.9
+        version: 4.0.9
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
@@ -77,6 +80,9 @@ importers:
       tailwind-variants:
         specifier: ^0.1.20
         version: 0.1.20(tailwindcss@3.4.17)
+      utf-8-validate:
+        specifier: ^6.0.5
+        version: 6.0.5
       vaul-svelte:
         specifier: ^0.1.1
         version: 0.1.1(svelte@4.2.19)
@@ -1304,6 +1310,10 @@ packages:
 
   buffer-from@1.1.2:
     resolution: {integrity: sha512-E+XQCRwSbaaiChtv6k6Dwgc+bx+Bs6vuKJHHl5kox/BaKbhiXzqQOwK4cO22yElGp2OCmjwVhT3HmxgyPGnJfQ==}
+
+  bufferutil@4.0.9:
+    resolution: {integrity: sha512-WDtdLmJvAuNNPzByAYpRo2rF1Mmradw6gvWsQKf63476DDXmomT9zUiGypLcG4ibIM67vhAj8jJRdbmEws2Aqw==}
+    engines: {node: '>=6.14.2'}
 
   call-bind-apply-helpers@1.0.1:
     resolution: {integrity: sha512-BhYE+WDaywFg2TBWYNXAE+8B1ATnThNBqXHP5nQu0jWJdVvY2hvkpyB3qOmtmDePiS5/BDQ8wASEWGMWRG148g==}
@@ -2923,6 +2933,10 @@ packages:
   uri-js@4.4.1:
     resolution: {integrity: sha512-7rKUyy33Q1yc98pQ1DAmLtwX109F7TIfWlW1Ydo8Wl1ii1SeHieeh0HHfPeL2fMXK6z0s8ecKs9frCuLJvndBg==}
 
+  utf-8-validate@6.0.5:
+    resolution: {integrity: sha512-EYZR+OpIXp9Y1eG1iueg8KRsY8TuT8VNgnanZ0uA3STqhHQTLwbl+WX76/9X5OY12yQubymBpaBSmMPkSTQcKA==}
+    engines: {node: '>=6.14.2'}
+
   util-deprecate@1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
 
@@ -3575,15 +3589,15 @@ snapshots:
   '@rollup/rollup-win32-x64-msvc@4.34.6':
     optional: true
 
-  '@supabase/auth-helpers-shared@0.6.3(@supabase/supabase-js@2.48.1)':
+  '@supabase/auth-helpers-shared@0.6.3(@supabase/supabase-js@2.48.1(bufferutil@4.0.9)(utf-8-validate@6.0.5))':
     dependencies:
-      '@supabase/supabase-js': 2.48.1
+      '@supabase/supabase-js': 2.48.1(bufferutil@4.0.9)(utf-8-validate@6.0.5)
       jose: 4.15.9
 
-  '@supabase/auth-helpers-sveltekit@0.11.0(@supabase/supabase-js@2.48.1)(@sveltejs/kit@2.17.1(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.19)(vite@5.4.14(@types/node@22.13.1)))(svelte@4.2.19)(vite@5.4.14(@types/node@22.13.1)))':
+  '@supabase/auth-helpers-sveltekit@0.11.0(@supabase/supabase-js@2.48.1(bufferutil@4.0.9)(utf-8-validate@6.0.5))(@sveltejs/kit@2.17.1(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.19)(vite@5.4.14(@types/node@22.13.1)))(svelte@4.2.19)(vite@5.4.14(@types/node@22.13.1)))':
     dependencies:
-      '@supabase/auth-helpers-shared': 0.6.3(@supabase/supabase-js@2.48.1)
-      '@supabase/supabase-js': 2.48.1
+      '@supabase/auth-helpers-shared': 0.6.3(@supabase/supabase-js@2.48.1(bufferutil@4.0.9)(utf-8-validate@6.0.5))
+      '@supabase/supabase-js': 2.48.1(bufferutil@4.0.9)(utf-8-validate@6.0.5)
       '@sveltejs/kit': 2.17.1(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.19)(vite@5.4.14(@types/node@22.13.1)))(svelte@4.2.19)(vite@5.4.14(@types/node@22.13.1))
 
   '@supabase/auth-js@2.67.3':
@@ -3602,12 +3616,12 @@ snapshots:
     dependencies:
       '@supabase/node-fetch': 2.6.15
 
-  '@supabase/realtime-js@2.11.2':
+  '@supabase/realtime-js@2.11.2(bufferutil@4.0.9)(utf-8-validate@6.0.5)':
     dependencies:
       '@supabase/node-fetch': 2.6.15
       '@types/phoenix': 1.6.6
       '@types/ws': 8.5.14
-      ws: 8.18.0
+      ws: 8.18.0(bufferutil@4.0.9)(utf-8-validate@6.0.5)
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
@@ -3616,13 +3630,13 @@ snapshots:
     dependencies:
       '@supabase/node-fetch': 2.6.15
 
-  '@supabase/supabase-js@2.48.1':
+  '@supabase/supabase-js@2.48.1(bufferutil@4.0.9)(utf-8-validate@6.0.5)':
     dependencies:
       '@supabase/auth-js': 2.67.3
       '@supabase/functions-js': 2.4.4
       '@supabase/node-fetch': 2.6.15
       '@supabase/postgrest-js': 1.18.1
-      '@supabase/realtime-js': 2.11.2
+      '@supabase/realtime-js': 2.11.2(bufferutil@4.0.9)(utf-8-validate@6.0.5)
       '@supabase/storage-js': 2.7.1
     transitivePeerDependencies:
       - bufferutil
@@ -3980,6 +3994,10 @@ snapshots:
   buffer-crc32@1.0.0: {}
 
   buffer-from@1.1.2: {}
+
+  bufferutil@4.0.9:
+    dependencies:
+      node-gyp-build: 4.8.4
 
   call-bind-apply-helpers@1.0.1:
     dependencies:
@@ -5561,6 +5579,10 @@ snapshots:
     dependencies:
       punycode: 2.3.1
 
+  utf-8-validate@6.0.5:
+    dependencies:
+      node-gyp-build: 4.8.4
+
   util-deprecate@1.0.2: {}
 
   vaul-svelte@0.1.1(svelte@4.2.19):
@@ -5616,7 +5638,10 @@ snapshots:
 
   wrappy@1.0.2: {}
 
-  ws@8.18.0: {}
+  ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@6.0.5):
+    optionalDependencies:
+      bufferutil: 4.0.9
+      utf-8-validate: 6.0.5
 
   xtend@4.0.2: {}
 
